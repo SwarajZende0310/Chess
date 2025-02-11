@@ -1,0 +1,40 @@
+add_library(
+  ${CHESS_CORE_TARGET_NAME} STATIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Application.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Application.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Core.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Core.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Application.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Application.cpp)
+
+target_include_directories(${CHESS_CORE_TARGET_NAME}
+                           PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+include(FetchContent)
+set(SFML_LIB_NAME SFML)
+
+FetchContent_Declare(
+  ${SFML_LIB_NAME}
+  GIT_REPOSITORY https://github.com/SFML/SFML.git
+  GIT_TAG 3.0.0
+  GIT_SHALLOW FALSE)
+
+FetchContent_MakeAvailable(${SFML_LIB_NAME})
+
+target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-graphics)
+target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-window)
+target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-system)
+target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-audio)
+
+function(CopyLibToTarget LIB_NAME TARGET_NAME)
+  add_custom_command(
+    TARGET ${TARGET_NAME}
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${LIB_NAME}>
+            $<TARGET_FILE_DIR:${TARGET_NAME}>)
+endfunction()
+
+copylibtotarget(sfml-graphics ${CHESS_CORE_TARGET_NAME})
+copylibtotarget(sfml-window ${CHESS_CORE_TARGET_NAME})
+copylibtotarget(sfml-system ${CHESS_CORE_TARGET_NAME})
+copylibtotarget(sfml-audio ${CHESS_CORE_TARGET_NAME})
