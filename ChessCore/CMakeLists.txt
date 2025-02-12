@@ -2,10 +2,13 @@ add_library(
   ${CHESS_CORE_TARGET_NAME} STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Application.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Application.cpp
+
   ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Core.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Core.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Application.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Application.cpp)
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/AssetManager.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/AssetManager.cpp
+)
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}
                            PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
