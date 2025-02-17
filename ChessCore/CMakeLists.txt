@@ -8,6 +8,12 @@ add_library(
 
   ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/AssetManager.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/AssetManager.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Stage.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Stage.cpp
+ 
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Board.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Board.cpp
 )
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}

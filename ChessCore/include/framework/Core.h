@@ -1,5 +1,6 @@
 #pragma once
 
+#include<stdio.h>
 #include<vector>
 #include<memory>
 #include<map>
@@ -29,4 +30,12 @@ namespace chess
 
     template<typename T>
     using Set = std::unordered_set<T>;
+
+    #define LOG(M, ...) printf(M "\n", ##__VA_ARGS__)
+
+    struct ChessCoordinate
+    {
+        char col;
+        int row;
+    };
 }
