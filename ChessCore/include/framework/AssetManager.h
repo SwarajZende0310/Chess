@@ -25,6 +25,8 @@ namespace chess
   template<typename T>
   inline  shared<T> AssetManager::LoadAssets(const std::string& path, Dictionary<std::string, shared<T>> &container)
   {
+    if(path.size() == 0) return shared<T>{nullptr};
+    
     auto found  = container.find(path);
 
     if(found != container.end())
