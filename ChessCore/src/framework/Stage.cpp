@@ -1,6 +1,7 @@
 #include"framework/Stage.h"
 #include"framework/Board.h"
 #include"framework/Application.h"
+#include"framework/ChessState.h"
 #include"Pieces/King.h"
 
 namespace chess
@@ -10,6 +11,7 @@ namespace chess
     mBoard{}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
+    ChessState::Get().ResetToStartPosition();
     mWhiteKing = SpawnPiece<King>(true);
   }
 
