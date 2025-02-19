@@ -13,11 +13,17 @@ namespace chess
     
     void RefreshBoard();
 
+    inline sf::Vector2f GetBoardStart()const{ return mBoardStart; }
+    inline sf::Vector2f GetBoardDimensions()const { return mBoardDimensions; }
+    inline float GetSquareOffsetX(){ return mOffsetX; }
+    inline float GetSquareOffsetY(){ return mOffsetY; }
+    inline sf::Vector2f GetSpriteScale() { return {mScaleX, mScaleY};}
+
+    const sf::Vector2f& GetSquareBound(const ChessCoordinate& chessCoordinate);
+    
     private:
     void RenderBlackSquare(const sf::Vector2f& position);
     void RenderWhiteSquare(const sf::Vector2f& position);
-
-    const sf::Vector2f& GetSquareBound(const ChessCoordinate& chessCoordinate);
 
     void Calculate_Square_Offset();
 

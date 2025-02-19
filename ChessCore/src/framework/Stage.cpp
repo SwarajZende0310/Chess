@@ -1,6 +1,7 @@
 #include"framework/Stage.h"
 #include"framework/Board.h"
 #include"framework/Application.h"
+#include"Pieces/King.h"
 
 namespace chess
 {
@@ -9,14 +10,17 @@ namespace chess
     mBoard{}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
+    mWhiteKing = SpawnPiece<King>(true);
   }
 
   void Stage::Init()
   {
   }
+
   void Stage::Render()
   {
     mBoard->RefreshBoard();
+    mWhiteKing->RenderPiece();
   }
 
   sf::RenderWindow &Stage::GetWindow()
@@ -43,6 +47,10 @@ namespace chess
       return mBoard;
   }
 
+  sf::Vector2f Stage::GetSpriteScale()
+  {
+      return mBoard->GetSpriteScale();
+  }
   bool Stage::HandleEvent(const sf::Event &event)
   {
       return false;

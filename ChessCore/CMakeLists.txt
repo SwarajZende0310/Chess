@@ -14,6 +14,12 @@ add_library(
  
   ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Board.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Board.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Piece.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Piece.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/King.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/King.cpp
 )
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}

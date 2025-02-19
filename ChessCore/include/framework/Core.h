@@ -35,7 +35,13 @@ namespace chess
 
     struct ChessCoordinate
     {
-        char col;
-        int row;
+        ChessCoordinate(char _file, int _rank)
+            :file{_file},
+            rank{_rank}
+        {
+
+        }
+        char file;
+        int rank;
     };
 }
