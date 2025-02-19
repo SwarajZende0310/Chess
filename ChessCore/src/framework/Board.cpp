@@ -4,10 +4,10 @@
 
 namespace chess
 {
-  Board::Board(Stage *owningStage, const sf::Vector2f &boardStart, const sf::Vector2f &boardEnd)
+  Board::Board(Stage *owningStage, const sf::Vector2f &boardStart, const sf::Vector2f &boardDimensions)
     :mOwingStage{owningStage},
     mBoardStart{boardStart},
-    mBoardEnd{boardEnd},
+    mBoardDimensions{boardDimensions},
     mWhiteTexture{AssetManager::Get().LoadTexture("JohnPablok Cburnett Chess set/PNGs/With Shadow/1024px/square brown dark_png_shadow_1024px.png")},
     mBlackTexture{AssetManager::Get().LoadTexture("JohnPablok Cburnett Chess set/PNGs/With Shadow/1024px/square brown light_png_shadow_1024px.png")},
     mWhiteSquaresSprite{*(mWhiteTexture)},
@@ -65,8 +65,8 @@ namespace chess
 
   void Board::Calculate_Square_Offset()
   {
-    int length = mBoardEnd.y - mBoardStart.y;
-    int width = mBoardEnd.x - mBoardStart.x;
+    int length = mBoardDimensions.y;
+    int width = mBoardDimensions.x;
 
     mOffsetX = length/8;
     mOffsetY = width/8;

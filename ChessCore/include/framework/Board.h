@@ -9,7 +9,7 @@ namespace chess
   class Board
   {
     public:
-    Board(Stage* owningStage, const sf::Vector2f& boardStart = sf::Vector2f{0.f,0.f}, const sf::Vector2f& boardEnd = sf::Vector2f{800.f,800.f});
+    Board(Stage* owningStage, const sf::Vector2f& boardStart = sf::Vector2f{0.f,0.f}, const sf::Vector2f& boardDimensions = sf::Vector2f{800.f,800.f});
     
     void RefreshBoard();
 
@@ -23,7 +23,7 @@ namespace chess
 
     Stage* mOwingStage;
     sf::Vector2f mBoardStart;
-    sf::Vector2f mBoardEnd;
+    sf::Vector2f mBoardDimensions;
 
     shared<sf::Texture> mWhiteTexture;
     shared<sf::Texture> mBlackTexture;
