@@ -54,7 +54,10 @@ namespace chess
     
     sf::Vector2f King::GetPieceLocation() const
     {
-        return sf::Vector2f();
+        if(mWhitePieces)
+            return mWhiteKingSprite.getPosition();
+        else
+            return mBlackKingSprite.getPosition();
     }
     
     float King::GetPieceRotation() const

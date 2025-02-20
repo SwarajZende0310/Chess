@@ -68,7 +68,7 @@ namespace chess
         row = 7;
         for(int i = 7; i >= 0; i--)
         {
-            mBlackPawns |= (1ULL << ( 8 * (row-1) + 8 * i));
+            mBlackPawns |= (1ULL << ( 8 * (row-1) + i));
         }
 
         row = 8;

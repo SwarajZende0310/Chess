@@ -23,6 +23,21 @@ add_library(
 
   ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/King.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/King.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/Queen.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/Queen.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/Rook.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/Rook.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/Knight.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/Knight.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/Bishop.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/Bishop.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/Pawn.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/Pawn.cpp
 )
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}

@@ -9,6 +9,11 @@ namespace chess
   class Board;
   class Actor;
   class King;
+  class Pawn;
+  class Knight;
+  class Bishop;
+  class Rook;
+  class Queen;
   class Stage
   {
     public:
@@ -36,10 +41,20 @@ namespace chess
       Application* mOwningApp;
 
       shared<Board> mBoard;
-      // shared<Actor> mPieces[12];
 
       shared<King> mWhiteKing;
+      shared<Queen> mWhiteQueen;
+      shared<Rook> mWhiteRook;
+      shared<Knight> mWhiteKnight;
+      shared<Bishop> mWhiteBishop;
+      shared<Pawn> mWhitePawn;
+      
       shared<King> mBlackKing;
+      shared<Queen> mBlackQueen;
+      shared<Rook> mBlackRook;
+      shared<Knight> mBlackKnight;
+      shared<Bishop> mBlackBishop;
+      shared<Pawn> mBlackPawn;
   };
 
   template <typename PieceType>
