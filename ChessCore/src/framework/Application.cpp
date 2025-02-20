@@ -22,11 +22,16 @@ namespace chess {
         }
       }
 
-      mWindow.clear();
+      // Render only if piece is moved
+      if(mCurrentStage && mCurrentStage->IsPieceMoved())
+      {
+        mWindow.clear();
 
-      Render();
+        Render();
+        mCurrentStage->SetPieceMoved(false);
 
-      mWindow.display();
+        mWindow.display();
+      }
     }
   }
 

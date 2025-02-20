@@ -24,6 +24,9 @@ namespace chess
 
       sf::RenderWindow& GetWindow();
       sf::Vector2f GetSpriteScale();
+
+      inline bool IsPieceMoved(){ return mPieceMoved;}
+      inline void SetPieceMoved(bool moved){ mPieceMoved = moved; }
       
     private:
       void RenderBoard();
@@ -55,6 +58,8 @@ namespace chess
       shared<Knight> mBlackKnight;
       shared<Bishop> mBlackBishop;
       shared<Pawn> mBlackPawn;
+
+      bool mPieceMoved;
   };
 
   template <typename PieceType>

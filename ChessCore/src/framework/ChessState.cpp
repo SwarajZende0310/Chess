@@ -101,10 +101,6 @@ namespace chess
             {
                 if( (1ULL << ( (8 * i) + j)) & mWhitePawns)
                 {
-                    // ChessCoordinate chessCoordinate;
-                    // chessCoordinate.rank = 7 - j;
-                    // chessCoordinate.file = ConvertColToRank( i + 1 );
-
                     pawns.emplace_back(ChessCoordinate{ i + 1 , ConvertColToRank(7 - j + 1)});
                 }
             }

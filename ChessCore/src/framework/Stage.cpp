@@ -25,7 +25,8 @@ namespace chess
     mBlackRook{},
     mBlackKnight{},
     mBlackBishop{},
-    mBlackPawn{}
+    mBlackPawn{},
+    mPieceMoved{true}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
