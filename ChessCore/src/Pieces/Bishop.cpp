@@ -13,8 +13,8 @@ namespace chess
         mBlackBishopSprite{*(mBlackBishopTexture)},
         mWhitePieces{whitePiece}
     {
-        mWhiteBishopSprite.setScale(mOwningStage->GetSpriteScale());
-        mBlackBishopSprite.setScale(mOwningStage->GetSpriteScale());
+        mWhiteBishopSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
+        mBlackBishopSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
     bool Bishop::MovePossible(ChessCoordinate *endCoordinate)

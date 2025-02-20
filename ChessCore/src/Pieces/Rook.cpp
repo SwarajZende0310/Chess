@@ -13,8 +13,8 @@ namespace chess
         mBlackRookSprite{*(mBlackRookTexture)},
         mWhitePieces{whitePiece}
     {
-        mWhiteRookSprite.setScale(mOwningStage->GetSpriteScale());
-        mBlackRookSprite.setScale(mOwningStage->GetSpriteScale());
+        mWhiteRookSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
+        mBlackRookSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
     bool Rook::MovePossible(ChessCoordinate *endCoordinate)

@@ -26,7 +26,9 @@ namespace chess
     mBlackKnight{},
     mBlackBishop{},
     mBlackPawn{},
-    mPieceMoved{true}
+    mPieceMoved{true},
+    mPieceOffsetX{10},
+    mPieceOffsetY{8}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -154,7 +156,7 @@ namespace chess
       int row = chessCoordinate.rank - 1;
       int col = chessCoordinate.file - 'a';
 
-      return sf::Vector2f{mBoard->GetSquareOffsetX() * (col), mBoard->GetSquareOffsetY() * (7 - row)};
+      return sf::Vector2f{mBoard->GetSquareOffsetX() * (col) + mPieceOffsetX, mBoard->GetSquareOffsetY() * (7 - row) + mPieceOffsetY};
   }
 
   shared<Board> Stage::SpawnBoard(const sf::Vector2f &boardStart, const sf::Vector2f &boardEnd)

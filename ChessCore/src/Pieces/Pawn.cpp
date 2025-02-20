@@ -13,8 +13,8 @@ namespace chess
         mBlackPawnSprite{*(mBlackPawnTexture)},
         mWhitePieces{whitePiece}
     {
-        mWhitePawnSprite.setScale(mOwningStage->GetSpriteScale());
-        mBlackPawnSprite.setScale(mOwningStage->GetSpriteScale());
+        mWhitePawnSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
+        mBlackPawnSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
     bool Pawn::MovePossible(ChessCoordinate *endCoordinate)

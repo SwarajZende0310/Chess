@@ -13,8 +13,8 @@ namespace chess
         mBlackKingSprite{*(mBlackKingTexture)},
         mWhitePieces{whitePiece}
     {
-        mWhiteKingSprite.setScale(mOwningStage->GetSpriteScale());
-        mBlackKingSprite.setScale(mOwningStage->GetSpriteScale());
+        mWhiteKingSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
+        mBlackKingSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
     bool King::MovePossible(ChessCoordinate *endCoordinate)

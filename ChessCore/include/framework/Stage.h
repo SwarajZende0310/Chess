@@ -60,6 +60,9 @@ namespace chess
       shared<Pawn> mBlackPawn;
 
       bool mPieceMoved;
+
+      int mPieceOffsetX;
+      int mPieceOffsetY;
   };
 
   template <typename PieceType>
