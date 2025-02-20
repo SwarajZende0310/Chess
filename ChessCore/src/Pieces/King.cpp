@@ -15,7 +15,6 @@ namespace chess
     {
         mWhiteKingSprite.setScale(mOwningStage->GetSpriteScale());
         mBlackKingSprite.setScale(mOwningStage->GetSpriteScale());
-        mWhiteKingSprite.setPosition({0.f,0.f});
     }
 
     bool King::MovePossible(ChessCoordinate *endCoordinate)
@@ -39,12 +38,18 @@ namespace chess
         }
     }
 
-    void King::SetPieceLocation(const sf::Vector2f &newLocation)
+    void King::SetPieceLocation(const sf::Vector2f &newLocation, bool whitePieces)
     {
+        if(whitePieces)
+            mWhiteKingSprite.setPosition(newLocation);
+        else
+            mBlackKingSprite.setPosition(newLocation);
     }
     
-    void King::SetPieceRotation(float newRotation)
+    void King::SetPieceRotation(float newRotation, bool whitePieces)
     {
+        // sf::Angle newRot{newRotation};
+        // mWhiteKingSprite.setRotation(newRot);
     }
     
     sf::Vector2f King::GetPieceLocation() const

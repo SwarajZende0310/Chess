@@ -13,6 +13,7 @@ namespace chess
     SpawnBoard({0.f,0.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
     mWhiteKing = SpawnPiece<King>(true);
+    mBlackKing = SpawnPiece<King>(false);
   }
 
   void Stage::Init()
@@ -21,8 +22,8 @@ namespace chess
 
   void Stage::Render()
   {
-    mBoard->RefreshBoard();
-    mWhiteKing->RenderPiece();
+    RenderBoard();
+    RenderPieces();
   }
 
   sf::RenderWindow &Stage::GetWindow()
@@ -32,15 +33,24 @@ namespace chess
 
   void Stage::RenderBoard()
   {
+    mBoard->RefreshBoard();
   }
 
   void Stage::RenderPieces()
   {
+    mWhiteKing->SetPieceLocation(ConvertChessCoordinateToPosition(ChessState::Get().GetWhiteKingPosition()), true);
+    mWhiteKing->RenderPiece();
+
+    mBlackKing->SetPieceLocation(ConvertChessCoordinateToPosition(ChessState::Get().GetBlackKingPosition()),false);
+    mBlackKing->RenderPiece();
   }
 
-  const sf::Vector2f &Stage::ConvertChessCoordinateToPosition(const ChessCoordinate &chessCoordinate)
+  const sf::Vector2f Stage::ConvertChessCoordinateToPosition(const ChessCoordinate &chessCoordinate)
   {
-      return sf::Vector2f{};
+      int row = chessCoordinate.rank - 1;
+      int col = chessCoordinate.file - 'a';
+
+      return sf::Vector2f{mBoard->GetSquareOffsetX() * (col), mBoard->GetSquareOffsetY() * (7 - row)};
   }
 
   shared<Board> Stage::SpawnBoard(const sf::Vector2f &boardStart, const sf::Vector2f &boardEnd)

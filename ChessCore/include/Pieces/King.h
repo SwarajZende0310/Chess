@@ -12,11 +12,10 @@ namespace chess
             virtual bool MovePossible(ChessCoordinate* endCoordinate)override;
             virtual void MaveMove(ChessCoordinate* endCoorinate)override;
             virtual void RenderPiece()override;
-        
+            
+            virtual void SetPieceLocation(const sf::Vector2f& newLocation, bool whitePieces) override;
+            virtual void SetPieceRotation(float newRotation, bool whitePieces) override;
         private:
-            virtual void SetPieceLocation(const sf::Vector2f& newLocation) override;
-            virtual void SetPieceRotation(float newRotation) override;
-
             virtual sf::Vector2f GetPieceLocation()const override;
             virtual float GetPieceRotation()const override;
 

@@ -24,7 +24,7 @@ namespace chess
       void RenderBoard();
       void RenderPieces();
 
-      const sf::Vector2f& ConvertChessCoordinateToPosition(const ChessCoordinate& chessCoordinate);
+      const sf::Vector2f ConvertChessCoordinateToPosition(const ChessCoordinate& chessCoordinate);
 
       shared<Board> SpawnBoard(const sf::Vector2f& boardStart, const sf::Vector2f& boardEnd);
 
@@ -39,6 +39,7 @@ namespace chess
       // shared<Actor> mPieces[12];
 
       shared<King> mWhiteKing;
+      shared<King> mBlackKing;
   };
 
   template <typename PieceType>
