@@ -25,11 +25,26 @@ namespace chess
             ChessCoordinate GetBlackQueenPosition();
             ChessCoordinate GetBlackKingPosition();
 
+            void SetWhitePawnPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetWhiteKnightPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetWhiteBishopPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetWhiteRookPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetWhiteQueenPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetWhiteKingPosition(ChessCoordinate& start, ChessCoordinate& end);
+
+            void SetBlackPawnPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetBlackKnightPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetBlackBishopPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetBlackRookPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetBlackQueenPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetBlackKingPosition(ChessCoordinate& start, ChessCoordinate& end);
+
         protected:
             ChessState();
 
         private:
-            char ConvertColtoRank(int row);
+            char ConvertColToRank(int row);
+            int ConvertRankToCol(char col);
             static unique<ChessState> mChessState;
             // White Pieces
             uint64_t mWhitePawns;
