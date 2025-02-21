@@ -34,7 +34,8 @@ namespace chess
       void RenderBoard();
       void RenderPieces();
 
-      void MovePiece(char piece);
+      bool CheckCorrectPieceSelected(char piece);
+      bool MovePiece(char piece);
 
       const sf::Vector2f ConvertChessCoordinateToPosition(const ChessCoordinate& chessCoordinate);
       ChessCoordinate ConvertPositionToChessCoordinate(const sf::Vector2i& position);
@@ -70,6 +71,8 @@ namespace chess
       bool mPieceSelected;
       ChessCoordinate mStartPose;
       ChessCoordinate mEndPose;
+
+      bool mWhiteTurn;
   };
 
   template <typename PieceType>
