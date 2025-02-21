@@ -57,10 +57,9 @@ namespace chess
     mOwingStage->GetWindow().draw(mWhiteSquaresSprite);
   }
 
-  const sf::Vector2f &Board::GetSquareBound(const ChessCoordinate &chessCoordinate)
+  sf::FloatRect Board::GetSquareBound(const ChessCoordinate &chessCoordinate)const
   {
-      // TODO: insert return statement here
-      return sf::Vector2f{};
+      return mBlackSquaresSprite.getGlobalBounds();
   }
 
   void Board::Calculate_Square_Offset()

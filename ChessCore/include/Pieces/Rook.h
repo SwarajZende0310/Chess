@@ -9,8 +9,8 @@ namespace chess
         public:
             Rook(Stage* owningStage, bool whitePiece);
 
-            virtual bool MovePossible(ChessCoordinate* endCoordinate)override;
-            virtual void MaveMove(ChessCoordinate* endCoorinate)override;
+            virtual bool MovePossible(ChessCoordinate& startCoordinate,ChessCoordinate& endCoordinate)override;
+            virtual void MakeMove(ChessCoordinate& startCoordinate,ChessCoordinate& endCoordinate)override;
             virtual void RenderPiece()override;
             
             virtual void SetPieceLocation(const sf::Vector2f& newLocation, bool whitePieces) override;

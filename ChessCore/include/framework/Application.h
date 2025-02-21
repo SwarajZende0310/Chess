@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <string>
 #include"framework/Stage.h"
 
 namespace chess 
@@ -20,7 +19,10 @@ namespace chess
     sf::RenderWindow& GetWindow();
     sf::Vector2u GetWindowSize()const;
 
+    void QuitApplication();
+
   private:
+    bool DispathEvent(const std::optional<sf::Event>& event);
     sf::RenderWindow mWindow;
     shared<Stage> mCurrentStage;
     void RenderInternal();

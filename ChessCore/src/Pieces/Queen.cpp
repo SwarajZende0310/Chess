@@ -1,6 +1,7 @@
 #include "Pieces/Queen.h"
 #include "framework/AssetManager.h"
 #include "framework/Stage.h"
+#include "framework/ChessState.h"
 
 namespace chess
 {
@@ -17,13 +18,21 @@ namespace chess
         mBlackQueenSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
-    bool Queen::MovePossible(ChessCoordinate *endCoordinate)
+    bool Queen::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        return false;
+        return true;
     }
-    
-    void Queen::MaveMove(ChessCoordinate *endCoorinate)
+
+    void Queen::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
+        if(mWhitePieces)
+        {
+            ChessState::Get().SetWhiteQueenPosition(startCoordinate,endCoordinate);
+        }
+        else
+        {
+            ChessState::Get().SetBlackQueenPosition(startCoordinate,endCoordinate);
+        }
     }
 
     void Queen::RenderPiece()

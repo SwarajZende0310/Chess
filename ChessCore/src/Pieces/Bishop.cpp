@@ -1,6 +1,7 @@
 #include "Pieces/Bishop.h"
 #include "framework/AssetManager.h"
 #include "framework/Stage.h"
+#include "framework/ChessState.h"
 
 namespace chess
 {
@@ -17,13 +18,21 @@ namespace chess
         mBlackBishopSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
-    bool Bishop::MovePossible(ChessCoordinate *endCoordinate)
+    bool Bishop::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        return false;
+        return true;
     }
-    
-    void Bishop::MaveMove(ChessCoordinate *endCoorinate)
+
+    void Bishop::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
+        if(mWhitePieces)
+        {
+            ChessState::Get().SetWhiteBishopPosition(startCoordinate,endCoordinate);
+        }
+        else
+        {
+            ChessState::Get().SetBlackBishopPosition(startCoordinate,endCoordinate);
+        }
     }
 
     void Bishop::RenderPiece()

@@ -19,7 +19,7 @@ namespace chess
     inline float GetSquareOffsetY(){ return mOffsetY; }
     inline sf::Vector2f GetSpriteScale() { return {mScaleX, mScaleY};}
 
-    const sf::Vector2f& GetSquareBound(const ChessCoordinate& chessCoordinate);
+    sf::FloatRect GetSquareBound(const ChessCoordinate& chessCoordinate)const;
     
     private:
     void RenderBlackSquare(const sf::Vector2f& position);

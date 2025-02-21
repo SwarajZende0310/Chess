@@ -27,19 +27,22 @@ namespace chess
 
       inline bool IsPieceMoved(){ return mPieceMoved;}
       inline void SetPieceMoved(bool moved){ mPieceMoved = moved; }
+
+      bool HandleEvent(const std::optional<sf::Event> & event);
       
     private:
       void RenderBoard();
       void RenderPieces();
 
+      void MovePiece(char piece);
+
       const sf::Vector2f ConvertChessCoordinateToPosition(const ChessCoordinate& chessCoordinate);
+      ChessCoordinate ConvertPositionToChessCoordinate(const sf::Vector2i& position);
 
       shared<Board> SpawnBoard(const sf::Vector2f& boardStart, const sf::Vector2f& boardEnd);
 
       template<typename PieceType>
       shared<PieceType> SpawnPiece(bool whitePiece);
-
-      bool HandleEvent(const sf::Event& event);
 
       Application* mOwningApp;
 
@@ -63,6 +66,10 @@ namespace chess
 
       int mPieceOffsetX;
       int mPieceOffsetY;
+
+      bool mPieceSelected;
+      ChessCoordinate mStartPose;
+      ChessCoordinate mEndPose;
   };
 
   template <typename PieceType>

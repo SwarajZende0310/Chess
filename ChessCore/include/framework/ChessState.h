@@ -39,6 +39,8 @@ namespace chess
             void SetBlackQueenPosition(ChessCoordinate& start, ChessCoordinate& end);
             void SetBlackKingPosition(ChessCoordinate& start, ChessCoordinate& end);
 
+            char GetPieceOnChessCoordinate(ChessCoordinate coordinate);
+
         protected:
             ChessState();
 

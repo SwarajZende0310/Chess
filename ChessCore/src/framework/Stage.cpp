@@ -28,7 +28,10 @@ namespace chess
     mBlackPawn{},
     mPieceMoved{true},
     mPieceOffsetX{10},
-    mPieceOffsetY{8}
+    mPieceOffsetY{8},
+    mPieceSelected{false},
+    mStartPose{-1,'n'},
+    mEndPose{-1,'n'}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -63,6 +66,38 @@ namespace chess
       return mOwningApp->GetWindow();
   }
 
+  bool Stage::HandleEvent(const std::optional<sf::Event> &event)
+  {
+      bool handled = false;
+
+      if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+      {
+          if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+          {
+              if(!mPieceSelected)
+              {
+                mStartPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
+                mPieceSelected = true;
+              }
+              else
+              {
+                mEndPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
+                char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+                // Change chess state and render everything again
+                MovePiece(piece);
+                SetPieceMoved(true);
+                mPieceSelected = false;
+                LOG("Piece: %c Start %c%d , End %c%d", piece, mStartPose.file, mStartPose.rank, mEndPose.file, mEndPose.rank);
+              }
+          }
+          else if(mouseButtonPressed->button == sf::Mouse::Button::Right)
+          {
+            mPieceSelected = false;
+          }
+      }
+      return handled;
+  }
+  
   void Stage::RenderBoard()
   {
     mBoard->RefreshBoard();
@@ -151,12 +186,72 @@ namespace chess
     mBlackKing->RenderPiece();
   }
 
+  void Stage::MovePiece(char piece)
+  {
+    if(piece == 'K' && mWhiteKing->MovePossible(mStartPose, mEndPose))
+    {
+      mWhiteKing->MakeMove(mStartPose, mEndPose);
+    }
+    else if(piece == 'Q' && mWhiteQueen->MovePossible(mStartPose, mEndPose))
+    {
+      mWhiteQueen->MakeMove(mStartPose, mEndPose);
+    }
+    else if(piece == 'N' && mWhiteKnight->MovePossible(mStartPose, mEndPose))
+    {
+      mWhiteKnight->MakeMove(mStartPose, mEndPose);
+    } 
+    else if(piece == 'B' && mWhiteBishop->MovePossible(mStartPose, mEndPose))
+    {
+      mWhiteBishop->MakeMove(mStartPose, mEndPose);
+    } 
+    else if(piece == 'R' && mWhiteRook->MovePossible(mStartPose, mEndPose))
+    {
+      mWhiteRook->MakeMove(mStartPose, mEndPose);
+    } 
+    else if(piece == 'P' && mWhitePawn->MovePossible(mStartPose, mEndPose))
+    {
+      mWhitePawn->MakeMove(mStartPose, mEndPose);
+    } 
+    // Black Pieces
+    else if(piece == 'k' && mBlackKing->MovePossible(mStartPose, mEndPose))
+    {
+      mBlackKing->MakeMove(mStartPose, mEndPose);
+    } 
+    else if(piece == 'q' && mBlackQueen->MovePossible(mStartPose, mEndPose))
+    {
+      mBlackQueen->MakeMove(mStartPose, mEndPose);
+    } 
+    else if(piece == 'n' && mBlackKnight->MovePossible(mStartPose, mEndPose))
+    {
+      mBlackKnight->MakeMove(mStartPose, mEndPose);
+    } 
+    else if(piece == 'b' && mBlackBishop->MovePossible(mStartPose, mEndPose))
+    {
+      mBlackBishop->MakeMove(mStartPose, mEndPose);
+    } 
+    else if(piece == 'r' && mBlackRook->MovePossible(mStartPose, mEndPose))
+    {
+      mBlackRook->MakeMove(mStartPose, mEndPose);
+    } 
+    else if(piece == 'p' && mBlackPawn->MovePossible(mStartPose, mEndPose))
+    {
+      mBlackPawn->MakeMove(mStartPose, mEndPose);
+    }  
+  }
+
   const sf::Vector2f Stage::ConvertChessCoordinateToPosition(const ChessCoordinate &chessCoordinate)
   {
       int row = chessCoordinate.rank - 1;
       int col = chessCoordinate.file - 'a';
 
       return sf::Vector2f{mBoard->GetSquareOffsetX() * (col) + mPieceOffsetX, mBoard->GetSquareOffsetY() * (7 - row) + mPieceOffsetY};
+  }
+
+  ChessCoordinate Stage::ConvertPositionToChessCoordinate(const sf::Vector2i &position)
+  {
+      int row = position.y / mBoard->GetSquareOffsetX();
+      int col = position.x / mBoard->GetSquareOffsetY(); 
+      return ChessCoordinate{7 - row + 1, (char)(col + 'a')};
   }
 
   shared<Board> Stage::SpawnBoard(const sf::Vector2f &boardStart, const sf::Vector2f &boardEnd)
@@ -168,9 +263,5 @@ namespace chess
   sf::Vector2f Stage::GetSpriteScale()
   {
       return mBoard->GetSpriteScale();
-  }
-  bool Stage::HandleEvent(const sf::Event &event)
-  {
-      return false;
   }
 }

@@ -1,6 +1,4 @@
 #include "framework/Application.h"
-#include "SFML/Graphics/RenderWindow.hpp"
-#include "SFML/System/Vector2.hpp"
 
 namespace chess {
   Application::Application(unsigned int windowWidth, unsigned int windowHeight,const std::string &windowTitle,std::uint32_t windowStyle)
@@ -18,7 +16,11 @@ namespace chess {
       {
         if (event->is<sf::Event::Closed>()) 
         {
-          mWindow.close();
+          QuitApplication();
+        }
+        else
+        {
+          DispathEvent(event);
         }
       }
 
@@ -50,7 +52,19 @@ namespace chess {
     return mWindow.getSize();
   }
 
-  void Application::RenderInternal() 
+  void Application::QuitApplication()
+  {
+    mWindow.close();
+  }
+
+  bool Application::DispathEvent(const std::optional<sf::Event> &event)
+  {
+      if(mCurrentStage)
+        return mCurrentStage->HandleEvent(event);
+      return false;
+  }
+
+  void Application::RenderInternal()
   {
     if(mCurrentStage)
       mCurrentStage->Render();

@@ -1,6 +1,7 @@
 #include "Pieces/Rook.h"
 #include "framework/AssetManager.h"
 #include "framework/Stage.h"
+#include "framework/ChessState.h"
 
 namespace chess
 {
@@ -17,13 +18,21 @@ namespace chess
         mBlackRookSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
-    bool Rook::MovePossible(ChessCoordinate *endCoordinate)
+    bool Rook::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        return false;
+        return true;
     }
-    
-    void Rook::MaveMove(ChessCoordinate *endCoorinate)
+
+    void Rook::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
+        if(mWhitePieces)
+        {
+            ChessState::Get().SetWhiteRookPosition(startCoordinate,endCoordinate);
+        }
+        else
+        {
+            ChessState::Get().SetBlackRookPosition(startCoordinate,endCoordinate);
+        }
     }
 
     void Rook::RenderPiece()

@@ -11,8 +11,8 @@ namespace chess
         public:
             Piece(Stage* owningStage);
 
-            virtual bool MovePossible(ChessCoordinate* endCoordinate) = 0;
-            virtual void MaveMove(ChessCoordinate* endCoorinate) = 0;
+            virtual bool MovePossible(ChessCoordinate& startCoordinate,ChessCoordinate& endCoordinate) = 0;
+            virtual void MakeMove(ChessCoordinate& startCoordinate,ChessCoordinate& endCoordinate) = 0;
             virtual void RenderPiece() = 0;
 
             virtual void SetPieceLocation(const sf::Vector2f& newLocation, bool whitePieces) = 0;

@@ -1,6 +1,7 @@
 #include "Pieces/King.h"
 #include "framework/AssetManager.h"
 #include "framework/Stage.h"
+#include "framework/ChessState.h"
 
 namespace chess
 {
@@ -17,13 +18,21 @@ namespace chess
         mBlackKingSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
-    bool King::MovePossible(ChessCoordinate *endCoordinate)
+    bool King::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        return false;
+        return true;
     }
-    
-    void King::MaveMove(ChessCoordinate *endCoorinate)
+
+    void King::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
+        if(mWhitePieces)
+        {
+            ChessState::Get().SetWhiteKingPosition(startCoordinate,endCoordinate);
+        }
+        else
+        {
+            ChessState::Get().SetBlackKingPosition(startCoordinate,endCoordinate);
+        }
     }
 
     void King::RenderPiece()
