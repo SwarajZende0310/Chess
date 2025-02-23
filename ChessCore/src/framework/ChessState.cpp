@@ -118,6 +118,12 @@ namespace chess
         uint64_t currentPos =  1ULL << (8 * (start.rank - 1) + (7- ConvertRankToCol(start.file)+1));
         if(!(pieceContainer & currentPos))return;
 
+        // Remove other piece if already there in position where we are moving
+        if(ChessState::Get().GetPieceOnChessCoordinate(end) != invalid)
+        {
+            ChessState::Get().RemovePiece(ChessState::Get().GetPieceOnChessCoordinate(end), end);
+        }
+
         // Unset the current high bit
         pieceContainer ^= currentPos;
 
@@ -144,6 +150,18 @@ namespace chess
         else if( mBlackKing & currentPos)return blackKing;
 
         return invalid;
+    }
+
+    void ChessState::RemovePiece(char piece, ChessCoordinate &position)
+    {
+        if(piece == invalid || position.file == invalid || position.rank == -1)return;
+        uint64_t& pieceContainer = GetPieceContainer(piece);
+        uint64_t currentPos =  1ULL << (8 * (position.rank - 1) + (7- ConvertRankToCol(position.file)+1));
+        if(!(pieceContainer & currentPos))return;
+
+        currentPos = ~(currentPos);
+
+        pieceContainer &= currentPos;
     }
 
     ChessState::ChessState()

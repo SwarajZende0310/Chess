@@ -17,6 +17,8 @@ namespace chess
 
             char GetPieceOnChessCoordinate(ChessCoordinate coordinate);
 
+            void RemovePiece(char piece,ChessCoordinate& position);
+
         protected:
             ChessState();
 
