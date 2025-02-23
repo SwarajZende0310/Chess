@@ -20,18 +20,28 @@ namespace chess
 
     bool Knight::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        return true;
+        int ranksForward = endCoordinate.rank - startCoordinate.rank;
+        int filesRightward = endCoordinate.file - startCoordinate.file;
+        
+        //Knight moves forward and backward
+        if((((ranksForward == 2 || ranksForward == -2) && (filesRightward == 1 || filesRightward == -1))  ||
+            ((filesRightward == 2 || filesRightward == -2) && (ranksForward == 1 || ranksForward == -1))) && 
+            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate))) //Knight moves sidewards
+        {
+            return true;
+        }
+        return false;
     }
 
     void Knight::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         if(mWhitePieces)
         {
-            ChessState::Get().SetWhiteKnightPosition(startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(whiteKnight,startCoordinate,endCoordinate);
         }
         else
         {
-            ChessState::Get().SetBlackKnightPosition(startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(blackKnight,startCoordinate,endCoordinate);
         }
     }
 
@@ -72,5 +82,10 @@ namespace chess
     float Knight::GetPieceRotation() const
     {
         return 0.0f;
+    }
+
+    bool Knight::isEnemy(ChessCoordinate &endCoordinate)
+    {
+        return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
     }
 }
