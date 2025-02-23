@@ -91,7 +91,7 @@ namespace chess
     bool Bishop::PiecesInBetweenPath(ChessCoordinate& startCoordinate, ChessCoordinate& endCoordinate)
     {
         int offsetX = (endCoordinate.file - startCoordinate.file) > 0 ? 1 : -1 ;
-        int offsetY = (endCoordinate.rank - startCoordinate.file) > 0 ? 1 : -1 ;
+        int offsetY = (endCoordinate.rank - startCoordinate.file) > 0 ? -1 : 1 ;
 
         ChessCoordinate iterator{startCoordinate.rank,startCoordinate.file};
         iterator.file += offsetX;
