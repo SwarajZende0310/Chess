@@ -20,18 +20,27 @@ namespace chess
 
     bool King::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        return true;
+        // TODO :: scan for other enemy piece attacking the end coordinate
+        int ranksForward = abs(endCoordinate.rank - startCoordinate.rank);
+        int filesRightward = abs(endCoordinate.file - startCoordinate.file);
+
+        if(((ranksForward == 1 && filesRightward == 1) || (ranksForward == 0 && filesRightward == 1 ) || (ranksForward == 1 && filesRightward == 0 )) && 
+            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate)))
+        {
+            return true;
+        }
+        return false;
     }
 
     void King::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         if(mWhitePieces)
         {
-            ChessState::Get().SetWhiteKingPosition(startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(whiteKing,startCoordinate,endCoordinate);
         }
         else
         {
-            ChessState::Get().SetBlackKingPosition(startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(blackKing,startCoordinate,endCoordinate);
         }
     }
 
@@ -72,5 +81,10 @@ namespace chess
     float King::GetPieceRotation() const
     {
         return 0.0f;
+    }
+
+    bool chess::King::isEnemy(ChessCoordinate &endCoordinate)
+    {
+        return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
     }
 }
