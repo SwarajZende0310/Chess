@@ -7,6 +7,7 @@
 #include<set>
 #include<unordered_map>
 #include<unordered_set>
+#include<utility>
 
 namespace chess
 {
@@ -35,6 +36,7 @@ namespace chess
 
     struct ChessCoordinate
     {
+        public:
         ChessCoordinate(int _rank, char _file)
             :rank{_rank},
             file{_file}
@@ -43,5 +45,19 @@ namespace chess
         }
         int rank;
         char file;
+    };
+
+    static bool operator==(const ChessCoordinate& lhs, const ChessCoordinate& rhs)
+    {
+        return lhs.file == rhs.file && lhs.rank == rhs.rank;
+    }
+
+    struct ChessCoordinateHashFunction
+    {
+        public:
+            std::size_t operator()(const ChessCoordinate& coordinate)const
+            {
+                return std::hash<int>()(coordinate.rank) ^ std::hash<char>()(coordinate.file);
+            }
     };
 }
