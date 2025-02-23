@@ -7,4 +7,12 @@ namespace chess
     {
 
     }
+
+    bool Piece::GetPieceColor(char piece)
+    {
+        if(piece == whiteKing || piece == whiteQueen || piece == whiteRook || piece == whiteBishop || piece == whiteKnight || piece == whitePawn )
+            return true;
+        else 
+            return false;
+    }
 }

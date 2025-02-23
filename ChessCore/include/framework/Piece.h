@@ -16,6 +16,7 @@ namespace chess
             virtual void RenderPiece() = 0;
 
             inline virtual bool GetPieceColor() = 0;
+            bool GetPieceColor(char piece);
 
             virtual void SetPieceLocation(const sf::Vector2f& newLocation, bool whitePieces) = 0;
             virtual void SetPieceRotation(float newRotation, bool whitePieces) = 0;

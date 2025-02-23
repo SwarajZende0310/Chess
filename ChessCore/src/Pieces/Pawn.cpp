@@ -41,7 +41,8 @@ namespace chess
         }
         else if((startCoordinate.file - 1 == endCoordinate.file || startCoordinate.file + 1 == endCoordinate.file) && 
                 (pawnForwardMoves == 1) && 
-                (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) != invalid))//Capturing pieces
+                (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) != invalid) &&
+                ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate)))))//Capturing pieces
         {
             return true;
         }
