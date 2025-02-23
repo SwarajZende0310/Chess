@@ -42,7 +42,7 @@ namespace chess
         else if((startCoordinate.file - 1 == endCoordinate.file || startCoordinate.file + 1 == endCoordinate.file) && 
                 (pawnForwardMoves == 1) && 
                 (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) != invalid) &&
-                ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate)))))//Capturing pieces
+                isEnemy(endCoordinate))//Capturing pieces
         {
             return true;
         }
@@ -99,5 +99,10 @@ namespace chess
     float Pawn::GetPieceRotation() const
     {
         return 0.0f;
+    }
+
+    bool Pawn::isEnemy(ChessCoordinate &endCoordinate)
+    {
+        return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
     }
 }
