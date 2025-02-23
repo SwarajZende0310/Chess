@@ -21,6 +21,9 @@ namespace chess
             virtual sf::Vector2f GetPieceLocation()const override;
             virtual float GetPieceRotation()const override;
 
+            bool isEnemy(ChessCoordinate& endCoordinate);
+            bool PiecesInBetweenPath(ChessCoordinate& startCoordinate, ChessCoordinate& endCoordinate);
+
             Stage* mOwningStage;
             
             shared<sf::Texture> mWhiteQueenTexture;

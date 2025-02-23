@@ -20,18 +20,27 @@ namespace chess
 
     bool Queen::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        return true;
+        int ranksForward = abs(endCoordinate.rank - startCoordinate.rank);
+        int filesRightward = abs(endCoordinate.file - startCoordinate.file);
+
+        if(((ranksForward == filesRightward) || (ranksForward == 0 && filesRightward > 0 ) || (ranksForward > 0 && filesRightward == 0 )) && 
+            !PiecesInBetweenPath(startCoordinate,endCoordinate) &&
+            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate)))
+        {
+            return true;
+        }
+        return false;
     }
 
     void Queen::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         if(mWhitePieces)
         {
-            ChessState::Get().SetWhiteQueenPosition(startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(whiteQueen,startCoordinate,endCoordinate);
         }
         else
         {
-            ChessState::Get().SetBlackQueenPosition(startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(blackQueen,startCoordinate,endCoordinate);
         }
     }
 
@@ -72,5 +81,41 @@ namespace chess
     float Queen::GetPieceRotation() const
     {
         return 0.0f;
+    }
+
+    bool Queen::isEnemy(ChessCoordinate &endCoordinate)
+    {
+        return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
+    }
+
+    bool Queen::PiecesInBetweenPath(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
+    {
+        int offsetX = (endCoordinate.file - startCoordinate.file);
+        int offsetY = (endCoordinate.rank - startCoordinate.rank);
+
+        if(offsetX > 0)
+            offsetX = 1;
+        else if(offsetX < 0)
+            offsetX = -1;
+
+        if(offsetY > 0)
+            offsetY = 1;
+        else if(offsetY < 0)
+            offsetY = -1;
+
+        ChessCoordinate iterator{startCoordinate.rank,startCoordinate.file};
+        iterator.file += offsetX;
+        iterator.rank += offsetY;
+
+        while(iterator.isValid() && !(iterator == endCoordinate))
+        {
+            if(ChessState::Get().GetPieceOnChessCoordinate(iterator) != invalid)
+            {
+                return true;
+            }
+            iterator.file += offsetX;
+            iterator.rank += offsetY;
+        }
+        return false;
     }
 }
