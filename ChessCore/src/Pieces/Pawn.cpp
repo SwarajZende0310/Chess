@@ -16,23 +16,49 @@ namespace chess
     {
         mWhitePawnSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
         mBlackPawnSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
+
+        // Initialising first move of every pawn to true
+        int rank = mWhitePieces ? 2 : 7;
+        for(int i = 0 ; i < 8; i++)
+        {
+            mFirstMove[ChessCoordinate{rank,(char)('a'+i)}] = true;
+        }
     }
 
     bool Pawn::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        return true;
+        int pawnForwardMoves = mWhitePieces ? endCoordinate.rank - startCoordinate.rank : startCoordinate.rank - endCoordinate.rank ;
+        if((startCoordinate.file == endCoordinate.file) && ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid)
+        {
+            if(mFirstMove[startCoordinate])
+            {
+                return (pawnForwardMoves == 1 || pawnForwardMoves == 2);
+            }
+            else
+            {
+                return pawnForwardMoves == 1;
+            }
+        }
+        else if((startCoordinate.file - 1 == endCoordinate.file || startCoordinate.file + 1 == endCoordinate.file) && 
+                (pawnForwardMoves == 1) && 
+                (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) != invalid))//Capturing pieces
+        {
+            return true;
+        }
+        return false;
     }
 
     void Pawn::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         if(mWhitePieces)
         {
-            ChessState::Get().SetWhitePawnPosition(startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(whitePawn,startCoordinate,endCoordinate);
         }
         else
         {
-            ChessState::Get().SetBlackPawnPosition(startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(blackPawn,startCoordinate,endCoordinate);
         }
+        mFirstMove[endCoordinate] = false;
     }
 
     void Pawn::RenderPiece()

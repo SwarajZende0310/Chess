@@ -30,5 +30,7 @@ namespace chess
             sf::Sprite mBlackPawnSprite;
 
             bool mWhitePieces;
+
+            Dictionary<ChessCoordinate,bool,ChessCoordinateHashFunction> mFirstMove;
     };
 }
