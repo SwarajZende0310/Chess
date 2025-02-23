@@ -63,6 +63,11 @@ namespace chess
         }
         int rank;
         char file;
+
+        bool isValid()
+        {
+            return (rank > 0 && rank < 9) && (file >= 'a' && file <= 'h');
+        }
     };
 
     static bool operator==(const ChessCoordinate& lhs, const ChessCoordinate& rhs)
