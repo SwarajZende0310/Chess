@@ -110,85 +110,30 @@ namespace chess
 
   void Stage::RenderPieces()
   {
+    char whitePieces[6] = {'K','Q','R','B','N','P'};
+    char blackPieces[6] = {'k','q','r','b','n','p'};
+
     // Render White Pieces
-    // Render Pawns
-    for(auto &coordinate : ChessState::Get().GetWhitePawnsPosition())
+    for(int i = 0; i < 6; i++)
     {
-      mWhitePawn->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),true);
-      mWhitePawn->RenderPiece();
+      List<ChessCoordinate> coordinates = ChessState::Get().GetPiecePosiiton(whitePieces[i]);
+      for(auto &coordinate : coordinates)
+      {
+        GetPieceContainer(whitePieces[i])->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),true);
+        GetPieceContainer(whitePieces[i])->RenderPiece();
+      }
     }
-
-    // Render Bishops
-    for(auto &coordinate : ChessState::Get().GetWhiteBishopsPosition())
-    {
-      mWhiteBishop->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),true);
-      mWhiteBishop->RenderPiece();
-    }
-
-    // Render Knights
-    for(auto &coordinate : ChessState::Get().GetWhiteKnightsPosition())
-    {
-      mWhiteKnight->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),true);
-      mWhiteKnight->RenderPiece();
-    }
-
-    // Render Rooks
-    for(auto &coordinate : ChessState::Get().GetWhiteRooksPosition())
-    {
-      mWhiteRook->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),true);
-      mWhiteRook->RenderPiece();
-    }
-
-    // Render Queen
-    ChessCoordinate queenPose = ChessState::Get().GetWhiteQueenPosition();
-    if(queenPose.file != 'n' && queenPose.rank != -1)
-    {
-      mWhiteQueen->SetPieceLocation(ConvertChessCoordinateToPosition(queenPose),true);
-      mWhiteQueen->RenderPiece();
-    }
-
-    mWhiteKing->SetPieceLocation(ConvertChessCoordinateToPosition(ChessState::Get().GetWhiteKingPosition()), true);
-    mWhiteKing->RenderPiece();
 
     // Render Black Pieces
-    // Render Pawns
-    for(auto &coordinate : ChessState::Get().GetBlackPawnsPosition())
+    for(int i = 0; i < 6; i++)
     {
-      mBlackPawn->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),false);
-      mBlackPawn->RenderPiece();
+      List<ChessCoordinate> coordinates = ChessState::Get().GetPiecePosiiton(blackPieces[i]);
+      for(auto &coordinate : coordinates)
+      {
+        GetPieceContainer(blackPieces[i])->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),false);
+        GetPieceContainer(blackPieces[i])->RenderPiece();
+      }
     }
-
-    // Render Bishops
-    for(auto &coordinate : ChessState::Get().GetBlackBishopsPosition())
-    {
-      mBlackBishop->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),false);
-      mBlackBishop->RenderPiece();
-    }
-
-    // Render Knights
-    for(auto &coordinate : ChessState::Get().GetBlackKnightsPosition())
-    {
-      mBlackKnight->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),false);
-      mBlackKnight->RenderPiece();
-    }
-
-    // Render Rooks
-    for(auto &coordinate : ChessState::Get().GetBlackRooksPosition())
-    {
-      mBlackRook->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),false);
-      mBlackRook->RenderPiece();
-    }
-
-    // Render Queen
-    queenPose = ChessState::Get().GetBlackQueenPosition();
-    if(queenPose.file != 'n' && queenPose.rank != -1)
-    {
-      mBlackQueen->SetPieceLocation(ConvertChessCoordinateToPosition(queenPose),false);
-      mBlackQueen->RenderPiece();
-    }
-
-    mBlackKing->SetPieceLocation(ConvertChessCoordinateToPosition(ChessState::Get().GetBlackKingPosition()),false);
-    mBlackKing->RenderPiece();
   }
 
   bool Stage::CheckCorrectPieceSelected(char piece)
@@ -201,84 +146,14 @@ namespace chess
   
   bool Stage::MovePiece(char piece) 
   {
-    if(mWhiteTurn)
+    shared<Piece> piecePointer = GetPieceContainer(piece); 
+    // Determine whose turn and valid move
+    if((mWhiteTurn && piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)) || 
+      (!mWhiteTurn && !piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)))
     {
-      if(piece == 'K' && mWhiteKing->MovePossible(mStartPose, mEndPose))
-      {
-        mWhiteKing->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      }
-      else if(piece == 'Q' && mWhiteQueen->MovePossible(mStartPose, mEndPose))
-      {
-        mWhiteQueen->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      }
-      else if(piece == 'N' && mWhiteKnight->MovePossible(mStartPose, mEndPose))
-      {
-        mWhiteKnight->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-      else if(piece == 'B' && mWhiteBishop->MovePossible(mStartPose, mEndPose))
-      {
-        mWhiteBishop->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-      else if(piece == 'R' && mWhiteRook->MovePossible(mStartPose, mEndPose))
-      {
-        mWhiteRook->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-      else if(piece == 'P' && mWhitePawn->MovePossible(mStartPose, mEndPose))
-      {
-        mWhitePawn->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-    }
-    // Blacks Turn
-    else
-    { 
-      if(piece == 'k' && mBlackKing->MovePossible(mStartPose, mEndPose))
-      {
-        mBlackKing->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-      else if(piece == 'q' && mBlackQueen->MovePossible(mStartPose, mEndPose))
-      {
-        mBlackQueen->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-      else if(piece == 'n' && mBlackKnight->MovePossible(mStartPose, mEndPose))
-      {
-        mBlackKnight->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-      else if(piece == 'b' && mBlackBishop->MovePossible(mStartPose, mEndPose))
-      {
-        mBlackBishop->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-      else if(piece == 'r' && mBlackRook->MovePossible(mStartPose, mEndPose))
-      {
-        mBlackRook->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      } 
-      else if(piece == 'p' && mBlackPawn->MovePossible(mStartPose, mEndPose))
-      {
-        mBlackPawn->MakeMove(mStartPose, mEndPose);
-        mWhiteTurn = !mWhiteTurn;
-        return true;
-      }
+      piecePointer->MakeMove(mStartPose, mEndPose);
+      mWhiteTurn = !mWhiteTurn;
+      return true;
     }  
     return false;
   }
@@ -304,6 +179,37 @@ namespace chess
       return mBoard;
   }
 
+  shared<Piece> Stage::GetPieceContainer(char piece)
+  {
+      switch (piece)
+        {
+        case 'P':
+            return mWhitePawn;
+        case 'B':
+            return mWhiteBishop;
+        case 'N':
+            return mWhiteKnight;
+        case 'R':
+            return mWhiteRook;
+        case 'Q':
+            return mWhiteQueen;
+        case 'K':
+            return mWhiteKing;
+        case 'p':
+            return mBlackPawn;
+        case 'b':
+            return mBlackBishop;
+        case 'n':
+            return mBlackKnight;
+        case 'r':
+            return mBlackRook;
+        case 'q':
+            return mBlackQueen;
+        case 'k':
+            return mBlackKing;
+        }
+      return nullptr;
+  }
   sf::Vector2f Stage::GetSpriteScale()
   {
       return mBoard->GetSpriteScale();

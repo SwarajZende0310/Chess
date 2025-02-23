@@ -7,7 +7,7 @@ namespace chess
 {
   class Application;
   class Board;
-  class Actor;
+  class Piece;
   class King;
   class Pawn;
   class Knight;
@@ -44,6 +44,8 @@ namespace chess
 
       template<typename PieceType>
       shared<PieceType> SpawnPiece(bool whitePiece);
+
+      shared<Piece> GetPieceContainer(char piece);
 
       Application* mOwningApp;
 
