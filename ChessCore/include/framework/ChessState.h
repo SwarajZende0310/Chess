@@ -10,34 +10,10 @@ namespace chess
             static ChessState& Get();
 
             void ResetToStartPosition();
+            
+            List<ChessCoordinate> GetPiecePosiiton(char piece);
 
-            List<ChessCoordinate> GetWhitePawnsPosition();
-            List<ChessCoordinate> GetWhiteKnightsPosition();
-            List<ChessCoordinate> GetWhiteBishopsPosition();
-            List<ChessCoordinate> GetWhiteRooksPosition();
-            ChessCoordinate GetWhiteQueenPosition();
-            ChessCoordinate GetWhiteKingPosition();
-
-            List<ChessCoordinate> GetBlackPawnsPosition();
-            List<ChessCoordinate> GetBlackKnightsPosition();
-            List<ChessCoordinate> GetBlackBishopsPosition();
-            List<ChessCoordinate> GetBlackRooksPosition();
-            ChessCoordinate GetBlackQueenPosition();
-            ChessCoordinate GetBlackKingPosition();
-
-            void SetWhitePawnPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetWhiteKnightPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetWhiteBishopPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetWhiteRookPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetWhiteQueenPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetWhiteKingPosition(ChessCoordinate& start, ChessCoordinate& end);
-
-            void SetBlackPawnPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetBlackKnightPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetBlackBishopPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetBlackRookPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetBlackQueenPosition(ChessCoordinate& start, ChessCoordinate& end);
-            void SetBlackKingPosition(ChessCoordinate& start, ChessCoordinate& end);
+            void SetPiecePosition(char piece, ChessCoordinate& start, ChessCoordinate& end);
 
             char GetPieceOnChessCoordinate(ChessCoordinate coordinate);
 
@@ -45,6 +21,8 @@ namespace chess
             ChessState();
 
         private:
+            uint64_t& GetPieceContainer(char piece); 
+
             char ConvertColToRank(int row);
             int ConvertRankToCol(char col);
             static unique<ChessState> mChessState;

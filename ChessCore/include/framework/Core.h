@@ -34,6 +34,24 @@ namespace chess
 
     #define LOG(M, ...) printf(M "\n", ##__VA_ARGS__)
 
+    // White Piece Representation
+    #define whitePawn 'P'
+    #define whiteBishop 'B'
+    #define whiteKnight 'N'
+    #define whiteRook 'R'
+    #define whiteQueen 'Q'
+    #define whiteKing 'K'
+
+    // Black Piece Representation
+    #define blackPawn 'p'
+    #define blackBishop 'b'
+    #define blackKnight 'n'
+    #define blackRook 'r'
+    #define blackQueen 'q'
+    #define blackKing 'k'
+
+    #define invalid 'i'
+
     struct ChessCoordinate
     {
         public:
