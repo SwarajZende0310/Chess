@@ -30,8 +30,8 @@ namespace chess
     mPieceOffsetX{10},
     mPieceOffsetY{8},
     mPieceSelected{false},
-    mStartPose{-1,'n'},
-    mEndPose{-1,'n'},
+    mStartPose{-1,invalid},
+    mEndPose{-1,invalid},
     mWhiteTurn{true}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
@@ -110,8 +110,8 @@ namespace chess
 
   void Stage::RenderPieces()
   {
-    char whitePieces[6] = {'K','Q','R','B','N','P'};
-    char blackPieces[6] = {'k','q','r','b','n','p'};
+    char whitePieces[6] = {whiteKing,whiteQueen,whiteRook,whiteBishop,whiteKnight,whitePawn};
+    char blackPieces[6] = {blackKing,blackQueen,blackRook,blackBishop,blackKnight,blackPawn};
 
     // Render White Pieces
     for(int i = 0; i < 6; i++)
@@ -138,8 +138,8 @@ namespace chess
 
   bool Stage::CheckCorrectPieceSelected(char piece)
   {
-      if((mWhiteTurn && (piece=='K' || piece=='Q' || piece=='R' || piece=='N' || piece=='B' || piece=='P')) 
-          || (!mWhiteTurn && (piece=='k' || piece=='q' || piece=='r' || piece=='n' || piece=='b' || piece=='p')))
+      if((mWhiteTurn && (piece==whiteKing || piece==whiteQueen || piece==whiteRook || piece==whiteKnight || piece==whiteBishop || piece==whitePawn)) 
+          || (!mWhiteTurn && (piece==blackKing || piece==blackQueen || piece==blackRook || piece==blackKnight || piece==blackBishop || piece==blackPawn)))
           return true;
       return false;
   }
@@ -183,29 +183,29 @@ namespace chess
   {
       switch (piece)
         {
-        case 'P':
+        case whitePawn:
             return mWhitePawn;
-        case 'B':
+        case whiteBishop:
             return mWhiteBishop;
-        case 'N':
+        case whiteKnight:
             return mWhiteKnight;
-        case 'R':
+        case whiteRook:
             return mWhiteRook;
-        case 'Q':
+        case whiteQueen:
             return mWhiteQueen;
-        case 'K':
+        case whiteKing:
             return mWhiteKing;
-        case 'p':
+        case blackPawn:
             return mBlackPawn;
-        case 'b':
+        case blackBishop:
             return mBlackBishop;
-        case 'n':
+        case blackKnight:
             return mBlackKnight;
-        case 'r':
+        case blackRook:
             return mBlackRook;
-        case 'q':
+        case blackQueen:
             return mBlackQueen;
-        case 'k':
+        case blackKing:
             return mBlackKing;
         }
       return nullptr;
