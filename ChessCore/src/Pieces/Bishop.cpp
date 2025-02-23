@@ -24,7 +24,7 @@ namespace chess
         int filesRightward = abs(endCoordinate.file - startCoordinate.file);
 
         if((ranksForward == filesRightward) && 
-            !PiecesInBetween(startCoordinate,endCoordinate) &&
+            !PiecesInBetweenPath(startCoordinate,endCoordinate) &&
             (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate)))
         {
             return true;
@@ -88,7 +88,7 @@ namespace chess
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
     }
 
-    bool Bishop::PiecesInBetween(ChessCoordinate& startCoordinate, ChessCoordinate& endCoordinate)
+    bool Bishop::PiecesInBetweenPath(ChessCoordinate& startCoordinate, ChessCoordinate& endCoordinate)
     {
         int offsetX = (endCoordinate.file - startCoordinate.file) > 0 ? 1 : -1 ;
         int offsetY = (endCoordinate.rank - startCoordinate.file) > 0 ? 1 : -1 ;

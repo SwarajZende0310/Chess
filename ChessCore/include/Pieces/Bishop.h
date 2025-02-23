@@ -22,7 +22,7 @@ namespace chess
             virtual float GetPieceRotation()const override;
 
             bool isEnemy(ChessCoordinate& endCoordinate);
-            bool PiecesInBetween(ChessCoordinate& startCoordinate, ChessCoordinate& endCoordinate);
+            bool PiecesInBetweenPath(ChessCoordinate& startCoordinate, ChessCoordinate& endCoordinate);
 
             Stage* mOwningStage;
             
