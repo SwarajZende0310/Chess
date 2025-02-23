@@ -15,6 +15,8 @@ namespace chess
             virtual void MakeMove(ChessCoordinate& startCoordinate,ChessCoordinate& endCoordinate) = 0;
             virtual void RenderPiece() = 0;
 
+            inline virtual bool GetPieceColor() = 0;
+
             virtual void SetPieceLocation(const sf::Vector2f& newLocation, bool whitePieces) = 0;
             virtual void SetPieceRotation(float newRotation, bool whitePieces) = 0;
         private:

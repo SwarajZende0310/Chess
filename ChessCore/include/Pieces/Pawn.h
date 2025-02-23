@@ -12,6 +12,8 @@ namespace chess
             virtual bool MovePossible(ChessCoordinate& startCoordinate,ChessCoordinate& endCoordinate)override;
             virtual void MakeMove(ChessCoordinate& startCoordinate,ChessCoordinate& endCoordinate)override;
             virtual void RenderPiece()override;
+
+            inline virtual bool GetPieceColor()override{ return mWhitePieces; }
             
             virtual void SetPieceLocation(const sf::Vector2f& newLocation, bool whitePieces) override;
             virtual void SetPieceRotation(float newRotation, bool whitePieces) override;
