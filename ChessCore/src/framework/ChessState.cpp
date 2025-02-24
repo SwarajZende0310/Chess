@@ -117,10 +117,14 @@ namespace chess
         if(start.file == invalid || start.rank == -1 || end.file == invalid || end.rank == -1) return;
         uint64_t currentPos =  1ULL << (8 * (start.rank - 1) + (7- ConvertRankToCol(start.file)+1));
         if(!(pieceContainer & currentPos))return;
+        bool pieceRemoved = false;
 
         // Remove other piece if already there in position where we are moving
         if(ChessState::Get().GetPieceOnChessCoordinate(end) != invalid)
         {
+            pieceRemoved = true;
+            mRemovedPiece = ChessState::Get().GetPieceOnChessCoordinate(end);
+            mRemovedPiecePosition = end;
             ChessState::Get().RemovePiece(ChessState::Get().GetPieceOnChessCoordinate(end), end);
         }
 
@@ -130,7 +134,37 @@ namespace chess
         // Set the end position bit
         pieceContainer |= 1ULL << (8 * (end.rank - 1) + (7- ConvertRankToCol(end.file)+1));
 
+        // Updating for undoing move if needed
+        mLastPieceMoved = piece;
+        mLastMovedStartMove = start;
+        mLastMovedEndMove = end;
+        mRemovedPieceLastMove = pieceRemoved;
+
         UpdateAttackedSquare();
+    }
+
+    void ChessState::UndoLastMove()
+    {
+        if(!mLastMovedStartMove.isValid() || !mLastMovedEndMove.isValid())return;
+
+        // Spawning removed piece
+        if(mRemovedPieceLastMove && mRemovedPiece != invalid && mRemovedPiecePosition.isValid())
+        {
+            SpawnPiece(mRemovedPiece,mRemovedPiecePosition);
+        }
+        // reseting to previous position
+        SetPiecePosition(mLastPieceMoved,mLastMovedEndMove,mLastMovedStartMove);
+        
+        // Reseting to invalid state
+        mRemovedPieceLastMove = false;
+        mRemovedPiece = invalid;
+        mRemovedPiecePosition.file = invalid;
+        mRemovedPiecePosition.rank = -1;
+        mLastPieceMoved = invalid;
+        mLastMovedStartMove.file = invalid;
+        mLastMovedStartMove.rank = -1;
+        mLastMovedEndMove.file = invalid;
+        mLastMovedEndMove.rank = -1;
     }
 
     char ChessState::GetPieceOnChessCoordinate(ChessCoordinate coordinate)
@@ -180,7 +214,13 @@ namespace chess
           mBlackQueen{0},
           mBlackKing{0},
           mWhiteAttackedSquares{},
-          mBlackAttackedSquares{}
+          mBlackAttackedSquares{},
+          mRemovedPiece{invalid},
+          mRemovedPiecePosition{-1,invalid},
+          mRemovedPieceLastMove{false},
+          mLastPieceMoved{invalid},
+          mLastMovedStartMove{-1,invalid},
+          mLastMovedEndMove{-1,invalid}
     {
         ResetToStartPosition();
     }
@@ -404,6 +444,15 @@ namespace chess
                 if(iter.isValid()) mBlackAttackedSquares.insert(iter);
             }
         }
+    }
+
+    void ChessState::SpawnPiece(char piece, ChessCoordinate &position)
+    {
+        uint64_t& pieceContainer = GetPieceContainer(piece);
+        if(!position.isValid()) return;
+
+        // Set the end position bit
+        pieceContainer |= 1ULL << (8 * (position.rank - 1) + (7- ConvertRankToCol(position.file)+1));
     }
 
     uint64_t &ChessState::GetPieceContainer(char piece)

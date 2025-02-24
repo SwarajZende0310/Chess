@@ -104,6 +104,15 @@ namespace chess
             handled = true;
           }
       }
+      else if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>())
+      {
+        if(keyPress->scancode == sf::Keyboard::Scan::Left)
+        {
+          ChessState::Get().UndoLastMove();
+          SetPieceMoved(true);
+          mWhiteTurn = !mWhiteTurn;
+        }
+      }
       return handled;
   }
   

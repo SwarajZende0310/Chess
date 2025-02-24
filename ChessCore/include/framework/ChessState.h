@@ -15,6 +15,8 @@ namespace chess
 
             void SetPiecePosition(char piece, ChessCoordinate& start, ChessCoordinate& end);
 
+            void UndoLastMove();
+
             char GetPieceOnChessCoordinate(ChessCoordinate coordinate);
 
             void RemovePiece(char piece,ChessCoordinate& position);
@@ -32,6 +34,8 @@ namespace chess
             int ConvertRankToCol(char col);
 
             void UpdateAttackedSquare();
+
+            void SpawnPiece(char piece, ChessCoordinate& position);
 
             static unique<ChessState> mChessState;
             // White Pieces
@@ -52,5 +56,12 @@ namespace chess
 
             Set<ChessCoordinate,ChessCoordinateHashFunction> mWhiteAttackedSquares;
             Set<ChessCoordinate,ChessCoordinateHashFunction> mBlackAttackedSquares;
+
+            char mRemovedPiece;
+            ChessCoordinate mRemovedPiecePosition;
+            bool mRemovedPieceLastMove;
+            char mLastPieceMoved;
+            ChessCoordinate mLastMovedStartMove;
+            ChessCoordinate mLastMovedEndMove;
     };
 }
