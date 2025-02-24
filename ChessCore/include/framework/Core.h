@@ -29,8 +29,8 @@ namespace chess
     template<typename keyType,typename valType,typename Hasher=std::hash<keyType>>
     using Dictionary = std::unordered_map<keyType,valType,Hasher>;
 
-    template<typename T>
-    using Set = std::unordered_set<T>;
+    template<typename keyType,typename Hasher=std::hash<keyType>>
+    using Set = std::unordered_set<keyType,Hasher>;
 
     #define LOG(M, ...) printf(M "\n", ##__VA_ARGS__)
 

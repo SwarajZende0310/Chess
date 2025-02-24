@@ -19,6 +19,9 @@ namespace chess
 
             void RemovePiece(char piece,ChessCoordinate& position);
 
+            Set<ChessCoordinate,ChessCoordinateHashFunction> GetWhiteAttackedSquares(){ return mWhiteAttackedSquares; }
+            Set<ChessCoordinate,ChessCoordinateHashFunction> GetBlackAttackedSquares(){ return mBlackAttackedSquares; }
+
         protected:
             ChessState();
 
@@ -27,6 +30,9 @@ namespace chess
 
             char ConvertColToRank(int row);
             int ConvertRankToCol(char col);
+
+            void UpdateAttackedSquare();
+
             static unique<ChessState> mChessState;
             // White Pieces
             uint64_t mWhitePawns;
@@ -43,5 +49,8 @@ namespace chess
             uint64_t mBlackRooks;
             uint64_t mBlackQueen;
             uint64_t mBlackKing;
+
+            Set<ChessCoordinate,ChessCoordinateHashFunction> mWhiteAttackedSquares;
+            Set<ChessCoordinate,ChessCoordinateHashFunction> mBlackAttackedSquares;
     };
 }

@@ -20,12 +20,12 @@ namespace chess
 
     bool King::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        // TODO :: scan for other enemy piece attacking the end coordinate
         int ranksForward = abs(endCoordinate.rank - startCoordinate.rank);
         int filesRightward = abs(endCoordinate.file - startCoordinate.file);
 
         if(((ranksForward == 1 && filesRightward == 1) || (ranksForward == 0 && filesRightward == 1 ) || (ranksForward == 1 && filesRightward == 0 )) && 
-            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate)))
+            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate)) && 
+            ((mWhitePieces && (ChessState::Get().GetBlackAttackedSquares().find(endCoordinate) == ChessState::Get().GetBlackAttackedSquares().end())) || (!mWhitePieces && (ChessState::Get().GetWhiteAttackedSquares().find(endCoordinate) == ChessState::Get().GetWhiteAttackedSquares().end())) ) )
         {
             return true;
         }

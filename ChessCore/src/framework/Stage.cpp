@@ -91,6 +91,10 @@ namespace chess
                   SetPieceMoved(true);
                   mPieceSelected = false;
                 }
+                else if(ChessState::Get().GetPieceOnChessCoordinate(mEndPose) == invalid)
+                {
+                  mPieceSelected = false;
+                }
                 handled = true;
               }
           }

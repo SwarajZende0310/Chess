@@ -129,6 +129,8 @@ namespace chess
 
         // Set the end position bit
         pieceContainer |= 1ULL << (8 * (end.rank - 1) + (7- ConvertRankToCol(end.file)+1));
+
+        UpdateAttackedSquare();
     }
 
     char ChessState::GetPieceOnChessCoordinate(ChessCoordinate coordinate)
@@ -176,7 +178,9 @@ namespace chess
           mBlackBishops{0},
           mBlackRooks{0},
           mBlackQueen{0},
-          mBlackKing{0}
+          mBlackKing{0},
+          mWhiteAttackedSquares{},
+          mBlackAttackedSquares{}
     {
         ResetToStartPosition();
     }
@@ -185,6 +189,221 @@ namespace chess
     {
         if(rank < 'a' || rank > 'h') return -1;
         return static_cast<int>(rank - 'a' + 1);
+    }
+
+    void ChessState::UpdateAttackedSquare()
+    {
+        mWhiteAttackedSquares.clear();
+        mBlackAttackedSquares.clear();
+
+        // white pawn attacked squares
+        for(auto coordinate : GetPiecePosiiton(whitePawn))
+        {
+            ChessCoordinate left = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 1)};
+            ChessCoordinate right = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file + 1)};
+
+            if(left.isValid())mWhiteAttackedSquares.insert(left);
+            if(right.isValid())mWhiteAttackedSquares.insert(right);
+        }
+
+        // white Knight attacked squares
+        for(auto coordinate : GetPiecePosiiton(whiteKnight))
+        {
+            ChessCoordinate forwardLeft = ChessCoordinate{coordinate.rank + 2, (char)(coordinate.file - 1)};
+            ChessCoordinate forwardRight = ChessCoordinate{coordinate.rank + 2, (char)(coordinate.file + 1)};
+
+            ChessCoordinate backwardLeft = ChessCoordinate{coordinate.rank - 2, (char)(coordinate.file - 1)};
+            ChessCoordinate backwardRight = ChessCoordinate{coordinate.rank - 2, (char)(coordinate.file + 1)};
+
+            ChessCoordinate leftUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 2)};
+            ChessCoordinate leftDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 2)};
+
+            ChessCoordinate rightUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 2)};
+            ChessCoordinate rightDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 2)};
+
+            if(forwardLeft.isValid())mWhiteAttackedSquares.insert(forwardLeft);
+            if(forwardRight.isValid())mWhiteAttackedSquares.insert(forwardRight);
+
+            if(backwardLeft.isValid())mWhiteAttackedSquares.insert(backwardLeft);
+            if(backwardRight.isValid())mWhiteAttackedSquares.insert(backwardRight);
+
+            if(leftUp.isValid())mWhiteAttackedSquares.insert(leftUp);
+            if(leftDown.isValid())mWhiteAttackedSquares.insert(leftDown);
+
+            if(rightUp.isValid())mWhiteAttackedSquares.insert(rightUp);
+            if(rightDown.isValid())mWhiteAttackedSquares.insert(rightDown);
+        }
+
+        // wihte bishop attacked squares
+        for(auto startCoordinate : GetPiecePosiiton(whiteBishop))
+        {
+            int offsetRank[] = { 1, 1,-1,-1};
+            int offsetFile[] = { 1,-1, 1,-1};
+            for(int i = 0; i < 4; i++)
+            {
+                ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
+                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                {
+                    mWhiteAttackedSquares.insert(iter);
+                    iter.file += offsetFile[i];
+                    iter.rank += offsetRank[i];
+                }
+                if(iter.isValid()) mWhiteAttackedSquares.insert(iter);
+            }
+        }
+
+        // white Rook attacked squares
+        for(auto startCoordinate : GetPiecePosiiton(whiteRook))
+        {
+            int offsetRank[] = { 0, 0, 1,-1};
+            int offsetFile[] = { 1,-1, 0, 0};
+            for(int i = 0; i < 4; i++)
+            {
+                ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i],(char) (startCoordinate.file + offsetFile[i])};
+                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                {
+                    mWhiteAttackedSquares.insert(iter);
+                    iter.file += offsetFile[i];
+                    iter.rank += offsetRank[i];
+                }
+                if(iter.isValid()) mWhiteAttackedSquares.insert(iter);
+            }
+        }
+
+        // white Queen attacked squares
+        for(auto startCoordinate : GetPiecePosiiton(whiteQueen))
+        {
+            int offsetRank[] = { 0, 0, 1,-1, 1, 1,-1,-1};
+            int offsetFile[] = { 1,-1, 0, 0, 1,-1, 1,-1};
+            for(int i = 0; i < 8; i++)
+            {
+                ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
+                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                {
+                    mWhiteAttackedSquares.insert(iter);
+                    iter.file += offsetFile[i];
+                    iter.rank += offsetRank[i];
+                }
+                if(iter.isValid()) mWhiteAttackedSquares.insert(iter);
+            }
+        }
+
+        // white King attacked squares
+        for(auto startCoordinate : GetPiecePosiiton(whiteKing))
+        {
+            int offsetRank[] = { 0, 0, 1,-1, 1, 1,-1,-1};
+            int offsetFile[] = { 1,-1, 0, 0, 1,-1, 1,-1};
+            for(int i = 0; i < 8; i++)
+            {
+                ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
+                if(iter.isValid()) mWhiteAttackedSquares.insert(iter);
+            }
+        }
+
+        //Black pieces
+        // black pawn attacked squares
+        for(auto coordinate : GetPiecePosiiton(blackPawn))
+        {
+            ChessCoordinate left = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 1)};
+            ChessCoordinate right = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file + 1)};
+
+            if(left.isValid())mBlackAttackedSquares.insert(left);
+            if(right.isValid())mBlackAttackedSquares.insert(right);
+        }
+
+        // black Knight attacked squares
+        for(auto coordinate : GetPiecePosiiton(blackKnight))
+        {
+            ChessCoordinate forwardLeft = ChessCoordinate{coordinate.rank + 2, (char)(coordinate.file - 1)};
+            ChessCoordinate forwardRight = ChessCoordinate{coordinate.rank + 2, (char)(coordinate.file + 1)};
+
+            ChessCoordinate backwardLeft = ChessCoordinate{coordinate.rank - 2, (char)(coordinate.file - 1)};
+            ChessCoordinate backwardRight = ChessCoordinate{coordinate.rank - 2, (char)(coordinate.file + 1)};
+
+            ChessCoordinate leftUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 2)};
+            ChessCoordinate leftDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 2)};
+
+            ChessCoordinate rightUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 2)};
+            ChessCoordinate rightDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 2)};
+
+            if(forwardLeft.isValid())mBlackAttackedSquares.insert(forwardLeft);
+            if(forwardRight.isValid())mBlackAttackedSquares.insert(forwardRight);
+
+            if(backwardLeft.isValid())mBlackAttackedSquares.insert(backwardLeft);
+            if(backwardRight.isValid())mBlackAttackedSquares.insert(backwardRight);
+
+            if(leftUp.isValid())mBlackAttackedSquares.insert(leftUp);
+            if(leftDown.isValid())mBlackAttackedSquares.insert(leftDown);
+
+            if(rightUp.isValid())mBlackAttackedSquares.insert(rightUp);
+            if(rightDown.isValid())mBlackAttackedSquares.insert(rightDown);
+        }
+
+        // black bishop attacked squares
+        for(auto startCoordinate : GetPiecePosiiton(blackBishop))
+        {
+            int offsetRank[] = { 1, 1,-1,-1};
+            int offsetFile[] = { 1,-1, 1,-1};
+            for(int i = 0; i < 4; i++)
+            {
+                ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
+                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                {
+                    mBlackAttackedSquares.insert(iter);
+                    iter.file += offsetFile[i];
+                    iter.rank += offsetRank[i];
+                }
+                if(iter.isValid()) mBlackAttackedSquares.insert(iter);
+            }
+        }
+
+        // black Rook attacked squares
+        for(auto startCoordinate : GetPiecePosiiton(blackRook))
+        {
+            int offsetRank[] = { 0, 0, 1,-1};
+            int offsetFile[] = { 1,-1, 0, 0};
+            for(int i = 0; i < 4; i++)
+            {
+                ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i],(char) (startCoordinate.file + offsetFile[i])};
+                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                {
+                    mBlackAttackedSquares.insert(iter);
+                    iter.file += offsetFile[i];
+                    iter.rank += offsetRank[i];
+                }
+                if(iter.isValid()) mBlackAttackedSquares.insert(iter);
+            }
+        }
+
+        // black Queen attacked squares
+        for(auto startCoordinate : GetPiecePosiiton(blackQueen))
+        {
+            int offsetRank[] = { 0, 0, 1,-1, 1, 1,-1,-1};
+            int offsetFile[] = { 1,-1, 0, 0, 1,-1, 1,-1};
+            for(int i = 0; i < 8; i++)
+            {
+                ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
+                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                {
+                    mBlackAttackedSquares.insert(iter);
+                    iter.file += offsetFile[i];
+                    iter.rank += offsetRank[i];
+                }
+                if(iter.isValid()) mBlackAttackedSquares.insert(iter);
+            }
+        }
+
+        // black King attacked squares
+        for(auto startCoordinate : GetPiecePosiiton(blackKing))
+        {
+            int offsetRank[] = { 0, 0, 1,-1, 1, 1,-1,-1};
+            int offsetFile[] = { 1,-1, 0, 0, 1,-1, 1,-1};
+            for(int i = 0; i < 8; i++)
+            {
+                ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
+                if(iter.isValid()) mBlackAttackedSquares.insert(iter);
+            }
+        }
     }
 
     uint64_t &ChessState::GetPieceContainer(char piece)
