@@ -242,7 +242,7 @@ namespace chess
             for(int i = 0; i < 4; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == blackKing))
                 {
                     mWhiteAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -260,7 +260,7 @@ namespace chess
             for(int i = 0; i < 4; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i],(char) (startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == blackKing))
                 {
                     mWhiteAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -278,7 +278,7 @@ namespace chess
             for(int i = 0; i < 8; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == blackKing) )
                 {
                     mWhiteAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -347,7 +347,7 @@ namespace chess
             for(int i = 0; i < 4; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == whiteKing) )
                 {
                     mBlackAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -365,7 +365,7 @@ namespace chess
             for(int i = 0; i < 4; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i],(char) (startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == whiteKing) )
                 {
                     mBlackAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -383,7 +383,7 @@ namespace chess
             for(int i = 0; i < 8; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == whiteKing) )
                 {
                     mBlackAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
