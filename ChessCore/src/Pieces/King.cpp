@@ -69,7 +69,20 @@ namespace chess
         // sf::Angle newRot{newRotation};
         // mWhiteKingSprite.setRotation(newRot);
     }
-    
+
+    bool King::IsInCheck()
+    {
+        Set<ChessCoordinate,ChessCoordinateHashFunction> attackedSquares = mWhitePieces ? ChessState::Get().GetBlackAttackedSquares() : ChessState::Get().GetWhiteAttackedSquares();
+        if(mWhitePieces && attackedSquares.find(ChessState::Get().GetPiecePosiiton(whiteKing)[0]) != attackedSquares.end())
+        {
+            return true;
+        }
+        else if(!mWhitePieces && attackedSquares.find(ChessState::Get().GetPiecePosiiton(blackKing)[0]) != attackedSquares.end())
+        {
+            return true;
+        }
+        return false;
+    }
     sf::Vector2f King::GetPieceLocation() const
     {
         if(mWhitePieces)

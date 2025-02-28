@@ -1,5 +1,4 @@
 #include"framework/ChessState.h"
-#include<memory>
 
 namespace chess
 {
