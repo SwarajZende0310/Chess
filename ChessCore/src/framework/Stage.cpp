@@ -164,13 +164,10 @@ namespace chess
     if((mWhiteTurn && piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)) || 
       (!mWhiteTurn && !piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)))
     {
-      // Check whether the king is in check and and after moving the piece is the king is in check
-      bool kingInCheck = mWhiteTurn ? mWhiteKing->IsInCheck() : mBlackKing->IsInCheck();
-
       piecePointer->MakeMove(mStartPose, mEndPose);
-      kingInCheck = mWhiteTurn ? mWhiteKing->IsInCheck() : mBlackKing->IsInCheck();
+      bool kingInCheck = mWhiteTurn ? mWhiteKing->IsInCheck() : mBlackKing->IsInCheck();
       
-      if(kingInCheck)
+      if(kingInCheck)// If King in Check after making move then illegal move
       {
         ChessState::Get().UndoLastMove();
         return false;
