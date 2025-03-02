@@ -83,6 +83,20 @@ namespace chess
         return 0.0f;
     }
 
+    void Rook::CenterPivot()
+    {
+        sf::FloatRect bound ;
+        if(mWhitePieces)
+        {
+            bound = mWhiteRookSprite.getGlobalBounds();
+            mWhiteRookSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+        else
+        {
+            bound = mBlackRookSprite.getGlobalBounds();
+            mBlackRookSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+    }
     bool chess::Rook::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));

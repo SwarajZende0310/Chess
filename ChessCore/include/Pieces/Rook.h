@@ -21,6 +21,8 @@ namespace chess
             virtual sf::Vector2f GetPieceLocation()const override;
             virtual float GetPieceRotation()const override;
 
+            virtual void CenterPivot() override;
+
             bool isEnemy(ChessCoordinate& endCoordinate);
             bool PiecesInBetweenPath(ChessCoordinate& startCoordinate, ChessCoordinate& endCoordinate);
 

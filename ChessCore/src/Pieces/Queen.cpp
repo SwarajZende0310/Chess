@@ -83,6 +83,20 @@ namespace chess
         return 0.0f;
     }
 
+    void Queen::CenterPivot()
+    {
+        sf::FloatRect bound ;
+        if(mWhitePieces)
+        {
+            bound = mWhiteQueenSprite.getGlobalBounds();
+            mWhiteQueenSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+        else
+        {
+            bound = mBlackQueenSprite.getGlobalBounds();
+            mBlackQueenSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+    }
     bool Queen::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));

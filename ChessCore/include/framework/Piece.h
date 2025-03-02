@@ -24,6 +24,8 @@ namespace chess
             virtual sf::Vector2f GetPieceLocation()const = 0;
             virtual float GetPieceRotation()const = 0;
 
+            virtual void CenterPivot() = 0;
+
             Stage* mOwningSage;
     };
 }

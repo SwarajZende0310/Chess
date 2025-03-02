@@ -96,6 +96,20 @@ namespace chess
         return 0.0f;
     }
 
+    void King::CenterPivot()
+    {
+        sf::FloatRect bound ;
+        if(mWhitePieces)
+        {
+            bound = mWhiteKingSprite.getGlobalBounds();
+            mWhiteKingSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+        else
+        {
+            bound = mBlackKingSprite.getGlobalBounds();
+            mBlackKingSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+    }
     bool chess::King::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));

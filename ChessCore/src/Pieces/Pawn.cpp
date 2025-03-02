@@ -101,6 +101,20 @@ namespace chess
         return 0.0f;
     }
 
+    void Pawn::CenterPivot()
+    {
+        sf::FloatRect bound ;
+        if(mWhitePieces)
+        {
+            bound = mWhitePawnSprite.getGlobalBounds();
+            mWhitePawnSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+        else
+        {
+            bound = mBlackPawnSprite.getGlobalBounds();
+            mBlackPawnSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+    }
     bool Pawn::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));

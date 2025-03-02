@@ -83,6 +83,21 @@ namespace chess
         return 0.0f;
     }
 
+    void Bishop::CenterPivot()
+    {
+        sf::FloatRect bound ;
+        if(mWhitePieces)
+        {
+            bound = mWhiteBishopSprite.getGlobalBounds();
+            mWhiteBishopSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+        else
+        {
+            bound = mBlackBishopSprite.getGlobalBounds();
+            mBlackBishopSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
+        }
+    }
+
     bool Bishop::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
