@@ -52,6 +52,9 @@ namespace chess
 
     #define invalid 'i'
 
+    // Invalid piece container
+    static uint64_t UINT64_MAX_VALUE = UINT64_C(0xFFFFFFFFFFFFFFFF);
+
     struct ChessCoordinate
     {
         public:

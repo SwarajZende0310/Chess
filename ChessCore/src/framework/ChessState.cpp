@@ -483,6 +483,7 @@ namespace chess
         case blackKing:
             return mBlackKing;
         }
+        return UINT64_MAX_VALUE;
     }
 
     char ChessState::ConvertColToRank(int col)
