@@ -84,8 +84,8 @@ namespace chess
       if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
       {
           if (mouseButtonPressed->button == sf::Mouse::Button::Left)
-          {
-              mMouseDragging = true;
+          {      
+              mMouseDragging = true;     
               if(!mPieceSelected)
               {
                 mStartPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
@@ -118,12 +118,13 @@ namespace chess
       else if( const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
       {
         mMouseDragging = false;
-        mMousePosition = {-1,-1};
         mEndPose = ConvertPositionToChessCoordinate({mouseButtonReleased->position.x,mouseButtonReleased->position.y});
         char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
-        MovePiece(piece);
+        if(MovePiece(piece))
+        {
+          mPieceSelected = false;
+        }
 
-        mPieceSelected = false;
         handled = true;
       }
       else if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>())
@@ -154,7 +155,8 @@ namespace chess
       List<ChessCoordinate> coordinates = ChessState::Get().GetPiecePosiiton(whitePieces[i]);
       for(auto &coordinate : coordinates)
       {
-        if(mWhiteTurn && mPieceSelected && mStartPose.isValid() && coordinate == mStartPose)
+        // If piece is picked and mouse is dragging dont render
+        if(mWhiteTurn && mPieceSelected && mMouseDragging && mStartPose.isValid() && coordinate == mStartPose)
           continue;
         else
         {
@@ -170,7 +172,8 @@ namespace chess
       List<ChessCoordinate> coordinates = ChessState::Get().GetPiecePosiiton(blackPieces[i]);
       for(auto &coordinate : coordinates)
       {
-        if(!mWhiteTurn && mPieceSelected && mStartPose.isValid() && coordinate == mStartPose)
+        // If piece is picked and mouse is dragging dont render
+        if(!mWhiteTurn && mPieceSelected && mMouseDragging && mStartPose.isValid() && coordinate == mStartPose)
           continue;
         else
         {
@@ -198,6 +201,8 @@ namespace chess
   
   bool Stage::MovePiece(char piece) 
   {
+    if(piece == invalid)return false;
+
     shared<Piece> piecePointer = GetPieceContainer(piece); 
     // Determine whose turn and valid move
     if((mWhiteTurn && piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)) || 
