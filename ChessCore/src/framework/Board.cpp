@@ -17,7 +17,7 @@ namespace chess
     mOffsetX{102},
     mOffsetY{102}
   {
-    Calculate_Square_Offset();
+    CalculateSquareOffset();
     RefreshBoard();
   }
 
@@ -62,7 +62,7 @@ namespace chess
       return mBlackSquaresSprite.getGlobalBounds();
   }
 
-  void Board::Calculate_Square_Offset()
+  void Board::CalculateSquareOffset()
   {
     int length = mBoardDimensions.y;
     int width = mBoardDimensions.x;

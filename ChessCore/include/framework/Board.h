@@ -25,7 +25,7 @@ namespace chess
     void RenderBlackSquare(const sf::Vector2f& position);
     void RenderWhiteSquare(const sf::Vector2f& position);
 
-    void Calculate_Square_Offset();
+    void CalculateSquareOffset();
 
     Stage* mOwingStage;
     sf::Vector2f mBoardStart;
