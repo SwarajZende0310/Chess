@@ -186,7 +186,7 @@ namespace chess
     if(mMouseDragging && mPieceSelected && mStartPose.isValid())
     {
       char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
-      GetPieceContainer(piece)->SetPieceLocation({float(mMousePosition.x - 30) ,float(mMousePosition.y - 30)},GetPieceContainer(piece)->GetPieceColor());
+      GetPieceContainer(piece)->SetPieceLocation({float(mMousePosition.x - mBoard->GetSquareOffsetX()/2.f) ,float(mMousePosition.y - mBoard->GetSquareOffsetY()/2.f)},GetPieceContainer(piece)->GetPieceColor());
       GetPieceContainer(piece)->RenderPiece();
     }
   }
