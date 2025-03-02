@@ -3,6 +3,8 @@
 namespace chess {
   Application::Application(unsigned int windowWidth, unsigned int windowHeight,const std::string &windowTitle,std::uint32_t windowStyle)
       : mWindow{sf::VideoMode({windowWidth, windowHeight}), windowTitle,windowStyle},
+      mTargetFrameRate{120.f},
+      mTickClock{},
       mCurrentStage{}
       {
 
@@ -10,6 +12,10 @@ namespace chess {
 
   void Application::Run() 
   {
+    mTickClock.restart();
+    float accumalatedTime = 0.f;
+    float targetDeltaTime = 1.f / mTargetFrameRate;
+
     while (mWindow.isOpen()) 
     {
       while (const std::optional event = mWindow.pollEvent()) 
@@ -24,22 +30,34 @@ namespace chess {
         }
       }
 
-      // Render only if piece is moved
-      if(mCurrentStage && mCurrentStage->IsPieceMoved())
+      float frameDeltaTime = mTickClock.restart().asSeconds();
+      accumalatedTime += frameDeltaTime;
+      
+      while(accumalatedTime > targetDeltaTime)//Rendering only to achieve det frame rate
       {
-        mWindow.clear();
-
-        Render();
-        mCurrentStage->SetPieceMoved(false);
-
-        mWindow.display();
+          accumalatedTime -= targetDeltaTime;
+          TickInternal(targetDeltaTime);
+          Render();
       }
+
+      // Render only if piece is moved
+      // if(mCurrentStage && mCurrentStage->IsPieceMoved())
+      // {
+      //   mWindow.clear();
+
+      //   Render();
+      //   mCurrentStage->SetPieceMoved(false);
+
+      //   mWindow.display();
+      // }
     }
   }
 
   void Application::Render()
   { 
+    mWindow.clear();
     RenderInternal();
+    mWindow.display();
   }
 
   sf::RenderWindow& Application::GetWindow()
@@ -50,6 +68,11 @@ namespace chess {
   sf::Vector2u Application::GetWindowSize()const
   {
     return mWindow.getSize();
+  }
+
+  void Application::Tick(float deltaTime)
+  {
+
   }
 
   void Application::QuitApplication()
@@ -64,6 +87,13 @@ namespace chess {
       return false;
   }
 
+  void Application::TickInternal(float deltaTime)
+  {
+    if(mCurrentStage)
+    {
+      mCurrentStage->TickInternal(deltaTime);
+    }
+  }
   void Application::RenderInternal()
   {
     if(mCurrentStage)

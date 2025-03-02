@@ -32,7 +32,9 @@ namespace chess
     mPieceSelected{false},
     mStartPose{-1,invalid},
     mEndPose{-1,invalid},
-    mWhiteTurn{true}
+    mWhiteTurn{true},
+    mMouseDragging{false},
+    mMousePosition{-1,-1}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -62,6 +64,10 @@ namespace chess
     RenderPieces();
   }
 
+  void Stage::TickInternal(float deltaTime)
+  {
+
+  }
   sf::RenderWindow &Stage::GetWindow()
   {
       return mOwningApp->GetWindow();
@@ -71,10 +77,15 @@ namespace chess
   {
       bool handled = false;
 
+      if(const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
+      {
+        mMousePosition = mouseMoved->position;
+      }
       if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
       {
           if (mouseButtonPressed->button == sf::Mouse::Button::Left)
           {
+              mMouseDragging = true;
               if(!mPieceSelected)
               {
                 mStartPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
@@ -104,6 +115,17 @@ namespace chess
             handled = true;
           }
       }
+      else if( const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
+      {
+        mMouseDragging = false;
+        mMousePosition = {-1,-1};
+        mEndPose = ConvertPositionToChessCoordinate({mouseButtonReleased->position.x,mouseButtonReleased->position.y});
+        char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+        MovePiece(piece);
+
+        mPieceSelected = false;
+        handled = true;
+      }
       else if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>())
       {
         if(keyPress->scancode == sf::Keyboard::Scan::Left)
@@ -132,8 +154,13 @@ namespace chess
       List<ChessCoordinate> coordinates = ChessState::Get().GetPiecePosiiton(whitePieces[i]);
       for(auto &coordinate : coordinates)
       {
-        GetPieceContainer(whitePieces[i])->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),true);
-        GetPieceContainer(whitePieces[i])->RenderPiece();
+        if(mWhiteTurn && mPieceSelected && mStartPose.isValid() && coordinate == mStartPose)
+          continue;
+        else
+        {
+          GetPieceContainer(whitePieces[i])->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),true);
+          GetPieceContainer(whitePieces[i])->RenderPiece();
+        }
       }
     }
 
@@ -143,9 +170,21 @@ namespace chess
       List<ChessCoordinate> coordinates = ChessState::Get().GetPiecePosiiton(blackPieces[i]);
       for(auto &coordinate : coordinates)
       {
-        GetPieceContainer(blackPieces[i])->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),false);
-        GetPieceContainer(blackPieces[i])->RenderPiece();
+        if(!mWhiteTurn && mPieceSelected && mStartPose.isValid() && coordinate == mStartPose)
+          continue;
+        else
+        {
+          GetPieceContainer(blackPieces[i])->SetPieceLocation(ConvertChessCoordinateToPosition(coordinate),false);
+          GetPieceContainer(blackPieces[i])->RenderPiece();
+        }
       }
+    }
+
+    if(mMouseDragging && mPieceSelected && mStartPose.isValid())
+    {
+      char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+      GetPieceContainer(piece)->SetPieceLocation({float(mMousePosition.x - 30) ,float(mMousePosition.y - 30)},GetPieceContainer(piece)->GetPieceColor());
+      GetPieceContainer(piece)->RenderPiece();
     }
   }
 

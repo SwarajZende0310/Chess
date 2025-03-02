@@ -19,11 +19,19 @@ namespace chess
     sf::RenderWindow& GetWindow();
     sf::Vector2u GetWindowSize()const;
 
+    void Tick(float deltaTime);
+
     void QuitApplication();
 
   private:
     bool DispathEvent(const std::optional<sf::Event>& event);
+    void TickInternal(float deltaTime);
+
     sf::RenderWindow mWindow;
+
+    float mTargetFrameRate;
+    sf::Clock mTickClock;
+
     shared<Stage> mCurrentStage;
     void RenderInternal();
   };

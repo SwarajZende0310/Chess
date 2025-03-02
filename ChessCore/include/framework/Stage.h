@@ -21,6 +21,7 @@ namespace chess
       
       virtual void Init();
       virtual void Render();
+      void TickInternal(float deltaTime);
 
       sf::RenderWindow& GetWindow();
       sf::Vector2f GetSpriteScale();
@@ -75,6 +76,9 @@ namespace chess
       ChessCoordinate mEndPose;
 
       bool mWhiteTurn;
+
+      bool mMouseDragging;
+      sf::Vector2i mMousePosition;
   };
 
   template <typename PieceType>
