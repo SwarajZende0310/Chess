@@ -24,6 +24,8 @@ namespace chess
             Set<ChessCoordinate,ChessCoordinateHashFunction> GetWhiteAttackedSquares(){ return mWhiteAttackedSquares; }
             Set<ChessCoordinate,ChessCoordinateHashFunction> GetBlackAttackedSquares(){ return mBlackAttackedSquares; }
 
+            bool KingInCheck(bool white);
+
         protected:
             ChessState();
 

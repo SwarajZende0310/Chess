@@ -199,6 +199,20 @@ namespace chess
         pieceContainer &= currentPos;
     }
 
+    bool ChessState::KingInCheck(bool white)
+    {
+        UpdateAttackedSquare();
+        if(white)
+        {
+            return mBlackAttackedSquares.find(GetPiecePosiiton(whiteKing)[0]) != mBlackAttackedSquares.end() ;
+        }
+        else
+        {
+            return mWhiteAttackedSquares.find(GetPiecePosiiton(blackKing)[0]) != mWhiteAttackedSquares.end() ;
+        }
+        return false;
+    }
+
     ChessState::ChessState()
         : mWhitePawns{0},
           mWhiteKnights{0},
