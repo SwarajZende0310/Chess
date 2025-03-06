@@ -77,22 +77,18 @@ namespace chess
 
         int offsetRank[8] = { -1,  -1,  1,  1,  1, -1,  0,  0};
         int offsetFile[8] = {  1,  -1, -1,  1,  0,  0,  1, -1};
-
+        
+        ChessCoordinate start{pieceCoordinate.rank,pieceCoordinate.file};
         for(int i = 0; i < 8; i++)
         {
-            ChessCoordinate iter{pieceCoordinate.rank, pieceCoordinate.file};
-            iter.rank += offsetRank[i];
-            iter.file += offsetFile[i];
-            
-            char piece = ChessState::Get().GetPieceOnChessCoordinate(iter);
-            if(iter.isValid() 
-                && ((piece == invalid) || (piece != invalid && isEnemy(iter)))
-                && ((mWhitePieces && (ChessState::Get().GetBlackAttackedSquares().find(iter) == ChessState::Get().GetBlackAttackedSquares().end())) || (!mWhitePieces && (ChessState::Get().GetWhiteAttackedSquares().find(iter) == ChessState::Get().GetWhiteAttackedSquares().end())) ))
+            ChessCoordinate end{pieceCoordinate.rank, pieceCoordinate.file};
+            end.rank += offsetRank[i];
+            end.file += offsetFile[i];
+
+            if(end.isValid() && MovePossible(start,end))
             {
-                moves.emplace_back(iter);
+                moves.emplace_back(end);
             }
-            iter.rank += offsetRank[i];
-            iter.file += offsetFile[i];
         }
         return moves;
     }
