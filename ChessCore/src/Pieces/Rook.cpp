@@ -69,7 +69,36 @@ namespace chess
         // sf::Angle newRot{newRotation};
         // mWhiteRookSprite.setRotation(newRot);
     }
-    
+
+    List<ChessCoordinate> Rook::GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)
+    {
+        List<ChessCoordinate> moves;
+        moves.reserve(32);
+
+        int offsetRank[4] = {  0,   0,  1, -1};
+        int offsetFile[4] = {  1,  -1,  0,  0};
+
+        for(int i = 0; i < 4; i++)
+        {
+            ChessCoordinate iter{pieceCoordinate.rank, pieceCoordinate.file};
+            iter.rank += offsetRank[i];
+            iter.file += offsetFile[i];
+
+            while(iter.isValid())
+            {
+                if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid)
+                {
+                    if(isEnemy(iter))
+                        moves.emplace_back(iter);
+                    break;
+                }
+                moves.emplace_back(iter);
+                iter.rank += offsetRank[i];
+                iter.file += offsetFile[i];
+            }
+        }
+        return moves;
+    }
     sf::Vector2f Rook::GetPieceLocation() const
     {
         if(mWhitePieces)
