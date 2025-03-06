@@ -12,7 +12,8 @@ namespace chess
         mBlackKingTexture{AssetManager::Get().LoadTexture("JohnPablok Cburnett Chess set/PNGs/With Shadow/1024px/b_king_png_shadow_1024px.png")},
         mWhiteKingSprite{*(mWhiteKingTexture)},
         mBlackKingSprite{*(mBlackKingTexture)},
-        mWhitePieces{whitePiece}
+        mWhitePieces{whitePiece},
+        mFirstMove{true}
     {
         mWhiteKingSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
         mBlackKingSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
@@ -34,6 +35,7 @@ namespace chess
 
     void King::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
+        mFirstMove = false;
         if(mWhitePieces)
         {
             ChessState::Get().SetPiecePosition(whiteKing,startCoordinate,endCoordinate);

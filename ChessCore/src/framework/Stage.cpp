@@ -204,6 +204,52 @@ namespace chess
     if(piece == invalid)return false;
 
     shared<Piece> piecePointer = GetPieceContainer(piece); 
+
+    // Check for castling
+    if(CastlingPossible(mStartPose,mEndPose))
+    {
+      if(mWhiteTurn)
+      {
+        if(mEndPose.file == 'h')
+        {
+          mEndPose.file = 'g';
+          mWhiteKing->MakeMove(mStartPose, mEndPose);
+          mStartPose.file = 'h';
+          mEndPose.file = 'f';
+          mWhiteRook->MakeMove(mStartPose, mEndPose);
+        }
+        else if(mEndPose.file == 'a')
+        {
+          mEndPose.file = 'c';
+          mWhiteKing->MakeMove(mStartPose, mEndPose);
+          mStartPose.file = 'a';
+          mEndPose.file = 'd';
+          mWhiteRook->MakeMove(mStartPose, mEndPose);
+        }
+      }
+      else
+      {
+        if(mEndPose.file == 'h')
+        {
+          mEndPose.file = 'g';
+          mBlackKing->MakeMove(mStartPose, mEndPose);
+          mStartPose.file = 'h';
+          mEndPose.file = 'f';
+          mBlackRook->MakeMove(mStartPose, mEndPose);
+        }
+        else if(mEndPose.file == 'a')
+        {
+          mEndPose.file = 'c';
+          mBlackKing->MakeMove(mStartPose, mEndPose);
+          mStartPose.file = 'a';
+          mEndPose.file = 'd';
+          mBlackRook->MakeMove(mStartPose, mEndPose);
+        }
+      }
+      mWhiteTurn = !mWhiteTurn;
+      return true;
+    }
+
     // Determine whose turn and valid move
     if((mWhiteTurn && piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)) || 
       (!mWhiteTurn && !piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)))
@@ -222,6 +268,56 @@ namespace chess
     return false;
   }
 
+  bool Stage::CastlingPossible(ChessCoordinate kingCoordinate, ChessCoordinate rookCoordinate)
+  {
+      if(kingCoordinate == rookCoordinate)return false;
+
+      if(mWhiteTurn)
+      {
+        if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != whiteKing 
+          || ChessState::Get().GetPieceOnChessCoordinate(rookCoordinate) != whiteRook
+          || !mWhiteKing->IsFirstMove() 
+          || !mWhiteRook->IsFirstMove(rookCoordinate))
+            return false;
+
+        int offsetFile = (rookCoordinate.file - kingCoordinate.file) > 0 ? 1 :  -1;
+        
+        Set<ChessCoordinate,ChessCoordinateHashFunction> blackAttackedSquares = ChessState::Get().GetBlackAttackedSquares();
+        ChessCoordinate iter{kingCoordinate.rank,kingCoordinate.file};
+        iter.file += offsetFile;
+
+        while(iter.isValid() && !(iter == rookCoordinate))
+        {
+          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid && blackAttackedSquares.find(iter) != blackAttackedSquares.end())
+            return false;
+          iter.file += offsetFile;
+        }
+        return true;
+      }
+      else
+      {
+        if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != blackKing 
+        || ChessState::Get().GetPieceOnChessCoordinate(rookCoordinate) != blackRook
+          || !mBlackKing->IsFirstMove() 
+          || !mBlackRook->IsFirstMove(rookCoordinate))
+            return false;
+
+        int offsetFile = (rookCoordinate.file - kingCoordinate.file) > 0 ? 1 :  -1;
+        
+        Set<ChessCoordinate,ChessCoordinateHashFunction> whiteAttackedSquares = ChessState::Get().GetWhiteAttackedSquares();
+        ChessCoordinate iter{kingCoordinate.rank,kingCoordinate.file};
+        iter.file += offsetFile;
+
+        while(iter.isValid() && !(iter == rookCoordinate))
+        {
+          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid && whiteAttackedSquares.find(iter) != whiteAttackedSquares.end())
+            return false;
+          iter.file += offsetFile;
+        }
+        return true;
+      }
+      return false;
+  }
   const sf::Vector2f Stage::ConvertChessCoordinateToPosition(const ChessCoordinate &chessCoordinate)
   {
       int row = chessCoordinate.rank - 1;
