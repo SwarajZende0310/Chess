@@ -87,7 +87,40 @@ namespace chess
         // sf::Angle newRot{newRotation};
         // mWhitePawnSprite.setRotation(newRot);
     }
-    
+
+    List<ChessCoordinate> Pawn::GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)
+    {
+        List<ChessCoordinate> moves;
+        moves.reserve(4);
+
+        ChessCoordinate start{pieceCoordinate.rank, pieceCoordinate.file};
+        std::array<int,6> offsetRank;
+        std::array<int,6> offsetFile;
+        
+        if(mWhitePieces)
+        {
+            offsetRank = {  1,  1,  1,  2,  2,  2};
+            offsetFile = {  0, -1,  1,  0, -1,  1};
+        }
+        else
+        {
+            offsetRank = { -1, -1, -1, -2, -2, -2};
+            offsetFile = {  0, -1,  1,  0, -1,  1};
+        }
+        
+        for(int i = 0; i < 6 ; i++)
+        {
+            ChessCoordinate end{pieceCoordinate.rank, pieceCoordinate.file};
+            end.rank += offsetRank[i];
+            end.file += offsetFile[i];
+            if(MovePossible(start,end))
+            {
+                moves.emplace_back(end);
+            }
+        }
+
+        return moves;
+    }
     sf::Vector2f Pawn::GetPieceLocation() const
     {
         if(mWhitePieces)
