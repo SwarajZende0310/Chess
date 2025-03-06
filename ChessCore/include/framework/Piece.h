@@ -20,6 +20,8 @@ namespace chess
 
             virtual void SetPieceLocation(const sf::Vector2f& newLocation, bool whitePieces) = 0;
             virtual void SetPieceRotation(float newRotation, bool whitePieces) = 0;
+
+            virtual List<ChessCoordinate> GetAllPossibleMoves(const ChessCoordinate pieceCoordinate) = 0;
         private:
             virtual sf::Vector2f GetPieceLocation()const = 0;
             virtual float GetPieceRotation()const = 0;

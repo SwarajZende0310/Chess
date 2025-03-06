@@ -69,7 +69,36 @@ namespace chess
         // sf::Angle newRot{newRotation};
         // mWhiteBishopSprite.setRotation(newRot);
     }
-    
+
+    List<ChessCoordinate> Bishop::GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)
+    {
+        List<ChessCoordinate> moves;
+        moves.reserve(32);
+
+        int offsetRank[4] = { -1,  -1,  1,  1};
+        int offsetFile[4] = {  1,  -1, -1,  1};
+
+        for(int i = 0; i < 4; i++)
+        {
+            ChessCoordinate iter{pieceCoordinate.rank, pieceCoordinate.file};
+            iter.rank += offsetRank[i];
+            iter.file += offsetFile[i];
+
+            while(iter.isValid())
+            {
+                if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid)
+                {
+                    if(isEnemy(iter))
+                        moves.emplace_back(iter);
+                    break;
+                }
+                moves.emplace_back(iter);
+                iter.rank += offsetRank[i];
+                iter.file += offsetFile[i];
+            }
+        }
+        return moves;
+    }
     sf::Vector2f Bishop::GetPieceLocation() const
     {
         if(mWhitePieces)
