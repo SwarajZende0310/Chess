@@ -70,7 +70,32 @@ namespace chess
         // sf::Angle newRot{newRotation};
         // mWhiteKnightSprite.setRotation(newRot);
     }
-    
+
+    List<ChessCoordinate> Knight::GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)
+    {
+        List<ChessCoordinate> moves;
+        moves.reserve(8);
+
+        int offsetRank[8] = {  2,   2, -2, -2,  1, -1,  1, -1};
+        int offsetFile[8] = {  1,  -1,  1, -1,  2,  2, -2, -2};
+
+        for(int i = 0; i < 8; i++)
+        {
+            ChessCoordinate iter{pieceCoordinate.rank, pieceCoordinate.file};
+            iter.rank += offsetRank[i];
+            iter.file += offsetFile[i];
+            
+            char piece = ChessState::Get().GetPieceOnChessCoordinate(iter);
+            if(iter.isValid() 
+                && ((piece == invalid) || (piece != invalid && isEnemy(iter))))
+            {
+                moves.emplace_back(iter);
+            }
+            iter.rank += offsetRank[i];
+            iter.file += offsetFile[i];
+        }
+        return moves;
+    }
     sf::Vector2f Knight::GetPieceLocation() const
     {
         if(mWhitePieces)
