@@ -79,20 +79,18 @@ namespace chess
         int offsetRank[8] = {  2,   2, -2, -2,  1, -1,  1, -1};
         int offsetFile[8] = {  1,  -1,  1, -1,  2,  2, -2, -2};
 
+        ChessCoordinate start{pieceCoordinate.rank, pieceCoordinate.file};
+
         for(int i = 0; i < 8; i++)
         {
-            ChessCoordinate iter{pieceCoordinate.rank, pieceCoordinate.file};
-            iter.rank += offsetRank[i];
-            iter.file += offsetFile[i];
+            ChessCoordinate end{pieceCoordinate.rank, pieceCoordinate.file};
+            end.rank += offsetRank[i];
+            end.file += offsetFile[i];
             
-            char piece = ChessState::Get().GetPieceOnChessCoordinate(iter);
-            if(iter.isValid() 
-                && ((piece == invalid) || (piece != invalid && isEnemy(iter))))
+            if(end.isValid() && MovePossible(start,end))
             {
-                moves.emplace_back(iter);
+                moves.emplace_back(end);
             }
-            iter.rank += offsetRank[i];
-            iter.file += offsetFile[i];
         }
         return moves;
     }
