@@ -271,8 +271,8 @@ namespace chess
             ChessCoordinate leftUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 2)};
             ChessCoordinate leftDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 2)};
 
-            ChessCoordinate rightUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 2)};
-            ChessCoordinate rightDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 2)};
+            ChessCoordinate rightUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file + 2)};
+            ChessCoordinate rightDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file + 2)};
 
             if(forwardLeft.isValid())mWhiteAttackedSquares.insert(forwardLeft);
             if(forwardRight.isValid())mWhiteAttackedSquares.insert(forwardRight);
@@ -376,8 +376,8 @@ namespace chess
             ChessCoordinate leftUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 2)};
             ChessCoordinate leftDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 2)};
 
-            ChessCoordinate rightUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 2)};
-            ChessCoordinate rightDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 2)};
+            ChessCoordinate rightUp = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file + 2)};
+            ChessCoordinate rightDown = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file + 2)};
 
             if(forwardLeft.isValid())mBlackAttackedSquares.insert(forwardLeft);
             if(forwardRight.isValid())mBlackAttackedSquares.insert(forwardRight);
