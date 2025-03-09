@@ -213,6 +213,10 @@ namespace chess
         return false;
     }
 
+    List<ChessCoordinate> ChessState::GetLastPlayedMove()
+    {
+        return {mLastMovedStartMove,mLastMovedEndMove};
+    }
     ChessState::ChessState()
         : mWhitePawns{0},
           mWhiteKnights{0},
@@ -229,11 +233,11 @@ namespace chess
           mWhiteAttackedSquares{},
           mBlackAttackedSquares{},
           mRemovedPiece{invalid},
-          mRemovedPiecePosition{-1,invalid},
+          mRemovedPiecePosition{-1, invalid},
           mRemovedPieceLastMove{false},
           mLastPieceMoved{invalid},
-          mLastMovedStartMove{-1,invalid},
-          mLastMovedEndMove{-1,invalid}
+          mLastMovedStartMove{-1, invalid},
+          mLastMovedEndMove{-1, invalid}
     {
         ResetToStartPosition();
     }

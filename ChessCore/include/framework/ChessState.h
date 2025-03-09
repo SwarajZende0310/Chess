@@ -26,6 +26,8 @@ namespace chess
 
             bool KingInCheck(bool white);
 
+            List<ChessCoordinate> GetLastPlayedMove();
+
         protected:
             ChessState();
 

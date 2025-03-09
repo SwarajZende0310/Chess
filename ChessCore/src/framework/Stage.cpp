@@ -220,6 +220,24 @@ namespace chess
       return true;
     }
 
+    // Check for En Passant
+    if(EnPassantPossible(mStartPose,mEndPose))
+    {
+      ChessCoordinate removalPiece{ mWhiteTurn ? 5 : 4 ,mEndPose.file};
+      if(mWhiteTurn)
+      {
+        ChessState::Get().RemovePiece(blackPawn,removalPiece);
+        mWhitePawn->MakeMove(mStartPose,mEndPose);
+      }
+      else
+      {
+        ChessState::Get().RemovePiece(whitePawn,removalPiece);
+        mBlackPawn->MakeMove(mStartPose,mEndPose);
+      }
+      mWhiteTurn = !mWhiteTurn;
+      return true;
+    }
+
     // Determine whose turn and valid move
     if((mWhiteTurn && piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)) || 
       (!mWhiteTurn && !piecePointer->GetPieceColor() && piecePointer->MovePossible(mStartPose,mEndPose)))
@@ -336,6 +354,27 @@ namespace chess
       mBlackKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
       mBlackRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
     }
+  }
+
+  bool Stage::EnPassantPossible(ChessCoordinate startCoordinate, ChessCoordinate endCoordinate)
+  {
+      if((mWhiteTurn && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != whitePawn) || (!mWhiteTurn && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != blackPawn))
+        return false;
+      
+      List<ChessCoordinate> lastMove = ChessState::Get().GetLastPlayedMove();
+      if(mWhiteTurn && lastMove[0].rank == 7 && lastMove[1].rank == 5 && startCoordinate.rank == 5 && endCoordinate.rank == 6 
+        && lastMove[0].file == lastMove[1].file
+        && abs(startCoordinate.file - endCoordinate.file) == 1 && abs(startCoordinate.file - lastMove[0].file) == 1)
+      {
+        return true;
+      }
+      else if(!mWhiteTurn && lastMove[0].rank == 2 && lastMove[1].rank == 4 && startCoordinate.rank == 4 && endCoordinate.rank == 3 
+        && lastMove[0].file == lastMove[1].file
+        && abs(startCoordinate.file - endCoordinate.file) == 1 && abs(startCoordinate.file - lastMove[0].file) == 1)
+      {
+        return true;
+      }
+      return false;
   }
 
   const sf::Vector2f Stage::ConvertChessCoordinateToPosition(const ChessCoordinate &chessCoordinate)

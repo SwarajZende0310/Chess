@@ -37,9 +37,12 @@ namespace chess
 
       bool CheckCorrectPieceSelected(char piece);
       bool MovePiece(char piece);
+
       bool CastlingPossible(ChessCoordinate kingCoordinate, ChessCoordinate rookCoordinate);
       void CastleKingSide(bool whitePiece);
       void CastleQueenSide(bool whitePiece);
+
+      bool EnPassantPossible(ChessCoordinate startCoordinate, ChessCoordinate endCoordinate);
 
       const sf::Vector2f ConvertChessCoordinateToPosition(const ChessCoordinate& chessCoordinate);
       ChessCoordinate ConvertPositionToChessCoordinate(const sf::Vector2i& position);
