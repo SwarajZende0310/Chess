@@ -208,43 +208,13 @@ namespace chess
     // Check for castling
     if(CastlingPossible(mStartPose,mEndPose))
     {
-      if(mWhiteTurn)
+      if(mEndPose.file - mStartPose.file > 0)
       {
-        if(mEndPose.file == 'h')
-        {
-          mEndPose.file = 'g';
-          mWhiteKing->MakeMove(mStartPose, mEndPose);
-          mStartPose.file = 'h';
-          mEndPose.file = 'f';
-          mWhiteRook->MakeMove(mStartPose, mEndPose);
-        }
-        else if(mEndPose.file == 'a')
-        {
-          mEndPose.file = 'c';
-          mWhiteKing->MakeMove(mStartPose, mEndPose);
-          mStartPose.file = 'a';
-          mEndPose.file = 'd';
-          mWhiteRook->MakeMove(mStartPose, mEndPose);
-        }
+        CastleKingSide(mWhiteTurn);
       }
-      else
+      else if(mEndPose.file - mStartPose.file < 0)
       {
-        if(mEndPose.file == 'h')
-        {
-          mEndPose.file = 'g';
-          mBlackKing->MakeMove(mStartPose, mEndPose);
-          mStartPose.file = 'h';
-          mEndPose.file = 'f';
-          mBlackRook->MakeMove(mStartPose, mEndPose);
-        }
-        else if(mEndPose.file == 'a')
-        {
-          mEndPose.file = 'c';
-          mBlackKing->MakeMove(mStartPose, mEndPose);
-          mStartPose.file = 'a';
-          mEndPose.file = 'd';
-          mBlackRook->MakeMove(mStartPose, mEndPose);
-        }
+        CastleQueenSide(mWhiteTurn);
       }
       mWhiteTurn = !mWhiteTurn;
       return true;
@@ -272,23 +242,25 @@ namespace chess
   {
       if(kingCoordinate == rookCoordinate)return false;
 
+      int offsetFile = (rookCoordinate.file - kingCoordinate.file) > 0 ? 1 :  -1;
+      ChessCoordinate rookEndCoordinate{mWhiteTurn ? 1 : 8 ,offsetFile > 0 ? 'h' : 'a'};
+
       if(mWhiteTurn)
       {
         if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != whiteKing 
-          || ChessState::Get().GetPieceOnChessCoordinate(rookCoordinate) != whiteRook
-          || !mWhiteKing->IsFirstMove() 
-          || !mWhiteRook->IsFirstMove(rookCoordinate))
+          || abs(rookCoordinate.file - kingCoordinate.file) < 2
+          || !mWhiteKing->IsFirstMove()
+          || (offsetFile == 1 && !mWhiteRook->IsFirstMove(ChessCoordinate{1,'h'}))
+          || (offsetFile == -1 && !mWhiteRook->IsFirstMove(ChessCoordinate{1,'a'})))
             return false;
-
-        int offsetFile = (rookCoordinate.file - kingCoordinate.file) > 0 ? 1 :  -1;
         
         Set<ChessCoordinate,ChessCoordinateHashFunction> blackAttackedSquares = ChessState::Get().GetBlackAttackedSquares();
         ChessCoordinate iter{kingCoordinate.rank,kingCoordinate.file};
         iter.file += offsetFile;
 
-        while(iter.isValid() && !(iter == rookCoordinate))
+        while(iter.isValid() && !(iter == rookEndCoordinate))
         {
-          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid && blackAttackedSquares.find(iter) != blackAttackedSquares.end())
+          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid || blackAttackedSquares.find(iter) != blackAttackedSquares.end())
             return false;
           iter.file += offsetFile;
         }
@@ -297,20 +269,19 @@ namespace chess
       else
       {
         if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != blackKing 
-        || ChessState::Get().GetPieceOnChessCoordinate(rookCoordinate) != blackRook
+          || abs(rookCoordinate.file - kingCoordinate.file) < 2
           || !mBlackKing->IsFirstMove() 
-          || !mBlackRook->IsFirstMove(rookCoordinate))
+          || (offsetFile == 1 && !mBlackRook->IsFirstMove(ChessCoordinate{8,'h'}))
+          || (offsetFile == -1 && !mBlackRook->IsFirstMove(ChessCoordinate{8,'a'})))
             return false;
-
-        int offsetFile = (rookCoordinate.file - kingCoordinate.file) > 0 ? 1 :  -1;
         
         Set<ChessCoordinate,ChessCoordinateHashFunction> whiteAttackedSquares = ChessState::Get().GetWhiteAttackedSquares();
         ChessCoordinate iter{kingCoordinate.rank,kingCoordinate.file};
         iter.file += offsetFile;
 
-        while(iter.isValid() && !(iter == rookCoordinate))
+        while(iter.isValid() && !(iter == rookEndCoordinate))
         {
-          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid && whiteAttackedSquares.find(iter) != whiteAttackedSquares.end())
+          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid || whiteAttackedSquares.find(iter) != whiteAttackedSquares.end())
             return false;
           iter.file += offsetFile;
         }
@@ -318,6 +289,55 @@ namespace chess
       }
       return false;
   }
+  
+  void Stage::CastleKingSide(bool whitePiece)
+  {
+      if(whitePiece)
+      {
+        ChessCoordinate kingCoordinateStart = ChessCoordinate{1,'e'};
+        ChessCoordinate kingCoordinateEnd = ChessCoordinate{1,'g'};
+        ChessCoordinate rookCoordinateStart = ChessCoordinate{1,'h'};
+        ChessCoordinate rookCoordinateEnd = ChessCoordinate{1,'f'};
+
+        mWhiteKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
+        mWhiteRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
+      }
+      else
+      {
+        ChessCoordinate kingCoordinateStart = ChessCoordinate{8,'e'};
+        ChessCoordinate kingCoordinateEnd = ChessCoordinate{8,'g'};
+        ChessCoordinate rookCoordinateStart = ChessCoordinate{8,'h'};
+        ChessCoordinate rookCoordinateEnd = ChessCoordinate{8,'f'};
+
+        mBlackKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
+        mBlackRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
+      }
+  }
+
+  void Stage::CastleQueenSide(bool whitePiece)
+  {
+    if(whitePiece)
+    {
+      ChessCoordinate kingCoordinateStart = ChessCoordinate{1,'e'};
+      ChessCoordinate kingCoordinateEnd = ChessCoordinate{1,'c'};
+      ChessCoordinate rookCoordinateStart = ChessCoordinate{1,'a'};
+      ChessCoordinate rookCoordinateEnd = ChessCoordinate{1,'d'};
+
+      mWhiteKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
+      mWhiteRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
+    }
+    else
+    {
+      ChessCoordinate kingCoordinateStart = ChessCoordinate{8,'e'};
+      ChessCoordinate kingCoordinateEnd = ChessCoordinate{8,'c'};
+      ChessCoordinate rookCoordinateStart = ChessCoordinate{8,'a'};
+      ChessCoordinate rookCoordinateEnd = ChessCoordinate{8,'d'};
+
+      mBlackKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
+      mBlackRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
+    }
+  }
+
   const sf::Vector2f Stage::ConvertChessCoordinateToPosition(const ChessCoordinate &chessCoordinate)
   {
       int row = chessCoordinate.rank - 1;
