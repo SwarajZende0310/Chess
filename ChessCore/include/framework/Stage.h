@@ -54,6 +54,8 @@ namespace chess
 
       shared<Piece> GetPieceContainer(char piece);
 
+      char WhichPieceToPromote();
+
       Application* mOwningApp;
 
       shared<Board> mBoard;

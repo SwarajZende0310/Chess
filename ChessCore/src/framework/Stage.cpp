@@ -250,6 +250,14 @@ namespace chess
         ChessState::Get().UndoLastMove();
         return false;
       }
+      
+      // Check for promotion
+      ChessCoordinate pawnToPromote = mWhiteTurn ? mWhitePawn->PawnToPromote() : mBlackPawn->PawnToPromote();
+      if(pawnToPromote.isValid())
+      {
+        ChessState::Get().RemovePiece(mWhiteTurn ? whitePawn : blackPawn, pawnToPromote);
+        ChessState::Get().SpawnPiece(WhichPieceToPromote(), pawnToPromote);
+      }
       mWhiteTurn = !mWhiteTurn;
       return true;
     }  
@@ -429,6 +437,13 @@ namespace chess
         }
       return nullptr;
   }
+  
+  char Stage::WhichPieceToPromote()
+  {
+      // TODO :: Implement an ask to which piece to promote
+      return mWhiteTurn ? whiteQueen : blackQueen;
+  }
+  
   sf::Vector2f Stage::GetSpriteScale()
   {
       return mBoard->GetSpriteScale();

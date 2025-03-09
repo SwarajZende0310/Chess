@@ -26,6 +26,8 @@ namespace chess
 
             bool KingInCheck(bool white);
 
+            void SpawnPiece(char piece, ChessCoordinate& position);
+
             List<ChessCoordinate> GetLastPlayedMove();
 
         protected:
@@ -38,8 +40,6 @@ namespace chess
             int ConvertRankToCol(char col);
 
             void UpdateAttackedSquare();
-
-            void SpawnPiece(char piece, ChessCoordinate& position);
 
             static unique<ChessState> mChessState;
             // White Pieces

@@ -121,6 +121,37 @@ namespace chess
 
         return moves;
     }
+
+    ChessCoordinate Pawn::PawnToPromote()
+    {
+        ChessCoordinate pawnToPromote{invalid,invalid};
+        if(mWhitePieces)
+        {
+            for(int i = 0 ; i < 8 ; i++)
+            {
+                if(ChessState::Get().GetPieceOnChessCoordinate(ChessCoordinate{8,char('a'+i)}) == whitePawn)
+                {
+                    pawnToPromote.file = 'a' + i ;
+                    pawnToPromote.rank = 8 ;
+                    return pawnToPromote;
+                }
+            }
+        }
+        else
+        {
+            for(int i = 0 ; i < 8 ; i++)
+            {
+                if(ChessState::Get().GetPieceOnChessCoordinate(ChessCoordinate{1,char('a'+i)}) == blackPawn)
+                {
+                    pawnToPromote.file = 'a' + i ;
+                    pawnToPromote.rank = 1 ;
+                    return pawnToPromote;
+                }
+            }
+        }
+        return pawnToPromote;
+    }
+    
     sf::Vector2f Pawn::GetPieceLocation() const
     {
         if(mWhitePieces)

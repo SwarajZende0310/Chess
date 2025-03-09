@@ -19,6 +19,8 @@ namespace chess
             virtual void SetPieceRotation(float newRotation, bool whitePieces) override;
 
             virtual List<ChessCoordinate> GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)override;
+
+            ChessCoordinate PawnToPromote();
         private:
             virtual sf::Vector2f GetPieceLocation()const override;
             virtual float GetPieceRotation()const override;
