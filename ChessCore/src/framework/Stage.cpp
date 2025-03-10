@@ -282,7 +282,6 @@ namespace chess
         
         Set<ChessCoordinate,ChessCoordinateHashFunction> blackAttackedSquares = ChessState::Get().GetBlackAttackedSquares();
         ChessCoordinate iter{kingCoordinate.rank,kingCoordinate.file};
-        iter.file += offsetFile;
 
         while(iter.isValid() && !(iter == rookEndCoordinate))
         {
@@ -303,7 +302,6 @@ namespace chess
         
         Set<ChessCoordinate,ChessCoordinateHashFunction> whiteAttackedSquares = ChessState::Get().GetWhiteAttackedSquares();
         ChessCoordinate iter{kingCoordinate.rank,kingCoordinate.file};
-        iter.file += offsetFile;
 
         while(iter.isValid() && !(iter == rookEndCoordinate))
         {
