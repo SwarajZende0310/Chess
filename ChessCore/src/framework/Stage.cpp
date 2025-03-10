@@ -277,11 +277,13 @@ namespace chess
           || abs(rookCoordinate.file - kingCoordinate.file) < 2
           || !mWhiteKing->IsFirstMove()
           || (offsetFile == 1 && !mWhiteRook->IsFirstMove(ChessCoordinate{1,'h'}))
-          || (offsetFile == -1 && !mWhiteRook->IsFirstMove(ChessCoordinate{1,'a'})))
+          || (offsetFile == -1 && !mWhiteRook->IsFirstMove(ChessCoordinate{1,'a'}))
+          || mWhiteKing->IsInCheck())
             return false;
         
         Set<ChessCoordinate,ChessCoordinateHashFunction> blackAttackedSquares = ChessState::Get().GetBlackAttackedSquares();
         ChessCoordinate iter{kingCoordinate.rank,kingCoordinate.file};
+        iter.file += offsetFile;
 
         while(iter.isValid() && !(iter == rookEndCoordinate))
         {
@@ -297,11 +299,13 @@ namespace chess
           || abs(rookCoordinate.file - kingCoordinate.file) < 2
           || !mBlackKing->IsFirstMove() 
           || (offsetFile == 1 && !mBlackRook->IsFirstMove(ChessCoordinate{8,'h'}))
-          || (offsetFile == -1 && !mBlackRook->IsFirstMove(ChessCoordinate{8,'a'})))
+          || (offsetFile == -1 && !mBlackRook->IsFirstMove(ChessCoordinate{8,'a'}))
+          || mBlackKing->IsInCheck())
             return false;
         
         Set<ChessCoordinate,ChessCoordinateHashFunction> whiteAttackedSquares = ChessState::Get().GetWhiteAttackedSquares();
         ChessCoordinate iter{kingCoordinate.rank,kingCoordinate.file};
+        iter.file += offsetFile;
 
         while(iter.isValid() && !(iter == rookEndCoordinate))
         {
