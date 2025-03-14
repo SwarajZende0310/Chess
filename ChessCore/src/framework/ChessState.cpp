@@ -217,6 +217,21 @@ namespace chess
     {
         return {mLastMovedStartMove,mLastMovedEndMove};
     }
+    
+    int ChessState::GetPieceCount(char piece)
+    {
+        int pieceCount = 0;
+        uint64_t pieceContainer = GetPieceContainer(piece);
+
+        for(int i = 0; i < 64 ; i++)
+        {
+            if(pieceContainer & 1ULL << i)
+                pieceCount++;
+        }
+
+        return pieceCount;
+    }
+    
     ChessState::ChessState()
         : mWhitePawns{0},
           mWhiteKnights{0},

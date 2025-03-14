@@ -56,6 +56,8 @@ namespace chess
 
       char WhichPieceToPromote();
 
+      int EndState();
+
       Application* mOwningApp;
 
       shared<Board> mBoard;

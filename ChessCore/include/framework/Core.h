@@ -52,6 +52,12 @@ namespace chess
 
     #define invalid 'i'
 
+    // Game End State
+    #define WhiteWon  1
+    #define Draw      0
+    #define BlackWon -1
+    #define Ongoing   2
+
     // Invalid piece container
     static uint64_t UINT64_MAX_VALUE = UINT64_C(0xFFFFFFFFFFFFFFFF);
 

@@ -30,6 +30,8 @@ namespace chess
 
             List<ChessCoordinate> GetLastPlayedMove();
 
+            int GetPieceCount(char piece);
+
         protected:
             ChessState();
 
