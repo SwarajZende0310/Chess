@@ -123,12 +123,8 @@ namespace chess
                 if(MovePiece(piece))
                 {
                   SetPieceMoved(true);
-                  mPieceSelected = false;
                 }
-                else if(ChessState::Get().GetPieceOnChessCoordinate(mEndPose) == invalid)
-                {
-                  mPieceSelected = false;
-                }
+                mPieceSelected = false;
                 handled = true;
               }
           }
