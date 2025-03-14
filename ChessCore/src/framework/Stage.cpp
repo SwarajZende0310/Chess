@@ -95,7 +95,7 @@ namespace chess
           {
             LOG("Black Won");
           }
-          // mOwningApp->QuitApplication();
+          mOwningApp->ReachedEndState(currState);
         }
       }
       SetPieceMoved(false);
@@ -669,7 +669,7 @@ namespace chess
         }
         else
         {
-          return blackKingInCheck ? BlackWon : Draw;
+          return blackKingInCheck ? WhiteWon : Draw;
         }
       }
     return Draw;

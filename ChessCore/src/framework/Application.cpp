@@ -80,6 +80,10 @@ namespace chess {
     mWindow.close();
   }
 
+  void Application::ReachedEndState(int state)
+  {
+    QuitApplication();
+  }
   bool Application::DispathEvent(const std::optional<sf::Event> &event)
   {
       if(mCurrentStage)

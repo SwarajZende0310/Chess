@@ -23,6 +23,8 @@ namespace chess
 
     void QuitApplication();
 
+    void ReachedEndState(int state);
+
   private:
     bool DispathEvent(const std::optional<sf::Event>& event);
     void TickInternal(float deltaTime);
