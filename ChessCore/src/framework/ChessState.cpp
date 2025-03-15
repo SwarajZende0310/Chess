@@ -118,13 +118,24 @@ namespace chess
         if(!(pieceContainer & currentPos))return;
         bool pieceRemoved = false;
 
-        // Remove other piece if already there in position where we are moving
-        if(ChessState::Get().GetPieceOnChessCoordinate(end) != invalid)
+        // Remove other piece if already there in position where we are moving or Enpassant played
+        if(ChessState::Get().GetPieceOnChessCoordinate(end) != invalid || ( (piece == whitePawn || piece == blackPawn) && abs(start.file - end.file) == 1 ))
         {
-            pieceRemoved = true;
-            mRemovedPiece = ChessState::Get().GetPieceOnChessCoordinate(end);
-            mRemovedPiecePosition = end;
-            ChessState::Get().RemovePiece(ChessState::Get().GetPieceOnChessCoordinate(end), end);
+            char endPiece = ChessState::Get().GetPieceOnChessCoordinate(end);
+            if(endPiece == invalid)
+            {
+                // Enpassant move
+                pieceRemoved = true;
+                mRemovedPiecePosition = ChessCoordinate{start.rank,end.file};
+                mRemovedPiece = GetPieceOnChessCoordinate(mRemovedPiecePosition);
+            }
+            else
+            {
+                pieceRemoved = true;
+                mRemovedPiece = endPiece;
+                mRemovedPiecePosition = end;
+            }
+            ChessState::Get().RemovePiece(mRemovedPiece, mRemovedPiecePosition);
         }
 
         // Unset the current high bit
