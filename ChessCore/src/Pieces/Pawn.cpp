@@ -41,8 +41,8 @@ namespace chess
         }
         else if((startCoordinate.file - 1 == endCoordinate.file || startCoordinate.file + 1 == endCoordinate.file) && 
                 (pawnForwardMoves == 1) && 
-                (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) != invalid) &&
-                isEnemy(endCoordinate))//Capturing pieces
+                ((ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) != invalid && isEnemy(endCoordinate)) 
+                || (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid && EnPassantPossible(startCoordinate,endCoordinate))))//Capturing pieces
         {
             return true;
         }
@@ -182,5 +182,26 @@ namespace chess
     bool Pawn::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
+    }
+
+    bool Pawn::EnPassantPossible(ChessCoordinate startCoordinate, ChessCoordinate endCoordinate)
+    {
+      if((mWhitePieces && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != whitePawn) || (!mWhitePieces && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != blackPawn))
+        return false;
+      
+      List<ChessCoordinate> lastMove = ChessState::Get().GetLastPlayedMove();
+      if(mWhitePieces && lastMove[0].rank == 7 && lastMove[1].rank == 5 && startCoordinate.rank == 5 && endCoordinate.rank == 6 
+        && lastMove[0].file == lastMove[1].file
+        && abs(startCoordinate.file - endCoordinate.file) == 1 && abs(startCoordinate.file - lastMove[0].file) == 1)
+      {
+        return true;
+      }
+      else if(!mWhitePieces && lastMove[0].rank == 2 && lastMove[1].rank == 4 && startCoordinate.rank == 4 && endCoordinate.rank == 3 
+        && lastMove[0].file == lastMove[1].file
+        && abs(startCoordinate.file - endCoordinate.file) == 1 && abs(startCoordinate.file - lastMove[0].file) == 1)
+      {
+        return true;
+      }
+        return false;
     }
 }

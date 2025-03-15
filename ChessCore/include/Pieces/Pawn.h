@@ -29,6 +29,8 @@ namespace chess
 
             bool isEnemy(ChessCoordinate& endCoordinate);
 
+            bool EnPassantPossible(ChessCoordinate startCoordinate, ChessCoordinate endCoordinate);
+
             Stage* mOwningStage;
             
             shared<sf::Texture> mWhitePawnTexture;
