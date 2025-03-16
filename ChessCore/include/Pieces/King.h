@@ -21,7 +21,6 @@ namespace chess
             virtual List<ChessCoordinate> GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)override;
 
             bool IsInCheck();
-            bool IsFirstMove(){ return mFirstMove; }
         private:
             virtual sf::Vector2f GetPieceLocation()const override;
             virtual float GetPieceRotation()const override;
@@ -39,7 +38,5 @@ namespace chess
             sf::Sprite mBlackKingSprite;
 
             bool mWhitePieces;
-
-            bool mFirstMove;
     };
 }

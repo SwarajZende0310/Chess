@@ -16,11 +16,6 @@ namespace chess
     {
         mWhiteRookSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
         mBlackRookSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
-
-        int rank = mWhitePieces ? 1 : 8;
-
-        mFirstMove[ChessCoordinate{rank,'a'}] = true;
-        mFirstMove[ChessCoordinate{rank,'h'}] = true;
     }
 
     bool Rook::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
@@ -39,7 +34,6 @@ namespace chess
 
     void Rook::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
-        mFirstMove[endCoordinate] = false;
         if(mWhitePieces)
         {
             ChessState::Get().SetPiecePosition(whiteRook,startCoordinate,endCoordinate);
@@ -104,13 +98,6 @@ namespace chess
             }
         }
         return moves;
-    }
-    
-    bool Rook::IsFirstMove(ChessCoordinate coordinate)
-    {
-        if(mFirstMove.count(coordinate) > 0)
-            return mFirstMove[coordinate];
-        return false;
     }
     
     sf::Vector2f Rook::GetPieceLocation() const
