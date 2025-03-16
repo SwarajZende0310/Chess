@@ -59,6 +59,11 @@ namespace chess
     #define BlackWon -1
     #define Ongoing   2
 
+    // Castling states
+    #define NoCastling 0
+    #define KingSide 1
+    #define QueenSide 2
+
     // Invalid piece container
     static uint64_t UINT64_MAX_VALUE = UINT64_C(0xFFFFFFFFFFFFFFFF);
 
@@ -71,6 +76,14 @@ namespace chess
         {
 
         }
+
+        ChessCoordinate()
+            :rank{invalid},
+            file{invalid}
+        {
+
+        }
+
         int rank;
         char file;
 
@@ -92,5 +105,40 @@ namespace chess
             {
                 return std::hash<int>()(coordinate.rank) ^ std::hash<char>()(coordinate.file);
             }
+    };
+
+    struct PlayedMove
+    {
+        public:
+        PlayedMove()
+            :mPiece{invalid},
+            mStartCoordinate{},
+            mEndCoordinate{},
+            mCapturedPiece{invalid},
+            mCapturedPieceCoordinate{},
+            mCastling{NoCastling}
+        {
+
+        }
+
+        PlayedMove(char piece, ChessCoordinate start, ChessCoordinate end, char capturedPiece, ChessCoordinate capturedCoordinate,int castling)
+            :mPiece{piece},
+            mStartCoordinate{start.rank,start.file},
+            mEndCoordinate{end.rank,end.file},
+            mCapturedPiece{capturedPiece},
+            mCapturedPieceCoordinate{capturedCoordinate.rank,capturedCoordinate.file},
+            mCastling{castling}
+            {
+
+            }
+        
+        char mPiece;
+        ChessCoordinate mStartCoordinate;
+        ChessCoordinate mEndCoordinate;
+
+        char mCapturedPiece;
+        ChessCoordinate mCapturedPieceCoordinate;
+
+        int mCastling;
     };
 }

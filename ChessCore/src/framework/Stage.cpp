@@ -149,9 +149,8 @@ namespace chess
       }
       else if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>())
       {
-        if(keyPress->scancode == sf::Keyboard::Scan::Left)
+        if(keyPress->scancode == sf::Keyboard::Scan::Left && ChessState::Get().UndoLastMove())
         {
-          ChessState::Get().UndoLastMove();
           SetPieceMoved(true);
           mWhiteTurn = !mWhiteTurn;
         }
@@ -330,7 +329,7 @@ namespace chess
         ChessCoordinate rookCoordinateEnd = ChessCoordinate{1,'f'};
 
         mWhiteKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
-        mWhiteRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
+        ChessState::Get().SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
       }
       else
       {
@@ -340,7 +339,7 @@ namespace chess
         ChessCoordinate rookCoordinateEnd = ChessCoordinate{8,'f'};
 
         mBlackKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
-        mBlackRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
+        ChessState::Get().SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);
       }
   }
 
@@ -354,7 +353,7 @@ namespace chess
       ChessCoordinate rookCoordinateEnd = ChessCoordinate{1,'d'};
 
       mWhiteKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
-      mWhiteRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
+      ChessState::Get().SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
     }
     else
     {
@@ -364,7 +363,7 @@ namespace chess
       ChessCoordinate rookCoordinateEnd = ChessCoordinate{8,'d'};
 
       mBlackKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
-      mBlackRook->MakeMove(rookCoordinateStart,rookCoordinateEnd);
+      ChessState::Get().SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);
     }
   }
 
@@ -440,74 +439,23 @@ namespace chess
         
         if(moves.size() > 0)
           ongoing = true;
-        
-        // White Pawn moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(whitePawn);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
-        {
-          moves = mWhitePawn->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
-          {
-            mWhitePawn->MakeMove(startCoordinate[i],moves[j]);
-            if(!mWhiteKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
-          }
-        }
 
-        // White Knight moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(whiteKnight);
-        for(int i = 0;!ongoing && i < startCoordinate.size(); i++)
-        {
-          moves = mWhiteKnight->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
-          {
-            mWhiteKnight->MakeMove(startCoordinate[i],moves[j]);
-            if(!mWhiteKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
-          }
-        }
+        char whitePieces[5] = {whitePawn, whiteKnight, whiteBishop, whiteRook, whiteQueen};
 
-        // White Bishop moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(whiteBishop);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
+        for(int p = 0; p < 5 ; p++)
         {
-          moves = mWhiteBishop->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
+          shared<Piece> pieceContainer = GetPieceContainer(whitePieces[p]);
+          startCoordinate = ChessState::Get().GetPiecePosiiton(whitePieces[p]);
+          for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
           {
-            mWhiteBishop->MakeMove(startCoordinate[i],moves[j]);
-            if(!mWhiteKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
-          }
-        }
-
-        // White Rook moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(whiteRook);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
-        {
-          moves = mWhiteRook->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
-          {
-            mWhiteRook->MakeMove(startCoordinate[i],moves[j]);
-            if(!mWhiteKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
-          }
-        }
-
-        // White Queen moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(whiteQueen);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
-        {
-          moves = mWhiteQueen->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
-          {
-            mWhiteQueen->MakeMove(startCoordinate[i],moves[j]);
-            if(!mWhiteKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
+            moves = pieceContainer->GetAllPossibleMoves(startCoordinate[i]);
+            for(int j = 0; j < moves.size(); j++ )
+            {
+              ChessState::Get().SetPiecePosition(whitePieces[p],startCoordinate[i],moves[j]);
+              if(!mWhiteKing->IsInCheck())
+                ongoing = true;
+              ChessState::Get().UndoLastMove();
+            }
           }
         }
 
@@ -543,73 +491,22 @@ namespace chess
         if(moves.size() > 0)
           ongoing = true;
 
-        // Black Pawn moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(blackPawn);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
-        {
-          moves = mBlackPawn->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
-          {
-            mBlackPawn->MakeMove(startCoordinate[i],moves[j]);
-            if(!mBlackKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
-          }
-        }
+        char blackPieces[5] = {blackPawn, blackKnight, blackBishop, blackRook, blackQueen};
 
-        // Black Knight moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(blackKnight);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
+        for(int p = 0; p < 5 ; p++)
         {
-          moves = mBlackKnight->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
+          shared<Piece> pieceContainer = GetPieceContainer(blackPieces[p]);
+          startCoordinate = ChessState::Get().GetPiecePosiiton(blackPieces[p]);
+          for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
           {
-            mBlackKnight->MakeMove(startCoordinate[i],moves[j]);
-            if(!mBlackKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
-          }
-        }
-
-        // Black Bishop moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(blackBishop);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
-        {
-          moves = mBlackBishop->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
-          {
-            mBlackBishop->MakeMove(startCoordinate[i],moves[j]);
-            if(!mBlackKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
-          }
-        }
-
-        // Black Rook moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(blackRook);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
-        {
-          moves = mBlackRook->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
-          {
-            mBlackRook->MakeMove(startCoordinate[i],moves[j]);
-            if(!mBlackKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
-          }
-        }
-
-        // Black Queen moves
-        startCoordinate = ChessState::Get().GetPiecePosiiton(blackQueen);
-        for(int i = 0; !ongoing && i < startCoordinate.size(); i++)
-        {
-          moves = mBlackQueen->GetAllPossibleMoves(startCoordinate[i]);
-          for(int j = 0; j < moves.size(); j++ )
-          {
-            mBlackQueen->MakeMove(startCoordinate[i],moves[j]);
-            if(!mBlackKing->IsInCheck())
-              ongoing = true;
-            ChessState::Get().UndoLastMove();
+            moves = pieceContainer->GetAllPossibleMoves(startCoordinate[i]);
+            for(int j = 0; j < moves.size(); j++ )
+            {
+              ChessState::Get().SetPiecePosition(blackPieces[p],startCoordinate[i],moves[j]);
+              if(!mBlackKing->IsInCheck())
+                ongoing = true;
+              ChessState::Get().UndoLastMove();
+            }
           }
         }
 

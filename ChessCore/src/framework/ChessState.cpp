@@ -110,13 +110,13 @@ namespace chess
         return position;
     }
 
-    void ChessState::SetPiecePosition(char piece, ChessCoordinate &start, ChessCoordinate &end)
+    void ChessState::SetPiecePosition(char piece, ChessCoordinate &start, ChessCoordinate &end,bool log)
     {
         uint64_t& pieceContainer = GetPieceContainer(piece);
         if(start.file == invalid || start.rank == -1 || end.file == invalid || end.rank == -1) return;
         uint64_t currentPos =  1ULL << (8 * (start.rank - 1) + (7- ConvertRankToCol(start.file)+1));
         if(!(pieceContainer & currentPos))return;
-        bool pieceRemoved = false;
+        PlayedMove move;
 
         // Remove other piece if already there in position where we are moving or Enpassant played
         if(ChessState::Get().GetPieceOnChessCoordinate(end) != invalid || ( (piece == whitePawn || piece == blackPawn) && abs(start.file - end.file) == 1 ))
@@ -125,17 +125,21 @@ namespace chess
             if(endPiece == invalid)
             {
                 // Enpassant move
-                pieceRemoved = true;
-                mRemovedPiecePosition = ChessCoordinate{start.rank,end.file};
-                mRemovedPiece = GetPieceOnChessCoordinate(mRemovedPiecePosition);
+                move.mCapturedPieceCoordinate = ChessCoordinate{start.rank,end.file};
+                move.mCapturedPiece = GetPieceOnChessCoordinate(move.mCapturedPieceCoordinate);
             }
             else
             {
-                pieceRemoved = true;
-                mRemovedPiece = endPiece;
-                mRemovedPiecePosition = end;
+                move.mCapturedPiece = endPiece;
+                move.mCapturedPieceCoordinate = end;
             }
-            ChessState::Get().RemovePiece(mRemovedPiece, mRemovedPiecePosition);
+            ChessState::Get().RemovePiece(move.mCapturedPiece, move.mCapturedPieceCoordinate);
+        }
+
+        // Check for castling
+        if((piece == whiteKing || piece == blackKing) && abs(start.file - end.file) > 1 )
+        {
+            move.mCastling = end.file - start.file > 0 ? KingSide : QueenSide;
         }
 
         // Unset the current high bit
@@ -144,37 +148,79 @@ namespace chess
         // Set the end position bit
         pieceContainer |= 1ULL << (8 * (end.rank - 1) + (7- ConvertRankToCol(end.file)+1));
 
-        // Updating for undoing move if needed
-        mLastPieceMoved = piece;
-        mLastMovedStartMove = start;
-        mLastMovedEndMove = end;
-        mRemovedPieceLastMove = pieceRemoved;
+        // Updating moves
+        move.mPiece = piece;
+        move.mStartCoordinate = start;
+        move.mEndCoordinate = end;
+        if(log)
+            mMovesPlayed.emplace_back(move);
 
         UpdateAttackedSquare();
     }
 
-    void ChessState::UndoLastMove()
+    bool ChessState::UndoLastMove()
     {
-        if(!mLastMovedStartMove.isValid() || !mLastMovedEndMove.isValid())return;
+        if(mMovesPlayed.size() == 0) return false;
+        PlayedMove LastMove = mMovesPlayed.back();
+        mMovesPlayed.pop_back();
+
+        if(!LastMove.mStartCoordinate.isValid() || !LastMove.mEndCoordinate.isValid())return false;
+
+        // Undoing castling
+        if(LastMove.mCastling != NoCastling)
+        {
+            if(LastMove.mPiece == whiteKing)
+            {
+                ChessCoordinate kingCoordinateEnd = ChessCoordinate{1,'e'};
+                ChessCoordinate kingCoordinateStart = ChessCoordinate{1,'g'};
+                ChessCoordinate rookCoordinateEnd = ChessCoordinate{1,'h'};
+                ChessCoordinate rookCoordinateStart = ChessCoordinate{1,'f'};
+                if(LastMove.mCastling == KingSide)
+                {
+                    SetPiecePosition(whiteKing,kingCoordinateStart,kingCoordinateEnd,false);
+                    SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
+                }
+                else if(LastMove.mCastling == QueenSide)
+                {
+                    kingCoordinateStart.file = 'c';
+                    rookCoordinateStart.file = 'd';
+                    rookCoordinateEnd.file = 'a';
+                    SetPiecePosition(whiteKing,kingCoordinateStart,kingCoordinateEnd,false);
+                    SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
+                }
+            }
+            else if(LastMove.mPiece == blackKing)
+            {
+                ChessCoordinate kingCoordinateEnd = ChessCoordinate{8,'e'};
+                ChessCoordinate kingCoordinateStart = ChessCoordinate{8,'g'};
+                ChessCoordinate rookCoordinateEnd = ChessCoordinate{8,'h'};
+                ChessCoordinate rookCoordinateStart = ChessCoordinate{8,'f'};
+                if(LastMove.mCastling == KingSide)
+                {
+                    SetPiecePosition(blackKing,kingCoordinateStart,kingCoordinateEnd,false);
+                    SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);
+                }
+                else if(LastMove.mCastling == QueenSide)
+                {
+                    kingCoordinateStart.file = 'c';
+                    rookCoordinateStart.file = 'd';
+                    rookCoordinateEnd.file = 'a';
+                    SetPiecePosition(blackKing,kingCoordinateStart,kingCoordinateEnd,false);
+                    SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);  
+                }
+            }
+            return true;
+        }
 
         // Spawning removed piece
-        if(mRemovedPieceLastMove && mRemovedPiece != invalid && mRemovedPiecePosition.isValid())
+        if(LastMove.mCapturedPiece != invalid && LastMove.mCapturedPieceCoordinate.isValid())
         {
-            SpawnPiece(mRemovedPiece,mRemovedPiecePosition);
+            SpawnPiece(LastMove.mCapturedPiece,LastMove.mCapturedPieceCoordinate);
         }
+
         // reseting to previous position
-        SetPiecePosition(mLastPieceMoved,mLastMovedEndMove,mLastMovedStartMove);
-        
-        // Reseting to invalid state
-        mRemovedPieceLastMove = false;
-        mRemovedPiece = invalid;
-        mRemovedPiecePosition.file = invalid;
-        mRemovedPiecePosition.rank = -1;
-        mLastPieceMoved = invalid;
-        mLastMovedStartMove.file = invalid;
-        mLastMovedStartMove.rank = -1;
-        mLastMovedEndMove.file = invalid;
-        mLastMovedEndMove.rank = -1;
+        SetPiecePosition(LastMove.mPiece,LastMove.mEndCoordinate,LastMove.mStartCoordinate,false);
+        return true;
     }
 
     char ChessState::GetPieceOnChessCoordinate(ChessCoordinate coordinate)
@@ -226,7 +272,8 @@ namespace chess
 
     List<ChessCoordinate> ChessState::GetLastPlayedMove()
     {
-        return {mLastMovedStartMove,mLastMovedEndMove};
+        if(mMovesPlayed.size() == 0)return {};
+        return {mMovesPlayed.back().mStartCoordinate,mMovesPlayed.back().mEndCoordinate};
     }
     
     int ChessState::GetPieceCount(char piece)
@@ -258,12 +305,7 @@ namespace chess
           mBlackKing{0},
           mWhiteAttackedSquares{},
           mBlackAttackedSquares{},
-          mRemovedPiece{invalid},
-          mRemovedPiecePosition{-1, invalid},
-          mRemovedPieceLastMove{false},
-          mLastPieceMoved{invalid},
-          mLastMovedStartMove{-1, invalid},
-          mLastMovedEndMove{-1, invalid}
+          mMovesPlayed{}
     {
         ResetToStartPosition();
     }

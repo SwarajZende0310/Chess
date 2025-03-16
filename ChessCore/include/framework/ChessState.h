@@ -13,9 +13,9 @@ namespace chess
             
             List<ChessCoordinate> GetPiecePosiiton(char piece);
 
-            void SetPiecePosition(char piece, ChessCoordinate& start, ChessCoordinate& end);
+            void SetPiecePosition(char piece, ChessCoordinate& start, ChessCoordinate& end,bool log = true);
 
-            void UndoLastMove();
+            bool UndoLastMove();
 
             char GetPieceOnChessCoordinate(ChessCoordinate coordinate);
 
@@ -63,11 +63,6 @@ namespace chess
             Set<ChessCoordinate,ChessCoordinateHashFunction> mWhiteAttackedSquares;
             Set<ChessCoordinate,ChessCoordinateHashFunction> mBlackAttackedSquares;
 
-            char mRemovedPiece;
-            ChessCoordinate mRemovedPiecePosition;
-            bool mRemovedPieceLastMove;
-            char mLastPieceMoved;
-            ChessCoordinate mLastMovedStartMove;
-            ChessCoordinate mLastMovedEndMove;
+            List<PlayedMove> mMovesPlayed;
     };
 }
