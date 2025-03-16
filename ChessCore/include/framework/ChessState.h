@@ -32,6 +32,8 @@ namespace chess
 
             int GetPieceCount(char piece);
 
+            bool IsFirstMove(ChessCoordinate coordinate);
+
         protected:
             ChessState();
 
@@ -64,5 +66,7 @@ namespace chess
             Set<ChessCoordinate,ChessCoordinateHashFunction> mBlackAttackedSquares;
 
             List<PlayedMove> mMovesPlayed;
+
+            Dictionary<ChessCoordinate,bool,ChessCoordinateHashFunction> mFirstMove;
     };
 }

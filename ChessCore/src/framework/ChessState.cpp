@@ -88,6 +88,16 @@ namespace chess
 
         //Black King
         mBlackKing |= (1ULL << ( 8 * (row-1) + 3));
+
+        // Set first move to true
+        mFirstMove.clear();
+        for(int i = 0; i < 8; i++)
+        {
+            mFirstMove[ChessCoordinate{1,char('a'+i)}] = true;
+            mFirstMove[ChessCoordinate{2,char('a'+i)}] = true;
+            mFirstMove[ChessCoordinate{7,char('a'+i)}] = true;
+            mFirstMove[ChessCoordinate{8,char('a'+i)}] = true;
+        }
     }
 
     List<ChessCoordinate> ChessState::GetPiecePosiiton(char piece)
@@ -153,7 +163,10 @@ namespace chess
         move.mStartCoordinate = start;
         move.mEndCoordinate = end;
         if(log)
+        {
+            mFirstMove[end] = false;
             mMovesPlayed.emplace_back(move);
+        }    
 
         UpdateAttackedSquare();
     }
@@ -188,6 +201,8 @@ namespace chess
                     SetPiecePosition(whiteKing,kingCoordinateStart,kingCoordinateEnd,false);
                     SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
                 }
+                mFirstMove[kingCoordinateEnd] = true;
+                mFirstMove[rookCoordinateEnd] = true;
             }
             else if(LastMove.mPiece == blackKing)
             {
@@ -208,6 +223,8 @@ namespace chess
                     SetPiecePosition(blackKing,kingCoordinateStart,kingCoordinateEnd,false);
                     SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);  
                 }
+                mFirstMove[kingCoordinateEnd] = true;
+                mFirstMove[rookCoordinateEnd] = true;
             }
             return true;
         }
@@ -289,7 +306,16 @@ namespace chess
 
         return pieceCount;
     }
-    
+
+    bool ChessState::IsFirstMove(ChessCoordinate coordinate)
+    {
+        if(mFirstMove.count(coordinate) > 0)
+        {
+            return mFirstMove[coordinate];
+        }
+        return false;
+    }
+
     ChessState::ChessState()
         : mWhitePawns{0},
           mWhiteKnights{0},
@@ -305,7 +331,8 @@ namespace chess
           mBlackKing{0},
           mWhiteAttackedSquares{},
           mBlackAttackedSquares{},
-          mMovesPlayed{}
+          mMovesPlayed{},
+          mFirstMove{}
     {
         ResetToStartPosition();
     }

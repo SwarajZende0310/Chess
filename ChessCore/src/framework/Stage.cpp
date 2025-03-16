@@ -276,9 +276,9 @@ namespace chess
       {
         if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != whiteKing 
           || abs(rookCoordinate.file - kingCoordinate.file) < 2
-          || !mWhiteKing->IsFirstMove()
-          || (offsetFile == 1 && !mWhiteRook->IsFirstMove(ChessCoordinate{1,'h'}))
-          || (offsetFile == -1 && !mWhiteRook->IsFirstMove(ChessCoordinate{1,'a'}))
+          || !ChessState::Get().IsFirstMove(ChessState::Get().GetPiecePosiiton(whiteKing)[0])
+          || (offsetFile == 1 && !ChessState::Get().IsFirstMove(ChessCoordinate{1,'h'}))
+          || (offsetFile == -1 && !ChessState::Get().IsFirstMove(ChessCoordinate{1,'a'}))
           || mWhiteKing->IsInCheck())
             return false;
         
@@ -298,9 +298,9 @@ namespace chess
       {
         if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != blackKing 
           || abs(rookCoordinate.file - kingCoordinate.file) < 2
-          || !mBlackKing->IsFirstMove() 
-          || (offsetFile == 1 && !mBlackRook->IsFirstMove(ChessCoordinate{8,'h'}))
-          || (offsetFile == -1 && !mBlackRook->IsFirstMove(ChessCoordinate{8,'a'}))
+          || !ChessState::Get().IsFirstMove(ChessState::Get().GetPiecePosiiton(blackKing)[0])
+          || (offsetFile == 1 && !ChessState::Get().IsFirstMove(ChessCoordinate{8,'h'}))
+          || (offsetFile == -1 && !ChessState::Get().IsFirstMove(ChessCoordinate{8,'a'}))
           || mBlackKing->IsInCheck())
             return false;
         
