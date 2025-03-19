@@ -34,7 +34,8 @@ namespace chess
     mEndPose{-1,invalid},
     mWhiteTurn{true},
     mMouseDragging{false},
-    mMousePosition{-1,-1}
+    mMousePosition{-1,-1},
+    mFlipBoard{false}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -153,6 +154,10 @@ namespace chess
         {
           SetPieceMoved(true);
           mWhiteTurn = !mWhiteTurn;
+        }
+        else if(keyPress->scancode == sf::Keyboard::Scan::F)
+        {
+          mFlipBoard = !mFlipBoard;
         }
       }
       return handled;
@@ -372,6 +377,11 @@ namespace chess
       int row = chessCoordinate.rank - 1;
       int col = chessCoordinate.file - 'a';
 
+      if(mFlipBoard)//Black's perspective
+      {
+        return sf::Vector2f{mBoard->GetSquareOffsetX() * (7 - col) + mPieceOffsetX, mBoard->GetSquareOffsetY() * (row) + mPieceOffsetY};
+      }
+      // White's perspective
       return sf::Vector2f{mBoard->GetSquareOffsetX() * (col) + mPieceOffsetX, mBoard->GetSquareOffsetY() * (7 - row) + mPieceOffsetY};
   }
 
@@ -379,7 +389,7 @@ namespace chess
   {
       int row = position.y / mBoard->GetSquareOffsetX();
       int col = position.x / mBoard->GetSquareOffsetY(); 
-      return ChessCoordinate{7 - row + 1, (char)(col + 'a')};
+      return mFlipBoard ? ChessCoordinate{row + 1, (char)((7 - col ) + 'a')} : ChessCoordinate{7 - row + 1, (char)(col + 'a')};
   }
 
   shared<Board> Stage::SpawnBoard(const sf::Vector2f &boardStart, const sf::Vector2f &boardEnd)

@@ -87,6 +87,8 @@ namespace chess
 
       bool mMouseDragging;
       sf::Vector2i mMousePosition;
+
+      bool mFlipBoard;
   };
 
   template <typename PieceType>
