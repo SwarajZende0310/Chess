@@ -129,7 +129,9 @@ namespace chess
         PlayedMove move;
 
         // Remove other piece if already there in position where we are moving or Enpassant played
-        if(ChessState::Get().GetPieceOnChessCoordinate(end) != invalid || ( (piece == whitePawn || piece == blackPawn) && abs(start.file - end.file) == 1 ))
+        if(ChessState::Get().GetPieceOnChessCoordinate(end) != invalid 
+            || ( piece == whitePawn && abs(start.file - end.file) == 1 && (end.rank - start.rank) > 0 ) 
+            || ( piece == blackPawn && abs(start.file - end.file) == 1 && (end.rank - start.rank) < 0 ) )
         {
             char endPiece = ChessState::Get().GetPieceOnChessCoordinate(end);
             if(endPiece == invalid)
