@@ -226,6 +226,7 @@ namespace chess
                 mFirstMove[kingCoordinateEnd] = true;
                 mFirstMove[rookCoordinateEnd] = true;
             }
+            mMovesWithoutCapture -=1;
             return true;
         }
 
@@ -314,6 +315,18 @@ namespace chess
             return mFirstMove[coordinate];
         }
         return false;
+    }
+
+    int ChessState::GetMovesWithoutCapture()
+    {
+        // Iterate through played moves and check for pawn moves or piece captures
+        int moveCount = 0;
+        for(int i = 0; i < mMovesPlayed.size(); i++)
+        {
+            PlayedMove move = mMovesPlayed[i];
+            moveCount = (move.mCapturedPiece != invalid || move.mPiece == whitePawn || move.mPiece == blackPawn) ? 0 : moveCount + 1 ;
+        }
+        return moveCount;
     }
 
     ChessState::ChessState()

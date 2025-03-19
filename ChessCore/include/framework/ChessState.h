@@ -34,6 +34,8 @@ namespace chess
 
             bool IsFirstMove(ChessCoordinate coordinate);
 
+            int GetMovesWithoutCapture();
+
         protected:
             ChessState();
 
@@ -68,5 +70,7 @@ namespace chess
             List<PlayedMove> mMovesPlayed;
 
             Dictionary<ChessCoordinate,bool,ChessCoordinateHashFunction> mFirstMove;
+
+            int mMovesWithoutCapture;
     };
 }

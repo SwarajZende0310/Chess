@@ -462,6 +462,9 @@ namespace chess
         // Check for draw 
         if(ongoing)
         {
+          //Check for 50 move rule
+          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return Draw;  
+
           // Check if enough checkmating material available
           if(ChessState::Get().GetPieceCount(whiteQueen) || ChessState::Get().GetPieceCount(blackQueen) 
             || ChessState::Get().GetPieceCount(whiteRook) || ChessState::Get().GetPieceCount(blackRook)
@@ -513,6 +516,9 @@ namespace chess
         // Check for draw 
         if(ongoing)
         {
+          //Check for 50 move rule
+          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return Draw;
+
           // Check if enough checkmating material available
           if(ChessState::Get().GetPieceCount(whiteQueen) || ChessState::Get().GetPieceCount(blackQueen)
             || ChessState::Get().GetPieceCount(whiteRook) || ChessState::Get().GetPieceCount(blackRook)
