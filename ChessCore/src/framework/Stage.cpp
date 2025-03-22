@@ -115,6 +115,23 @@ namespace chess
                 mStartPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
                 mPieceSelected = CheckCorrectPieceSelected(ChessState::Get().GetPieceOnChessCoordinate(mStartPose));
                 handled = true;
+
+                // Show legal moves here
+                char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+                if(mPieceSelected)
+                {
+                  shared<Piece> piecePointer = GetPieceContainer(piece);
+                  for(auto move : piecePointer->GetAllPossibleMoves(mStartPose))
+                  {
+                    ChessState::Get().SetPiecePosition(piece,mStartPose,move);
+                    if(!ChessState::Get().KingInCheck(mWhiteTurn))
+                    {
+                      LOG("%c%d",move.file,move.rank);
+                    }
+                    ChessState::Get().UndoLastMove();
+                  }
+                  LOG("");
+                }
               }
               else
               {
