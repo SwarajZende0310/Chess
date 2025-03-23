@@ -192,13 +192,13 @@ namespace chess
       List<ChessCoordinate> lastMove = ChessState::Get().GetLastPlayedMove();
       if(lastMove.size()<2)return false;
       if(mWhitePieces && lastMove[0].rank == 7 && lastMove[1].rank == 5 && startCoordinate.rank == 5 && endCoordinate.rank == 6 
-        && lastMove[0].file == lastMove[1].file
+        && lastMove[0].file == lastMove[1].file && endCoordinate.file == lastMove[0].file
         && abs(startCoordinate.file - endCoordinate.file) == 1 && abs(startCoordinate.file - lastMove[0].file) == 1)
       {
         return true;
       }
       else if(!mWhitePieces && lastMove[0].rank == 2 && lastMove[1].rank == 4 && startCoordinate.rank == 4 && endCoordinate.rank == 3 
-        && lastMove[0].file == lastMove[1].file
+        && lastMove[0].file == lastMove[1].file && endCoordinate.file == lastMove[0].file
         && abs(startCoordinate.file - endCoordinate.file) == 1 && abs(startCoordinate.file - lastMove[0].file) == 1)
       {
         return true;
