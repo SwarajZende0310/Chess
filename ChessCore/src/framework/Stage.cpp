@@ -37,7 +37,8 @@ namespace chess
     mMousePosition{-1,-1},
     mFlipBoard{false},
     mRenderPossibleMoves{true},
-    mPossibleMovesColor{201,201,201,90}
+    mPossibleMovesColor{201,201,201,90},
+    mKingInCheckColor{150,0,0,100}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -176,6 +177,9 @@ namespace chess
 
   void Stage::RenderPieces()
   {
+    // Render red if king in check
+    RenderKingInCheck();
+
     char whitePieces[6] = {whiteKing,whiteQueen,whiteRook,whiteBishop,whiteKnight,whitePawn};
     char blackPieces[6] = {blackKing,blackQueen,blackRook,blackBishop,blackKnight,blackPawn};
 
@@ -597,6 +601,18 @@ namespace chess
         mOwningApp->GetWindow().draw(circle);
       }
     }
+  }
+
+  void Stage::RenderKingInCheck()
+  {
+    if(ChessState::Get().KingInCheck(mWhiteTurn))
+    {
+      sf::RectangleShape rect{sf::Vector2f{mBoard->GetSquareOffsetX(),mBoard->GetSquareOffsetY()}};
+      rect.setFillColor(mKingInCheckColor);
+      rect.setPosition(ConvertChessCoordinateToPosition(mWhiteTurn ? ChessState::Get().GetPiecePosiiton(whiteKing)[0] : ChessState::Get().GetPiecePosiiton(blackKing)[0] ) + sf::Vector2f{-10.f,-10.f});
+      mOwningApp->GetWindow().draw(rect);
+    }
+    
   }
 
   sf::Vector2f Stage::GetSpriteScale()

@@ -58,6 +58,8 @@ namespace chess
 
       void RenderPossibleMoves();
 
+      void RenderKingInCheck();
+
       Application* mOwningApp;
 
       shared<Board> mBoard;
@@ -94,6 +96,8 @@ namespace chess
 
       bool mRenderPossibleMoves;
       sf::Color mPossibleMovesColor;
+
+      sf::Color mKingInCheckColor;
   };
 
   template <typename PieceType>
