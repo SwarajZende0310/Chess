@@ -77,9 +77,9 @@ namespace chess
     void Pawn::SetPieceLocation(const sf::Vector2f &newLocation, bool whitePieces)
     {
         if(whitePieces)
-            mWhitePawnSprite.setPosition(newLocation);
+            mWhitePawnSprite.setPosition(newLocation + sf::Vector2f{6.f,0.f});
         else
-            mBlackPawnSprite.setPosition(newLocation);
+            mBlackPawnSprite.setPosition(newLocation + sf::Vector2f{6.f,0.f});
     }
     
     void Pawn::SetPieceRotation(float newRotation, bool whitePieces)

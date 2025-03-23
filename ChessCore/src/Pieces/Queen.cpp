@@ -59,9 +59,9 @@ namespace chess
     void Queen::SetPieceLocation(const sf::Vector2f &newLocation, bool whitePieces)
     {
         if(whitePieces)
-            mWhiteQueenSprite.setPosition(newLocation);
+            mWhiteQueenSprite.setPosition(newLocation + sf::Vector2f{-6.f,0.f});
         else
-            mBlackQueenSprite.setPosition(newLocation);
+            mBlackQueenSprite.setPosition(newLocation + sf::Vector2f{-6.f,0.f});
     }
     
     void Queen::SetPieceRotation(float newRotation, bool whitePieces)
