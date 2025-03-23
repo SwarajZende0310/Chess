@@ -6,7 +6,7 @@
 namespace chess 
 {
     GameApplication::GameApplication()
-        : Application{800, 800, "Chess Game"} 
+        : Application{1000, 1000, "Chess Game"} 
     {
         AssetManager::Get().SetRootDirectory(GetResourceDir());
         weak<Stage> newStage = Application::LoadWorld<Stage>();

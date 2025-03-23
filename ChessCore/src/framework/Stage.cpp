@@ -40,7 +40,7 @@ namespace chess
     mPossibleMovesColor{201,201,201,90},
     mKingInCheckColor{150,0,0,100}
   {
-    SpawnBoard({0.f,0.f},{800.f,800.f});
+    SpawnBoard({100.f,100.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
 
     mWhiteKing = SpawnPiece<King>(true);
@@ -398,16 +398,22 @@ namespace chess
 
       if(mFlipBoard)//Black's perspective
       {
-        return sf::Vector2f{mBoard->GetSquareOffsetX() * (7 - col) + mPieceOffsetX, mBoard->GetSquareOffsetY() * (row) + mPieceOffsetY};
+        return sf::Vector2f{mBoard->GetBoardStart().x + mBoard->GetSquareOffsetX() * (7 - col) + mPieceOffsetX, mBoard->GetBoardStart().y + mBoard->GetSquareOffsetY() * (row) + mPieceOffsetY};
       }
       // White's perspective
-      return sf::Vector2f{mBoard->GetSquareOffsetX() * (col) + mPieceOffsetX, mBoard->GetSquareOffsetY() * (7 - row) + mPieceOffsetY};
+      return sf::Vector2f{mBoard->GetBoardStart().x + mBoard->GetSquareOffsetX() * (col) + mPieceOffsetX, mBoard->GetBoardStart().y + mBoard->GetSquareOffsetY() * (7 - row) + mPieceOffsetY};
   }
 
   ChessCoordinate Stage::ConvertPositionToChessCoordinate(const sf::Vector2i &position)
   {
-      int row = position.y / mBoard->GetSquareOffsetX();
-      int col = position.x / mBoard->GetSquareOffsetY(); 
+      if(position.x < mBoard->GetBoardStart().x || position.y < mBoard->GetBoardStart().y 
+        || position.x > mBoard->GetBoardDimensions().x + mBoard->GetBoardStart().x
+        || position.y > mBoard->GetBoardDimensions().y + mBoard->GetBoardStart().y) 
+        return ChessCoordinate{invalid,invalid};
+      
+      int row =  (position.y - mBoard->GetBoardStart().y) / mBoard->GetSquareOffsetX();
+      int col =  (position.x - mBoard->GetBoardStart().x) / mBoard->GetSquareOffsetY(); 
+
       return mFlipBoard ? ChessCoordinate{row + 1, (char)((7 - col ) + 'a')} : ChessCoordinate{7 - row + 1, (char)(col + 'a')};
   }
 
