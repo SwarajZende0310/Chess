@@ -35,7 +35,9 @@ namespace chess
     mWhiteTurn{true},
     mMouseDragging{false},
     mMousePosition{-1,-1},
-    mFlipBoard{false}
+    mFlipBoard{false},
+    mRenderPossibleMoves{true},
+    mPossibleMovesColor{201,201,201,90}
   {
     SpawnBoard({0.f,0.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -115,23 +117,6 @@ namespace chess
                 mStartPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
                 mPieceSelected = CheckCorrectPieceSelected(ChessState::Get().GetPieceOnChessCoordinate(mStartPose));
                 handled = true;
-
-                // Show legal moves here
-                char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
-                if(mPieceSelected)
-                {
-                  shared<Piece> piecePointer = GetPieceContainer(piece);
-                  for(auto move : piecePointer->GetAllPossibleMoves(mStartPose))
-                  {
-                    ChessState::Get().SetPiecePosition(piece,mStartPose,move);
-                    if(!ChessState::Get().KingInCheck(mWhiteTurn))
-                    {
-                      LOG("%c%d",move.file,move.rank);
-                    }
-                    ChessState::Get().UndoLastMove();
-                  }
-                  LOG("");
-                }
               }
               else
               {
@@ -175,6 +160,10 @@ namespace chess
         else if(keyPress->scancode == sf::Keyboard::Scan::F)
         {
           mFlipBoard = !mFlipBoard;
+        }
+        else if(keyPress->scancode == sf::Keyboard::Scan::R)
+        {
+          mRenderPossibleMoves = !mRenderPossibleMoves;
         }
       }
       return handled;
@@ -224,11 +213,20 @@ namespace chess
       }
     }
 
+    // Render Possible moves if piece Selected
+    if(mRenderPossibleMoves && mPieceSelected)
+    {
+      RenderPossibleMoves();
+    }
+
     if(mMouseDragging && mPieceSelected && mStartPose.isValid())
     {
       char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
-      GetPieceContainer(piece)->SetPieceLocation({float(mMousePosition.x - mBoard->GetSquareOffsetX()/2.f) ,float(mMousePosition.y - mBoard->GetSquareOffsetY()/2.f)},GetPieceContainer(piece)->GetPieceColor());
-      GetPieceContainer(piece)->RenderPiece();
+      if(piece != invalid)
+      {
+        GetPieceContainer(piece)->SetPieceLocation({float(mMousePosition.x - mBoard->GetSquareOffsetX()/2.f) ,float(mMousePosition.y - mBoard->GetSquareOffsetY()/2.f)},GetPieceContainer(piece)->GetPieceColor());
+        GetPieceContainer(piece)->RenderPiece();
+      }
     }
   }
 
@@ -564,6 +562,41 @@ namespace chess
         }
       }
     return Draw;
+  }
+
+  void Stage::RenderPossibleMoves()
+  {
+    char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+    if(piece == invalid)return;
+
+    sf::CircleShape circle{mBoard->GetSquareOffsetY()/6.f};
+
+    shared<Piece> piecePointer = GetPieceContainer(piece);
+    for(auto move : piecePointer->GetAllPossibleMoves(mStartPose))
+    {
+      ChessState::Get().SetPiecePosition(piece,mStartPose,move);
+      bool kingInCheck = ChessState::Get().KingInCheck(mWhiteTurn);
+      ChessState::Get().UndoLastMove();
+      if(!kingInCheck)
+      {
+        if(ChessState::Get().GetPieceOnChessCoordinate(move) == invalid)
+        {
+          circle.setRadius(mBoard->GetSquareOffsetY()/6.f);
+          circle.setOutlineThickness(0.f);
+          circle.setPosition(sf::Vector2f{mBoard->GetSquareOffsetX()/4.f , mBoard->GetSquareOffsetY()/4.f} + ConvertChessCoordinateToPosition(move));
+          circle.setFillColor(mPossibleMovesColor);
+        }
+        else//If move is a capture
+        {
+          circle.setRadius(mBoard->GetSquareOffsetY()/2.6f);
+          circle.setOutlineColor(mPossibleMovesColor);
+          circle.setOutlineThickness(10.f);
+          circle.setFillColor(sf::Color{0,0,0,0});
+          circle.setPosition(ConvertChessCoordinateToPosition(move));
+        }
+        mOwningApp->GetWindow().draw(circle);
+      }
+    }
   }
 
   sf::Vector2f Stage::GetSpriteScale()

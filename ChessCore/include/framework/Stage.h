@@ -56,6 +56,8 @@ namespace chess
 
       int EndState();
 
+      void RenderPossibleMoves();
+
       Application* mOwningApp;
 
       shared<Board> mBoard;
@@ -89,6 +91,9 @@ namespace chess
       sf::Vector2i mMousePosition;
 
       bool mFlipBoard;
+
+      bool mRenderPossibleMoves;
+      sf::Color mPossibleMovesColor;
   };
 
   template <typename PieceType>
