@@ -60,6 +60,8 @@ namespace chess
 
       void RenderKingInCheck();
 
+      void RenderLastPlayedMove();
+
       Application* mOwningApp;
 
       shared<Board> mBoard;

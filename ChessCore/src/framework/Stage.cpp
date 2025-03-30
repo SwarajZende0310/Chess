@@ -173,6 +173,7 @@ namespace chess
   void Stage::RenderBoard()
   {
     mBoard->RefreshBoard();
+    RenderLastPlayedMove();
   }
 
   void Stage::RenderPieces()
@@ -619,6 +620,21 @@ namespace chess
       mOwningApp->GetWindow().draw(rect);
     }
     
+  }
+
+  void Stage::RenderLastPlayedMove()
+  {
+    List<ChessCoordinate> lastMove = ChessState::Get().GetLastPlayedMove();
+    if(lastMove.size() < 2) return;
+
+    sf::RectangleShape rect{{mBoard->GetSquareOffsetX(),mBoard->GetSquareOffsetY()}};
+    rect.setFillColor({255,255,255,20});
+    
+    rect.setPosition(ConvertChessCoordinateToPosition(lastMove[0]) - sf::Vector2f{10.f,8.f});
+    mOwningApp->GetWindow().draw(rect);
+
+    rect.setPosition(ConvertChessCoordinateToPosition(lastMove[1]) - sf::Vector2f{10.f,8.f});
+    mOwningApp->GetWindow().draw(rect);
   }
 
   sf::Vector2f Stage::GetSpriteScale()
