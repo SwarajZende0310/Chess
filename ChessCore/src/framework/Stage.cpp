@@ -87,9 +87,9 @@ namespace chess
         int currState = EndState();
         if(currState != Ongoing)
         {
-          if(currState == Draw)
+          if(currState == DRAW)
           {
-            LOG("Draw");
+            LOG("DRAW");
           }
           else if(currState == WhiteWon)
           {
@@ -499,7 +499,7 @@ namespace chess
         if(ongoing)
         {
           //Check for 50 move rule
-          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return Draw;  
+          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return DRAW;  
 
           // Check if enough checkmating material available
           if(ChessState::Get().GetPieceCount(whiteQueen) || ChessState::Get().GetPieceCount(blackQueen) 
@@ -511,11 +511,11 @@ namespace chess
             {
               return Ongoing;
             }
-          return Draw;
+          return DRAW;
         }
         else
         {
-          return whiteKingInCheck ? BlackWon : Draw;
+          return whiteKingInCheck ? BlackWon : DRAW;
         }
       }
       // Black's turn
@@ -553,7 +553,7 @@ namespace chess
         if(ongoing)
         {
           //Check for 50 move rule
-          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return Draw;
+          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return DRAW;
 
           // Check if enough checkmating material available
           if(ChessState::Get().GetPieceCount(whiteQueen) || ChessState::Get().GetPieceCount(blackQueen)
@@ -565,14 +565,14 @@ namespace chess
             {
               return Ongoing;
             }
-          return Draw;
+          return DRAW;
         }
         else
         {
-          return blackKingInCheck ? WhiteWon : Draw;
+          return blackKingInCheck ? WhiteWon : DRAW;
         }
       }
-    return Draw;
+    return DRAW;
   }
 
   void Stage::RenderPossibleMoves()

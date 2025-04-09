@@ -55,7 +55,7 @@ namespace chess
 
     // Game End State
     #define WhiteWon  1
-    #define Draw      0
+    #define DRAW      0
     #define BlackWon -1
     #define Ongoing   2
 
