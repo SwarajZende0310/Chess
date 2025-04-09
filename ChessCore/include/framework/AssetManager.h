@@ -11,6 +11,7 @@ namespace chess
     public:
      static AssetManager& Get();
      shared<sf::Texture> LoadTexture(const std::string& texturePath);
+     shared<sf::Font> LoadFont(const std::string &path);
      void SetRootDirectory(const std::string& rootDir);
     protected:
       AssetManager();
@@ -19,6 +20,7 @@ namespace chess
       shared<T> LoadAssets(const std::string& path, Dictionary<std::string, shared<T>> &container);
       static unique<AssetManager> mAssetManager;
       Dictionary<std::string,shared<sf::Texture>> mLoadedTextures;
+      Dictionary<std::string,shared<sf::Font>> mLoadedFontMap;
       std::string mRootDir;
   };
   

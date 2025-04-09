@@ -24,7 +24,26 @@ namespace chess
     return LoadAssets(texturePath, mLoadedTextures); 
   }
 
-  void AssetManager::SetRootDirectory(const std::string& rootDir)
+  shared<sf::Font> AssetManager::LoadFont(const std::string &path)
+  {
+    if(path.size() == 0) return shared<sf::Font>{nullptr};
+    
+    auto found  = mLoadedFontMap.find(path);
+
+    if(found != mLoadedFontMap.end())
+    {
+      return mLoadedFontMap[path];
+    }
+    
+    shared<sf::Font> newAsset{new sf::Font};
+    if(newAsset->openFromFile(mRootDir + path))
+    {
+      return mLoadedFontMap[path] = newAsset; 
+    }
+
+    return nullptr;
+  }
+  void AssetManager::SetRootDirectory(const std::string &rootDir)
   {
     mRootDir = rootDir;
   }
