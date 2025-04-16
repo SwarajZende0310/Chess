@@ -38,6 +38,9 @@ add_library(
 
   ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/Pawn.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/Pawn.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/Widget.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/Widget.cpp
 )
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}
