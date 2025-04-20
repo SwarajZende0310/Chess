@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "framework/Core.h"
+#include"widgets/Button.h"
 
 namespace chess
 {
@@ -100,6 +101,8 @@ namespace chess
       sf::Color mPossibleMovesColor;
 
       sf::Color mKingInCheckColor;
+
+      Button mTestButton;
   };
 
   template <typename PieceType>

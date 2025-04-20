@@ -10,7 +10,7 @@ namespace chess
         }
     }
 
-    bool Widget::HandleEvent(std::optional<sf::Event> &event)
+    bool Widget::HandleEvent(const std::optional<sf::Event> &event)
     {
         return false;
     }
@@ -24,7 +24,7 @@ namespace chess
     void Widget::SetWidgetRotation(sf::Angle newRotation)
     {
         mWidgetTransform.setRotation(newRotation);
-        RoationUpdated(newRotation);
+        RotationUpdated(newRotation);
     }
 
     sf::Vector2f Widget::GetCenterPosition()
@@ -47,7 +47,7 @@ namespace chess
     {
     }
 
-    void Widget::RoationUpdated(const sf::Angle &newRotation)
+    void Widget::RotationUpdated(const sf::Angle &newRotation)
     {
     }
 }

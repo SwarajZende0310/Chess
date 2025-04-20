@@ -8,7 +8,7 @@ namespace chess
     {
         public:
             void NativeDraw(sf::RenderWindow& windowRef);
-            virtual bool HandleEvent(std::optional<sf::Event> &event);
+            virtual bool HandleEvent(const std::optional<sf::Event> &event);
 
             void SetWidgetLocation(sf::Vector2f newLocation);
             void SetWidgetRotation(sf::Angle newRotation);
@@ -28,7 +28,7 @@ namespace chess
         private:
             virtual void Draw(sf::RenderWindow& windowRef);
             virtual void LocationUpdated(const sf::Vector2f& newLocation);
-            virtual void RoationUpdated(const sf::Angle& newRotation);
+            virtual void RotationUpdated(const sf::Angle& newRotation);
 
             sf::Transformable mWidgetTransform;
             bool mIsVisible;
