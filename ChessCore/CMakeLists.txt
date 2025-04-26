@@ -21,6 +21,12 @@ add_library(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/ChessState.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/ChessState.cpp
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Object.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Object.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/framework/Delegate.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/Delegate.cpp
+
   ${CMAKE_CURRENT_SOURCE_DIR}/include/Pieces/King.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Pieces/King.cpp
 
