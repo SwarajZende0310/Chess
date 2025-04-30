@@ -15,6 +15,11 @@ namespace chess
     {
     }
 
+    void Object::Destroy()
+    {
+
+    }
+    
     weak<Object> Object::GetWeakRef()
     {
         return weak_from_this();

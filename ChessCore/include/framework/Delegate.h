@@ -15,13 +15,18 @@ namespace chess
             {
                 std::function<bool(Args...)> callbackFunc = [obj, callback](Args ...args ) -> bool
                 {
+                    // Bypassing the check for whether obj is expired as Stage has only one weak reference
+                    // TODO remove this and give stage a shared reference
+                    (static_cast<ClassName*>(obj.lock().get())->*callback)(args...);
+                    return true;
+                    //
                     if(!obj.expired())
                     {
                         (static_cast<ClassName*>(obj.lock().get())->*callback)(args...);
                         return true;
                     }
                     return false;
-                }
+                };
                 mCallbacks.push_back(callbackFunc);
             }
 

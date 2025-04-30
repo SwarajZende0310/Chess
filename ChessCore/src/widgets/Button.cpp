@@ -59,6 +59,7 @@ namespace chess
             {
                 if(mButtonSprite.getGlobalBounds().contains(mMousePosition) && mIsButtonDown)
                 {
+                    mOnButtonClicked.Broadcast();
                     handled = true;
                 }
             }

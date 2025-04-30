@@ -15,7 +15,8 @@ namespace chess
   class Bishop;
   class Rook;
   class Queen;
-  class Stage
+
+  class Stage : public Object
   {
     public:
       Stage(Application* owningApp);
@@ -62,6 +63,8 @@ namespace chess
       void RenderKingInCheck();
 
       void RenderLastPlayedMove();
+
+      void TestButtonClicked();
 
       Application* mOwningApp;
 

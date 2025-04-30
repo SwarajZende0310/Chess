@@ -1,10 +1,11 @@
 #pragma once
 
 #include<SFML/Graphics.hpp>
+#include"framework/Object.h"
 
 namespace chess
 {
-    class Widget
+    class Widget : public Object
     {
         public:
             void NativeDraw(sf::RenderWindow& windowRef);

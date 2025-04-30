@@ -57,6 +57,9 @@ namespace chess
     mBlackKnight = SpawnPiece<Knight>(false);
     mBlackBishop = SpawnPiece<Bishop>(false);
     mBlackPawn = SpawnPiece<Pawn>(false);
+
+    mTestButton.mOnButtonClicked.BindAction(GetWeakRef(),&Stage::TestButtonClicked);
+    mTestButton.SetWidgetLocation(sf::Vector2f{350.f, 0.f});
   }
 
   void Stage::Init()
@@ -637,6 +640,11 @@ namespace chess
 
     rect.setPosition(ConvertChessCoordinateToPosition(lastMove[1]) - sf::Vector2f{10.f,8.f});
     mOwningApp->GetWindow().draw(rect);
+  }
+
+  void Stage::TestButtonClicked()
+  {
+    LOG("Test Button Clicked!!!");
   }
 
   sf::Vector2f Stage::GetSpriteScale()

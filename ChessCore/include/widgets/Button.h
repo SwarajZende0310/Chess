@@ -27,6 +27,8 @@ namespace chess
             void SetTextSize(int textSize);
 
             virtual bool HandleEvent(const std::optional<sf::Event> &event)override;
+
+            Delegate<> mOnButtonClicked;
         private:
         virtual void Draw(sf::RenderWindow& windowRef);
         virtual void LocationUpdated(const sf::Vector2f& newLocation);
