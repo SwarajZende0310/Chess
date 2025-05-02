@@ -50,6 +50,9 @@ add_library(
 
   ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/Button.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/Button.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/HUD.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/HUD.cpp
 )
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}
