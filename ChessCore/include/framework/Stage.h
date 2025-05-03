@@ -2,7 +2,10 @@
 
 #include <SFML/Graphics.hpp>
 #include "framework/Core.h"
+
+// TODO :: Remove includes after testing
 #include"widgets/Button.h"
+#include"widgets/TextWidget.h"
 
 namespace chess
 {
@@ -106,6 +109,8 @@ namespace chess
       sf::Color mKingInCheckColor;
 
       Button mTestButton;
+
+      TextWidget mTextWidget;
   };
 
   template <typename PieceType>

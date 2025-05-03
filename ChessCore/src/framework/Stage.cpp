@@ -39,7 +39,8 @@ namespace chess
     mRenderPossibleMoves{true},
     mPossibleMovesColor{201,201,201,90},
     mKingInCheckColor{150,0,0,100},
-    mTestButton{}
+    mTestButton{},
+    mTextWidget{"Chess Game"}
   {
     SpawnBoard({100.f,100.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -71,6 +72,7 @@ namespace chess
     RenderBoard();
     RenderPieces();
     mTestButton.NativeDraw(mOwningApp->GetWindow());
+    mTextWidget.NativeDraw(mOwningApp->GetWindow());
   }
 
   void Stage::TickInternal(float deltaTime)

@@ -53,6 +53,9 @@ add_library(
 
   ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/HUD.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/HUD.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/TextWidget.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/TextWidget.cpp
 )
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}
