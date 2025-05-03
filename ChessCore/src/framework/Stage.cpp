@@ -40,7 +40,8 @@ namespace chess
     mPossibleMovesColor{201,201,201,90},
     mKingInCheckColor{150,0,0,100},
     mTestButton{},
-    mTextWidget{"Chess Game"}
+    mTextWidget{"Chess Game"},
+    mTestImage{"UI/numeralX.png"}
   {
     SpawnBoard({100.f,100.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -59,8 +60,12 @@ namespace chess
     mBlackBishop = SpawnPiece<Bishop>(false);
     mBlackPawn = SpawnPiece<Pawn>(false);
 
+    // TODO :: Remove the below code as related to widgets and should go in HUD
     mTestButton.mOnButtonClicked.BindAction(GetWeakRef(),&Stage::TestButtonClicked);
     mTestButton.SetWidgetLocation(sf::Vector2f{350.f, 0.f});
+
+    mTestImage.SetScale(sf::Vector2f{3.f,3.f});
+    mTestImage.SetWidgetLocation(sf::Vector2f{50.f,50.f});
   }
 
   void Stage::Init()
@@ -73,6 +78,7 @@ namespace chess
     RenderPieces();
     mTestButton.NativeDraw(mOwningApp->GetWindow());
     mTextWidget.NativeDraw(mOwningApp->GetWindow());
+    mTestImage.NativeDraw(mOwningApp->GetWindow());
   }
 
   void Stage::TickInternal(float deltaTime)

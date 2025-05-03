@@ -6,6 +6,7 @@
 // TODO :: Remove includes after testing
 #include"widgets/Button.h"
 #include"widgets/TextWidget.h"
+#include"widgets/ImageWidget.h"
 
 namespace chess
 {
@@ -108,9 +109,12 @@ namespace chess
 
       sf::Color mKingInCheckColor;
 
+      // TODO :: Remove After testing and put in HUD
       Button mTestButton;
 
       TextWidget mTextWidget;
+
+      ImageWidget mTestImage;
   };
 
   template <typename PieceType>

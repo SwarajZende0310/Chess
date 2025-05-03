@@ -56,6 +56,9 @@ add_library(
 
   ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/TextWidget.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/TextWidget.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/ImageWidget.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/ImageWidget.cpp
 )
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}
