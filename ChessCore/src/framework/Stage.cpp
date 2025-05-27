@@ -8,6 +8,7 @@
 #include"Pieces/Knight.h"
 #include"Pieces/Bishop.h"
 #include"Pieces/Pawn.h"
+#include"widgets/HUD.h"
 
 namespace chess
 {
@@ -38,10 +39,7 @@ namespace chess
     mFlipBoard{false},
     mRenderPossibleMoves{true},
     mPossibleMovesColor{201,201,201,90},
-    mKingInCheckColor{150,0,0,100},
-    mTestButton{},
-    mTextWidget{"Chess Game"},
-    mTestImage{"UI/numeralX.png"}
+    mKingInCheckColor{150,0,0,100}
   {
     SpawnBoard({100.f,100.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -59,13 +57,6 @@ namespace chess
     mBlackKnight = SpawnPiece<Knight>(false);
     mBlackBishop = SpawnPiece<Bishop>(false);
     mBlackPawn = SpawnPiece<Pawn>(false);
-
-    // TODO :: Remove the below code as related to widgets and should go in HUD
-    mTestButton.mOnButtonClicked.BindAction(GetWeakRef(),&Stage::TestButtonClicked);
-    mTestButton.SetWidgetLocation(sf::Vector2f{350.f, 0.f});
-
-    mTestImage.SetScale(sf::Vector2f{3.f,3.f});
-    mTestImage.SetWidgetLocation(sf::Vector2f{50.f,50.f});
   }
 
   void Stage::Init()
@@ -74,11 +65,7 @@ namespace chess
 
   void Stage::Render()
   {
-    RenderBoard();
-    RenderPieces();
-    mTestButton.NativeDraw(mOwningApp->GetWindow());
-    mTextWidget.NativeDraw(mOwningApp->GetWindow());
-    mTestImage.NativeDraw(mOwningApp->GetWindow());
+    RenderHUD(mOwningApp->GetWindow());
   }
 
   void Stage::TickInternal(float deltaTime)
@@ -92,95 +79,7 @@ namespace chess
 
   bool Stage::HandleEvent(const std::optional<sf::Event> &event)
   {
-      bool handled = false;
-
-      if(mPieceMoved)
-      {
-        // Check if current position is an End Position
-        int currState = EndState();
-        if(currState != Ongoing)
-        {
-          if(currState == DRAW)
-          {
-            LOG("DRAW");
-          }
-          else if(currState == WhiteWon)
-          {
-            LOG("White Won");
-          }
-          else if(currState == BlackWon)
-          {
-            LOG("Black Won");
-          }
-          mOwningApp->ReachedEndState(currState);
-        }
-      }
-      SetPieceMoved(false);
-
-      if(const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
-      {
-        mMousePosition = mouseMoved->position;
-      }
-      if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
-      {
-          if (mouseButtonPressed->button == sf::Mouse::Button::Left)
-          {      
-              mMouseDragging = true;     
-              if(!mPieceSelected)
-              {
-                mStartPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
-                mPieceSelected = CheckCorrectPieceSelected(ChessState::Get().GetPieceOnChessCoordinate(mStartPose));
-                handled = true;
-              }
-              else
-              {
-                mEndPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
-                char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
-                // Change chess state and render everything again
-                if(MovePiece(piece))
-                {
-                  SetPieceMoved(true);
-                }
-                mPieceSelected = false;
-                handled = true;
-              }
-          }
-          else if(mouseButtonPressed->button == sf::Mouse::Button::Right)
-          {
-            mPieceSelected = false;
-            handled = true;
-          }
-      }
-      else if( const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
-      {
-        mMouseDragging = false;
-        mEndPose = ConvertPositionToChessCoordinate({mouseButtonReleased->position.x,mouseButtonReleased->position.y});
-        char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
-        if(MovePiece(piece))
-        {
-          SetPieceMoved(true);
-          mPieceSelected = false;
-        }
-
-        handled = true;
-      }
-      else if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>())
-      {
-        if(keyPress->scancode == sf::Keyboard::Scan::Left && ChessState::Get().UndoLastMove())
-        {
-          SetPieceMoved(true);
-          mWhiteTurn = !mWhiteTurn;
-        }
-        else if(keyPress->scancode == sf::Keyboard::Scan::F)
-        {
-          mFlipBoard = !mFlipBoard;
-        }
-        else if(keyPress->scancode == sf::Keyboard::Scan::R)
-        {
-          mRenderPossibleMoves = !mRenderPossibleMoves;
-        }
-      }
-      return mTestButton.HandleEvent(event) || handled;
+      return mHUD->HandleEvent(event);
   }
   
   void Stage::RenderBoard()
@@ -650,9 +549,106 @@ namespace chess
     mOwningApp->GetWindow().draw(rect);
   }
 
-  void Stage::TestButtonClicked()
+  void Stage::RenderHUD(sf::RenderWindow &renderWindow)
   {
-    LOG("Test Button Clicked!!!");
+    if(mHUD)
+    {
+      mHUD->Draw(renderWindow);
+    }
+  }
+
+  bool Stage::HandleBoardEvent(const std::optional<sf::Event> &event)
+  {
+      bool handled = false;
+
+      if(mPieceMoved)
+      {
+        // Check if current position is an End Position
+        int currState = EndState();
+        if(currState != Ongoing)
+        {
+          if(currState == DRAW)
+          {
+            LOG("DRAW");
+          }
+          else if(currState == WhiteWon)
+          {
+            LOG("White Won");
+          }
+          else if(currState == BlackWon)
+          {
+            LOG("Black Won");
+          }
+          mOwningApp->ReachedEndState(currState);
+        }
+      }
+      SetPieceMoved(false);
+
+      if(const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
+      {
+        mMousePosition = mouseMoved->position;
+      }
+      if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+      {
+          if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+          {      
+              mMouseDragging = true;     
+              if(!mPieceSelected)
+              {
+                mStartPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
+                mPieceSelected = CheckCorrectPieceSelected(ChessState::Get().GetPieceOnChessCoordinate(mStartPose));
+                handled = true;
+              }
+              else
+              {
+                mEndPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
+                char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+                // Change chess state and render everything again
+                if(MovePiece(piece))
+                {
+                  SetPieceMoved(true);
+                }
+                mPieceSelected = false;
+                handled = true;
+              }
+          }
+          else if(mouseButtonPressed->button == sf::Mouse::Button::Right)
+          {
+            mPieceSelected = false;
+            handled = true;
+          }
+      }
+      else if( const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
+      {
+        mMouseDragging = false;
+        mEndPose = ConvertPositionToChessCoordinate({mouseButtonReleased->position.x,mouseButtonReleased->position.y});
+        char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+        if(MovePiece(piece))
+        {
+          SetPieceMoved(true);
+          mPieceSelected = false;
+        }
+
+        handled = true;
+      }
+      else if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>())
+      {
+        if(keyPress->scancode == sf::Keyboard::Scan::Left && ChessState::Get().UndoLastMove())
+        {
+          SetPieceMoved(true);
+          mWhiteTurn = !mWhiteTurn;
+        }
+        else if(keyPress->scancode == sf::Keyboard::Scan::F)
+        {
+          mFlipBoard = !mFlipBoard;
+        }
+        else if(keyPress->scancode == sf::Keyboard::Scan::R)
+        {
+          mRenderPossibleMoves = !mRenderPossibleMoves;
+        }
+      }
+
+      return handled;
   }
 
   sf::Vector2f Stage::GetSpriteScale()

@@ -2,11 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "framework/Core.h"
-
-// TODO :: Remove includes after testing
-#include"widgets/Button.h"
-#include"widgets/TextWidget.h"
-#include"widgets/ImageWidget.h"
+#include "framework/Object.h"
 
 namespace chess
 {
@@ -19,6 +15,7 @@ namespace chess
   class Bishop;
   class Rook;
   class Queen;
+  class HUD;
 
   class Stage : public Object
   {
@@ -34,6 +31,9 @@ namespace chess
 
       inline bool IsPieceMoved(){ return mPieceMoved;}
       inline void SetPieceMoved(bool moved){ mPieceMoved = moved; }
+
+      template<typename HUDType, typename...Args>
+      weak<HUDType> SpawnHUD(Args... args);
 
       bool HandleEvent(const std::optional<sf::Event> & event);
       
@@ -67,8 +67,10 @@ namespace chess
       void RenderKingInCheck();
 
       void RenderLastPlayedMove();
+      
+      void RenderHUD(sf::RenderWindow & renderWindow);
 
-      void TestButtonClicked();
+      bool HandleBoardEvent(const std::optional<sf::Event> & event);
 
       Application* mOwningApp;
 
@@ -109,12 +111,7 @@ namespace chess
 
       sf::Color mKingInCheckColor;
 
-      // TODO :: Remove After testing and put in HUD
-      Button mTestButton;
-
-      TextWidget mTextWidget;
-
-      ImageWidget mTestImage;
+      shared<HUD> mHUD;
   };
 
   template <typename PieceType>
@@ -122,5 +119,13 @@ namespace chess
   {
       shared<PieceType> newPiece{new PieceType{this,whitePiece}};
       return newPiece;
+  }
+  
+  template <typename HUDType, typename... Args>
+  inline weak<HUDType> Stage::SpawnHUD(Args... args)
+  {
+      shared<HUDType> newHUD{new HUDType(args...)};
+      mHUD = newHUD;
+      return std::static_pointer_cast<HUDType>(mHUD);
   }
 }

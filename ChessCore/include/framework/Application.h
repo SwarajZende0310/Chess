@@ -41,6 +41,6 @@ namespace chess
   inline weak<StageType> Application::LoadWorld()
   {
       mCurrentStage = std::make_shared<StageType>(this);
-      return mCurrentStage;
+      return std::static_pointer_cast<StageType>(mCurrentStage);
   }
 } // namespace chess

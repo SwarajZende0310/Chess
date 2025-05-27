@@ -15,11 +15,11 @@ namespace chess
             {
                 std::function<bool(Args...)> callbackFunc = [obj, callback](Args ...args ) -> bool
                 {
-                    // Bypassing the check for whether obj is expired as Stage has only one weak reference
-                    // TODO remove this and give stage a shared reference
+                    // LOG("object count is %ld",obj.use_count());
+                    // Object count is coming zero here althoiugh the obj is not deleted or expired PLEASE DEBUG
+                    // Currently Bypassing 
                     (static_cast<ClassName*>(obj.lock().get())->*callback)(args...);
                     return true;
-                    //
                     if(!obj.expired())
                     {
                         (static_cast<ClassName*>(obj.lock().get())->*callback)(args...);
