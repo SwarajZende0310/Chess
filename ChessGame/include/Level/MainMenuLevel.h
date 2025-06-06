@@ -12,9 +12,18 @@ namespace chess
         public:
             MainMenuLevel(Application* owningApp);
 
+            virtual void BeginPlay()override;
+
         protected:
 
         private:
             weak<MainMenuHUD> mMainMenuHUD;
+
+            void StartPlayOnlineChessGame();
+            void StartTwoplayerChessGame();
+            void PlayBot();
+            void StartAnalysisBoard();
+            void GoHome();
+            void EndGame();
     };
 }

@@ -40,6 +40,11 @@ namespace chess {
           Render();
       }
 
+      if(mCurrentStage)
+      {
+        mCurrentStage->BeginPlayInternal();
+      }
+
       // Render only if piece is moved
       // if(mCurrentStage && mCurrentStage->IsPieceMoved())
       // {

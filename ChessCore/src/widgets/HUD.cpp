@@ -21,6 +21,7 @@ namespace chess
     {
 
     }
+    
     void HUD::Init(const sf::RenderWindow &windowRef)
     {
 

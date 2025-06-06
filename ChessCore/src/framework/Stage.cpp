@@ -39,7 +39,8 @@ namespace chess
     mFlipBoard{false},
     mRenderPossibleMoves{true},
     mPossibleMovesColor{201,201,201,90},
-    mKingInCheckColor{150,0,0,100}
+    mKingInCheckColor{150,0,0,100},
+    mBeginPlay{false}
   {
     SpawnBoard({100.f,100.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -70,7 +71,10 @@ namespace chess
 
   void Stage::TickInternal(float deltaTime)
   {
-
+    if(mHUD && !mHUD->HasInit())
+    {
+      mHUD->NativeInit(mOwningApp->GetWindow());
+    }
   }
   sf::RenderWindow &Stage::GetWindow()
   {
@@ -79,9 +83,20 @@ namespace chess
 
   bool Stage::HandleEvent(const std::optional<sf::Event> &event)
   {
+    if(mHUD)
       return mHUD->HandleEvent(event);
+    return false;
   }
-  
+
+  void Stage::BeginPlayInternal()
+  {
+    if(!mBeginPlay)
+    {
+      mBeginPlay = true;
+      BeginPlay();
+    }
+  }
+
   void Stage::RenderBoard()
   {
     mBoard->RefreshBoard();
@@ -649,6 +664,11 @@ namespace chess
       }
 
       return handled;
+  }
+
+  void Stage::BeginPlay()
+  {
+
   }
 
   sf::Vector2f Stage::GetSpriteScale()

@@ -36,6 +36,8 @@ namespace chess
       weak<HUDType> SpawnHUD(Args... args);
 
       bool HandleEvent(const std::optional<sf::Event> & event);
+
+      void BeginPlayInternal();
       
     private:
       void RenderBoard();
@@ -71,6 +73,8 @@ namespace chess
       void RenderHUD(sf::RenderWindow & renderWindow);
 
       bool HandleBoardEvent(const std::optional<sf::Event> & event);
+
+      virtual void BeginPlay();
 
       Application* mOwningApp;
 
@@ -112,6 +116,8 @@ namespace chess
       sf::Color mKingInCheckColor;
 
       shared<HUD> mHUD;
+
+      bool mBeginPlay;
   };
 
   template <typename PieceType>
@@ -124,8 +130,7 @@ namespace chess
   template <typename HUDType, typename... Args>
   inline weak<HUDType> Stage::SpawnHUD(Args... args)
   {
-      shared<HUDType> newHUD{new HUDType(args...)};
-      mHUD = newHUD;
+      mHUD = std::make_shared<HUDType>(args...);
       return std::static_pointer_cast<HUDType>(mHUD);
   }
 }

@@ -15,11 +15,6 @@ namespace chess
             {
                 std::function<bool(Args...)> callbackFunc = [obj, callback](Args ...args ) -> bool
                 {
-                    // LOG("object count is %ld",obj.use_count());
-                    // Object count is coming zero here althoiugh the obj is not deleted or expired PLEASE DEBUG
-                    // Currently Bypassing 
-                    (static_cast<ClassName*>(obj.lock().get())->*callback)(args...);
-                    return true;
                     if(!obj.expired())
                     {
                         (static_cast<ClassName*>(obj.lock().get())->*callback)(args...);

@@ -24,6 +24,8 @@ namespace chess
             Delegate<> onQuitButtonClicked;
 
         private:
+            virtual void Init(const sf::RenderWindow& windowRef)override;
+
             TextWidget mTitleText;
 
             Button mHome;
