@@ -1,4 +1,5 @@
 #include"Level/MainMenuLevel.h"
+#include"Level/AnalysisBoardLevel.h"
 #include"framework/Application.h"
 #include"widgets/MainMenuHUD.h"
 
@@ -39,7 +40,7 @@ namespace chess
 
     void MainMenuLevel::StartAnalysisBoard()
     {
-        LOG("Starting Analysis Board Game Level");
+        GetApplication()->LoadWorld<AnalysisBoardLevel>();
     }
 
     void MainMenuLevel::GoHome()
@@ -49,6 +50,6 @@ namespace chess
 
     void MainMenuLevel::EndGame()
     {
-        LOG("Quitting Appplication");
+        GetApplication()->QuitApplication();
     }
 }

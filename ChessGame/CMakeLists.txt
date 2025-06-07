@@ -10,6 +10,12 @@ add_executable(${CHESS_GAME_TARGET_NAME}
 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/MainMenuHUD.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/MainMenuHUD.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Level/AnalysisBoardLevel.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Level/AnalysisBoardLevel.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/AnalysisBoardHUD.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/AnalysisBoardHUD.cpp
 )
 
 target_include_directories(${CHESS_GAME_TARGET_NAME} PUBLIC 

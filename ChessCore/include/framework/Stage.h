@@ -36,12 +36,21 @@ namespace chess
       weak<HUDType> SpawnHUD(Args... args);
 
       bool HandleEvent(const std::optional<sf::Event> & event);
+      virtual bool HandleEventInternal(const std::optional<sf::Event> & event);
 
       void BeginPlayInternal();
-      
-    private:
+
+      Application* GetApplication(){ return mOwningApp;}
+    
+    protected:
       void RenderBoard();
       void RenderPieces();
+      
+      void RenderHUD(sf::RenderWindow & renderWindow);
+
+      bool HandleBoardEvent(const std::optional<sf::Event> & event);
+
+    private:
 
       bool CheckCorrectPieceSelected(char piece);
       bool MovePiece(char piece);
@@ -69,10 +78,6 @@ namespace chess
       void RenderKingInCheck();
 
       void RenderLastPlayedMove();
-      
-      void RenderHUD(sf::RenderWindow & renderWindow);
-
-      bool HandleBoardEvent(const std::optional<sf::Event> & event);
 
       virtual void BeginPlay();
 

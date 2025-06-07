@@ -87,7 +87,7 @@ namespace chess {
 
   void Application::ReachedEndState(int state)
   {
-    QuitApplication();
+    // QuitApplication();
   }
   bool Application::DispathEvent(const std::optional<sf::Event> &event)
   {

@@ -83,9 +83,20 @@ namespace chess
 
   bool Stage::HandleEvent(const std::optional<sf::Event> &event)
   {
+    bool handled = false;
+
+    handled = HandleEventInternal(event) && handled;
+
     if(mHUD)
-      return mHUD->HandleEvent(event);
-    return false;
+    {
+      handled = mHUD->HandleEvent(event) && handled;
+    }
+    return handled;
+  }
+
+  bool Stage::HandleEventInternal(const std::optional<sf::Event> &event)
+  {
+      return false;
   }
 
   void Stage::BeginPlayInternal()
