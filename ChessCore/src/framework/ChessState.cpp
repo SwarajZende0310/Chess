@@ -35,6 +35,26 @@ namespace chess
         RNBQKBNR
         */
 
+        // Initialise evrything to Zero
+        mWhitePawns = 0;
+        mWhiteBishops = 0;
+        mWhiteKnights = 0;
+        mWhiteRooks = 0;
+        mWhiteQueen = 0;
+        mWhiteKing = 0;
+
+        mBlackPawns = 0;
+        mBlackBishops = 0;
+        mBlackKnights = 0;
+        mBlackRooks = 0;
+        mBlackQueen = 0;
+        mBlackKing = 0;
+
+        mWhiteAttackedSquares.clear();
+        mBlackAttackedSquares.clear();
+        mMovesPlayed.clear();
+        mFirstMove.clear();
+
         //Setting bits of uint64_t to show presence of piece
 
         //White Pawns
