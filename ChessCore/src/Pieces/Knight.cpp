@@ -1,3 +1,7 @@
+/**
+ * @file Knight.cpp
+ * @brief Implementation of the Knight chess piece.
+ */
 #include "Pieces/Knight.h"
 #include "framework/AssetManager.h"
 #include "framework/Stage.h"
@@ -5,6 +9,11 @@
 
 namespace chess
 {
+    /**
+     * @brief Construct a knight and load its assets.
+     * @param owningStage Stage for render context and scaling.
+     * @param whitePiece True for white knight, false for black.
+     */
     Knight::Knight(Stage *owningStage, bool whitePiece)
         :Piece{owningStage},
         mOwningStage{owningStage},
@@ -18,6 +27,12 @@ namespace chess
         mBlackKnightSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
+    /**
+     * @brief Validate L-shaped knight movement and capture rules.
+     * @param startCoordinate Start square.
+     * @param endCoordinate Destination square.
+     * @return true if an (2,1) move and destination is empty or enemy.
+     */
     bool Knight::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         int ranksForward = endCoordinate.rank - startCoordinate.rank;
@@ -33,6 +48,9 @@ namespace chess
         return false;
     }
 
+    /**
+     * @brief Apply the move to `ChessState` for the correct side.
+     */
     void Knight::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         if(mWhitePieces)
@@ -45,6 +63,9 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Draw the appropriate knight sprite to the window.
+     */
     void Knight::RenderPiece()
     {
         if(mWhitePieces)
@@ -57,6 +78,9 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Set the on-screen position of the knight sprite.
+     */
     void Knight::SetPieceLocation(const sf::Vector2f &newLocation, bool whitePieces)
     {
         if(whitePieces)
@@ -65,12 +89,20 @@ namespace chess
             mBlackKnightSprite.setPosition(newLocation);
     }
     
+    /**
+     * @brief Set the rotation of the knight sprite (unused).
+     */
     void Knight::SetPieceRotation(float newRotation, bool whitePieces)
     {
         // sf::Angle newRot{newRotation};
         // mWhiteKnightSprite.setRotation(newRot);
     }
 
+    /**
+     * @brief Generate pseudo-legal knight moves to 8 potential targets.
+     * @param pieceCoordinate Current square of the knight.
+     * @return Valid target squares that pass `MovePossible`.
+     */
     List<ChessCoordinate> Knight::GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)
     {
         List<ChessCoordinate> moves;
@@ -94,6 +126,9 @@ namespace chess
         }
         return moves;
     }
+    /**
+     * @brief Get current sprite position for this knight.
+     */
     sf::Vector2f Knight::GetPieceLocation() const
     {
         if(mWhitePieces)
@@ -102,11 +137,17 @@ namespace chess
             return mBlackKnightSprite.getPosition();
     }
     
+    /**
+     * @brief Get current sprite rotation (always 0 for now).
+     */
     float Knight::GetPieceRotation() const
     {
         return 0.0f;
     }
 
+    /**
+     * @brief Center sprite origin based on its global bounds.
+     */
     void Knight::CenterPivot()
     {
         sf::FloatRect bound ;
@@ -121,6 +162,9 @@ namespace chess
             mBlackKnightSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
         }
     }
+    /**
+     * @brief Check if a target square contains an opponent piece.
+     */
     bool Knight::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));

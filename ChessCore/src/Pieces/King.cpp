@@ -1,3 +1,7 @@
+/**
+ * @file King.cpp
+ * @brief Implementation of the King chess piece.
+ */
 #include "Pieces/King.h"
 #include "framework/AssetManager.h"
 #include "framework/Stage.h"
@@ -5,6 +9,11 @@
 
 namespace chess
 {
+    /**
+     * @brief Construct a king and load its assets.
+     * @param owningStage Stage for render context and scaling.
+     * @param whitePiece True for white king, false for black.
+     */
     King::King(Stage *owningStage, bool whitePiece)
         :Piece{owningStage},
         mOwningStage{owningStage},
@@ -18,6 +27,12 @@ namespace chess
         mBlackKingSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
+    /**
+     * @brief Validate king move: one square any direction and not into check.
+     * @param startCoordinate Start square.
+     * @param endCoordinate Destination square.
+     * @return true if destination is not attacked and movement is 1-square.
+     */
     bool King::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         int ranksForward = abs(endCoordinate.rank - startCoordinate.rank);
@@ -32,6 +47,9 @@ namespace chess
         return false;
     }
 
+    /**
+     * @brief Apply the move to `ChessState` for the correct side.
+     */
     void King::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         if(mWhitePieces)
@@ -44,6 +62,9 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Draw the appropriate king sprite to the window.
+     */
     void King::RenderPiece()
     {
         if(mWhitePieces)
@@ -56,6 +77,9 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Set the on-screen position of the king sprite.
+     */
     void King::SetPieceLocation(const sf::Vector2f &newLocation, bool whitePieces)
     {
         if(whitePieces)
@@ -64,12 +88,20 @@ namespace chess
             mBlackKingSprite.setPosition(newLocation);
     }
     
+    /**
+     * @brief Set the rotation of the king sprite (unused).
+     */
     void King::SetPieceRotation(float newRotation, bool whitePieces)
     {
         // sf::Angle newRot{newRotation};
         // mWhiteKingSprite.setRotation(newRot);
     }
 
+    /**
+     * @brief King moves to adjacent squares.
+     * @param pieceCoordinate Current square of the king.
+     * @return Adjacent squares that pass `MovePossible` (excludes castling).
+     */
     List<ChessCoordinate> King::GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)
     {
         List<ChessCoordinate> moves;
@@ -92,6 +124,10 @@ namespace chess
         }
         return moves;
     }
+    /**
+     * @brief Check whether this king is currently in check.
+     * @return true if current side's king square is in enemy attacked set.
+     */
     bool King::IsInCheck()
     {
         Set<ChessCoordinate,ChessCoordinateHashFunction> attackedSquares = mWhitePieces ? ChessState::Get().GetBlackAttackedSquares() : ChessState::Get().GetWhiteAttackedSquares();
@@ -105,6 +141,9 @@ namespace chess
         }
         return false;
     }
+    /**
+     * @brief Get current sprite position for this king.
+     */
     sf::Vector2f King::GetPieceLocation() const
     {
         if(mWhitePieces)
@@ -113,11 +152,17 @@ namespace chess
             return mBlackKingSprite.getPosition();
     }
     
+    /**
+     * @brief Get current sprite rotation (always 0 for now).
+     */
     float King::GetPieceRotation() const
     {
         return 0.0f;
     }
 
+    /**
+     * @brief Center sprite origin based on its global bounds.
+     */
     void King::CenterPivot()
     {
         sf::FloatRect bound ;
@@ -132,6 +177,9 @@ namespace chess
             mBlackKingSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
         }
     }
+    /**
+     * @brief Check if a target square contains an opponent piece.
+     */
     bool chess::King::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));

@@ -1,3 +1,7 @@
+/**
+ * @file Pawn.cpp
+ * @brief Implementation of the Pawn chess piece (moves, captures, en passant, promotion helpers).
+ */
 #include "Pieces/Pawn.h"
 #include "framework/AssetManager.h"
 #include "framework/Stage.h"
@@ -5,6 +9,11 @@
 
 namespace chess
 {
+    /**
+     * @brief Construct a pawn and load its assets.
+     * @param owningStage Stage for render context and scaling.
+     * @param whitePiece True for white pawn, false for black.
+     */
     Pawn::Pawn(Stage *owningStage, bool whitePiece)
         :Piece{owningStage},
         mOwningStage{owningStage},
@@ -25,6 +34,12 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Validate pawn push/capture/en passant rules.
+     * @param startCoordinate Start square.
+     * @param endCoordinate Destination square.
+     * @return true if legal per pawn rules and current state.
+     */
     bool Pawn::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         int pawnForwardMoves = mWhitePieces ? endCoordinate.rank - startCoordinate.rank : startCoordinate.rank - endCoordinate.rank ;
@@ -49,6 +64,9 @@ namespace chess
         return false;
     }
 
+    /**
+     * @brief Apply the move to `ChessState` for the correct side and update first-move flag.
+     */
     void Pawn::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         if(mWhitePieces)
@@ -62,6 +80,9 @@ namespace chess
         mFirstMove[endCoordinate] = false;
     }
 
+    /**
+     * @brief Draw the appropriate pawn sprite to the window.
+     */
     void Pawn::RenderPiece()
     {
         if(mWhitePieces)
@@ -74,6 +95,9 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Set the on-screen position of the pawn sprite (with minor X offset).
+     */
     void Pawn::SetPieceLocation(const sf::Vector2f &newLocation, bool whitePieces)
     {
         if(whitePieces)
@@ -82,12 +106,20 @@ namespace chess
             mBlackPawnSprite.setPosition(newLocation + sf::Vector2f{6.f,0.f});
     }
     
+    /**
+     * @brief Set the rotation of the pawn sprite (unused).
+     */
     void Pawn::SetPieceRotation(float newRotation, bool whitePieces)
     {
         // sf::Angle newRot{newRotation};
         // mWhitePawnSprite.setRotation(newRot);
     }
 
+    /**
+     * @brief Generate pseudo-legal pawn moves (push/captures/double on first move).
+     * @param pieceCoordinate Current square of the pawn.
+     * @return Candidate targets validated by `MovePossible`.
+     */
     List<ChessCoordinate> Pawn::GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)
     {
         List<ChessCoordinate> moves;
@@ -122,6 +154,10 @@ namespace chess
         return moves;
     }
 
+    /**
+     * @brief Find a pawn that reached the last rank for promotion.
+     * @return Coordinate of promotable pawn or invalid if none.
+     */
     ChessCoordinate Pawn::PawnToPromote()
     {
         ChessCoordinate pawnToPromote{invalid,invalid};
@@ -152,6 +188,9 @@ namespace chess
         return pawnToPromote;
     }
     
+    /**
+     * @brief Get current sprite position for this pawn.
+     */
     sf::Vector2f Pawn::GetPieceLocation() const
     {
         if(mWhitePieces)
@@ -160,11 +199,17 @@ namespace chess
             return mBlackPawnSprite.getPosition();
     }
     
+    /**
+     * @brief Get current sprite rotation (always 0 for now).
+     */
     float Pawn::GetPieceRotation() const
     {
         return 0.0f;
     }
 
+    /**
+     * @brief Center sprite origin based on its global bounds.
+     */
     void Pawn::CenterPivot()
     {
         sf::FloatRect bound ;
@@ -179,11 +224,20 @@ namespace chess
             mBlackPawnSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
         }
     }
+    /**
+     * @brief Check if a target square contains an opponent piece.
+     */
     bool Pawn::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
     }
 
+    /**
+     * @brief Determine if en passant capture is legal given last move and positions.
+     * @param startCoordinate Pawn start square.
+     * @param endCoordinate Target capture destination behind the moved pawn.
+     * @return true if the last move was a 2-step adjacent pawn and all constraints match.
+     */
     bool Pawn::EnPassantPossible(ChessCoordinate startCoordinate, ChessCoordinate endCoordinate)
     {
       if((mWhitePieces && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != whitePawn) || (!mWhitePieces && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != blackPawn))

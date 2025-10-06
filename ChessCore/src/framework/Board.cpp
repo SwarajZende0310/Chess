@@ -1,9 +1,20 @@
+/**
+ * @file Board.cpp
+ * @brief Implementation of the chess board rendering and geometry utilities.
+ */
+
 #include"framework/Board.h"
 #include"framework/AssetManager.h" 
 #include"framework/Stage.h"
 
 namespace chess
 {
+  /**
+   * @brief Construct a new Board and initialize metrics and sprites.
+   *
+   * Loads square textures, initializes sprites, computes offsets and scales,
+   * and prepares the first board rendering.
+   */
   Board::Board(Stage *owningStage, const sf::Vector2f &boardStart, const sf::Vector2f &boardDimensions)
     :mOwingStage{owningStage},
     mBoardStart{boardStart},
@@ -21,6 +32,9 @@ namespace chess
     RefreshBoard();
   }
 
+  /**
+   * @brief Redraw the entire board using current scale and offsets.
+   */
   void Board::RefreshBoard()
   {
     mBlackSquaresSprite.setScale({mScaleX,mScaleY});
@@ -45,23 +59,40 @@ namespace chess
     }
   }
 
+  /**
+   * @brief Draw a dark/black square at a position.
+   * @param position Top-left position in window coordinates.
+   */
   void Board::RenderBlackSquare(const sf::Vector2f &position)
   {
     mBlackSquaresSprite.setPosition(position);
     mOwingStage->GetWindow().draw(mBlackSquaresSprite);
   }
 
+  /**
+   * @brief Draw a light/white square at a position.
+   * @param position Top-left position in window coordinates.
+   */
   void Board::RenderWhiteSquare(const sf::Vector2f &position)
   {
     mWhiteSquaresSprite.setPosition(position);
     mOwingStage->GetWindow().draw(mWhiteSquaresSprite);
   }
 
+  /**
+   * @brief Get the approximate bounds of a board tile.
+   * @param chessCoordinate The coordinate of the tile.
+   * @return sf::FloatRect Bounds in window coordinates.
+   * @note Currently returns sprite global bounds as an approximation.
+   */
   sf::FloatRect Board::GetSquareBound(const ChessCoordinate &chessCoordinate)const
   {
       return mBlackSquaresSprite.getGlobalBounds();
   }
 
+  /**
+   * @brief Compute per-tile offsets and scaling based on board dimensions.
+   */
   void Board::CalculateSquareOffset()
   {
     int length = mBoardDimensions.y;
@@ -70,9 +101,9 @@ namespace chess
     mOffsetX = length/8;
     mOffsetY = width/8;
 
-    sf::Vector2u squareSpriteBound = mWhiteSquaresSprite.getTexture().getSize(); // Same for Both Light and Dark Sqauares
+    sf::Vector2u squareSpriteBound = mWhiteSquaresSprite.getTexture().getSize(); // Same for both light and dark squares
 
-    //Scaling value of Square Sprite
+    // Scaling value of square sprite
     mScaleX = mOffsetX/squareSpriteBound.x;
     mScaleY = mOffsetY/squareSpriteBound.y;
   }

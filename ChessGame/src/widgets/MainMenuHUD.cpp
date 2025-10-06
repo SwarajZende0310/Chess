@@ -1,7 +1,14 @@
+/**
+ * @file MainMenuHUD.cpp
+ * @brief HUD for main menu: draws title and buttons, dispatches clicks.
+ */
 #include"widgets/MainMenuHUD.h"
 
 namespace chess
 {
+    /**
+     * @brief Construct HUD and initialize title and button labels.
+     */
     MainMenuHUD::MainMenuHUD()
         :mTitleText{"Chess Game"},
         mHome{"Home"},
@@ -14,6 +21,9 @@ namespace chess
         
     }
 
+    /**
+     * @brief Draw the title and all menu buttons.
+     */
     void MainMenuHUD::Draw(sf::RenderWindow & windowRef)
     {
         mTitleText.NativeDraw(windowRef);
@@ -25,6 +35,9 @@ namespace chess
         mQuit.NativeDraw(windowRef);
     }
 
+    /**
+     * @brief Dispatch events to all buttons, reporting whether any handled them.
+     */
     bool MainMenuHUD::HandleEvent(const std::optional<sf::Event> &event)
     {
         return mHome.HandleEvent(event) 
@@ -35,6 +48,9 @@ namespace chess
             || mQuit.HandleEvent(event) ;
     }
 
+    /**
+     * @brief Initialize positions, sizes, and bind button click delegates.
+     */
     void MainMenuHUD::Init(const sf::RenderWindow& windowRef)
     {
         mTitleText.SetWidgetLocation({320.f,100.f});
@@ -64,31 +80,49 @@ namespace chess
         mQuit.mOnButtonClicked.BindAction(GetWeakRef(),&MainMenuHUD::QuitButtonClicked);
     }
 
+    /**
+     * @brief Broadcast Home action.
+     */
     void MainMenuHUD::HomeButtonClicked()
     {
         onHomeButtonClicked.Broadcast();
     }
 
+    /**
+     * @brief Broadcast Play Online action.
+     */
     void MainMenuHUD::PlayOnlineButtonClicked()
     {
         onPlayOnlineButtonClicked.Broadcast();
     }
 
+    /**
+     * @brief Broadcast Two Player action.
+     */
     void MainMenuHUD::TwoPlayerButtonClicked()
     {
         onTwoPlayerButtonClicked.Broadcast();
     }
 
+    /**
+     * @brief Broadcast Analysis Board action.
+     */
     void MainMenuHUD::AnalysisBoardButtonClicked()
     {
         onAnalysisButtonClicked.Broadcast();
     }
 
+    /**
+     * @brief Broadcast Play Bot action.
+     */
     void MainMenuHUD::PlayBotButtonClicked()
     {
         onPlayBotButtonClicked.Broadcast();
     }
 
+    /**
+     * @brief Broadcast Quit action.
+     */
     void MainMenuHUD::QuitButtonClicked()
     {
         onQuitButtonClicked.Broadcast();

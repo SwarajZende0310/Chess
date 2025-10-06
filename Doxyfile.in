@@ -1,0 +1,40 @@
+#-----------------------------------------------------------
+# Doxyfile template — configured by CMake
+#-----------------------------------------------------------
+
+PROJECT_NAME           = "Chess Game"
+PROJECT_BRIEF          = "A modular chess engine and game built in C++"
+OUTPUT_DIRECTORY       = "@DOXYGEN_OUTPUT_DIR@"
+INPUT                  = @DOXYGEN_INPUT_DIR@
+RECURSIVE              = YES
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+# Include all headers and source files
+FILE_PATTERNS          = *.h *.hpp *.cpp
+
+# Show all members, even undocumented
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+EXTRACT_LOCAL_CLASSES  = YES
+
+# Graphs (requires graphviz)
+HAVE_DOT               = YES
+CLASS_DIAGRAMS         = YES
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+
+# HTML setup
+GENERATE_TREEVIEW      = YES
+HTML_TIMESTAMP         = NO
+
+# Warnings
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = NO
+
+# Source browser
+SOURCE_BROWSER          = YES
+INLINE_SOURCES          = YES
+REFERENCED_BY_RELATION  = YES
+REFERENCES_RELATION     = YES

@@ -1,3 +1,7 @@
+/**
+ * @file Rook.cpp
+ * @brief Implementation of the Rook chess piece.
+ */
 #include "Pieces/Rook.h"
 #include "framework/AssetManager.h"
 #include "framework/Stage.h"
@@ -5,6 +9,11 @@
 
 namespace chess
 {
+    /**
+     * @brief Construct a rook and load its assets.
+     * @param owningStage Stage for render context and scaling.
+     * @param whitePiece True for white rook, false for black.
+     */
     Rook::Rook(Stage *owningStage, bool whitePiece)
         :Piece{owningStage},
         mOwningStage{owningStage},
@@ -18,6 +27,12 @@ namespace chess
         mBlackRookSprite.setScale(mOwningStage->GetSpriteScale() - sf::Vector2f{0.01,0.01});
     }
 
+    /**
+     * @brief Validate rook movement (ranks/files) and capture rules.
+     * @param startCoordinate Start square.
+     * @param endCoordinate Destination square.
+     * @return true if path is clear and destination is empty or enemy.
+     */
     bool Rook::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         int ranksForward = abs(endCoordinate.rank - startCoordinate.rank);
@@ -32,6 +47,9 @@ namespace chess
         return false;
     }
 
+    /**
+     * @brief Apply the move to `ChessState` for the correct side.
+     */
     void Rook::MakeMove(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         if(mWhitePieces)
@@ -44,6 +62,9 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Draw the appropriate rook sprite to the window.
+     */
     void Rook::RenderPiece()
     {
         if(mWhitePieces)
@@ -56,6 +77,9 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Set the on-screen position of the rook sprite.
+     */
     void Rook::SetPieceLocation(const sf::Vector2f &newLocation, bool whitePieces)
     {
         if(whitePieces)
@@ -64,12 +88,20 @@ namespace chess
             mBlackRookSprite.setPosition(newLocation);
     }
     
+    /**
+     * @brief Set the rotation of the rook sprite (unused).
+     */
     void Rook::SetPieceRotation(float newRotation, bool whitePieces)
     {
         // sf::Angle newRot{newRotation};
         // mWhiteRookSprite.setRotation(newRot);
     }
 
+    /**
+     * @brief Legal rook moves along ranks/files.
+     * @param pieceCoordinate Current square of the rook.
+     * @return All reachable squares until blocked; includes one capture per ray.
+     */
     List<ChessCoordinate> Rook::GetAllPossibleMoves(const ChessCoordinate pieceCoordinate)
     {
         List<ChessCoordinate> moves;
@@ -100,6 +132,9 @@ namespace chess
         return moves;
     }
     
+    /**
+     * @brief Get current sprite position for this rook.
+     */
     sf::Vector2f Rook::GetPieceLocation() const
     {
         if(mWhitePieces)
@@ -108,11 +143,17 @@ namespace chess
             return mBlackRookSprite.getPosition();
     }
     
+    /**
+     * @brief Get current sprite rotation (always 0 for now).
+     */
     float Rook::GetPieceRotation() const
     {
         return 0.0f;
     }
 
+    /**
+     * @brief Center sprite origin based on its global bounds.
+     */
     void Rook::CenterPivot()
     {
         sf::FloatRect bound ;
@@ -127,11 +168,18 @@ namespace chess
             mBlackRookSprite.setOrigin({float(bound.position.x) ,float(bound.position.y)});
         }
     }
+    /**
+     * @brief Check if a target square contains an opponent piece.
+     */
     bool chess::Rook::isEnemy(ChessCoordinate &endCoordinate)
     {
         return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
     }
 
+    /**
+     * @brief Determine if any piece blocks the path to destination.
+     * Normalizes direction along one axis and steps until end.
+     */
     bool chess::Rook::PiecesInBetweenPath(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         int offsetX = (endCoordinate.file - startCoordinate.file);

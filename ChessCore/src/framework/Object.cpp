@@ -1,3 +1,7 @@
+/**
+ * @file Object.cpp
+ * @brief Implementation of base Object lifetime and ID utilities.
+ */
 #include"framework/Object.h"
 
 namespace chess

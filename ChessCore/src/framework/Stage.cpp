@@ -1,3 +1,7 @@
+/**
+ * @file Stage.cpp
+ * @brief Implementation of the `chess::Stage` base class for game stages.
+ */
 #include"framework/Stage.h"
 #include"framework/Board.h"
 #include"framework/Application.h"
@@ -12,6 +16,12 @@
 
 namespace chess
 {
+  /**
+   * @brief Construct a new Stage and initialize core subsystems.
+   *
+   * Spawns the board, resets chess state, and constructs piece containers for
+   * both sides. Also initializes input/visual flags and HUD state.
+   */
   Stage::Stage(Application* owningApp)
     :mOwningApp{owningApp},
     mBoard{},
@@ -60,15 +70,27 @@ namespace chess
     mBlackPawn = SpawnPiece<Pawn>(false);
   }
 
+  /**
+   * @brief Initialize stage resources. Called once before gameplay.
+   */
   void Stage::Init()
   {
   }
 
+  /**
+   * @brief Render entry point for the stage.
+   *
+   * Default implementation renders HUD. Derived stages may draw board/pieces.
+   */
   void Stage::Render()
   {
     RenderHUD(mOwningApp->GetWindow());
   }
 
+  /**
+   * @brief Per-frame update for internal Stage systems.
+   * @param deltaTime Fixed step in seconds from Application.
+   */
   void Stage::TickInternal(float deltaTime)
   {
     if(mHUD && !mHUD->HasInit())
@@ -76,11 +98,18 @@ namespace chess
       mHUD->NativeInit(mOwningApp->GetWindow());
     }
   }
+  /**
+   * @brief Convenience to access the application window.
+   */
   sf::RenderWindow &Stage::GetWindow()
   {
       return mOwningApp->GetWindow();
   }
 
+  /**
+   * @brief Stage-level event handler that also forwards to HUD.
+   * @return true if handled by stage or HUD.
+   */
   bool Stage::HandleEvent(const std::optional<sf::Event> &event)
   {
     bool handled = false;
@@ -94,11 +123,18 @@ namespace chess
     return handled;
   }
 
+  /**
+   * @brief Overridable event handler for derived stages.
+   * @return false by default (not handled).
+   */
   bool Stage::HandleEventInternal(const std::optional<sf::Event> &event)
   {
       return false;
   }
 
+  /**
+   * @brief Ensures `BeginPlay()` is called exactly once.
+   */
   void Stage::BeginPlayInternal()
   {
     if(!mBeginPlay)
@@ -108,12 +144,18 @@ namespace chess
     }
   }
 
+  /**
+   * @brief Render the board and last played move highlights.
+   */
   void Stage::RenderBoard()
   {
     mBoard->RefreshBoard();
     RenderLastPlayedMove();
   }
 
+  /**
+   * @brief Render all pieces, possible moves, and drag visuals.
+   */
   void Stage::RenderPieces()
   {
     // Render red if king in check
@@ -173,6 +215,9 @@ namespace chess
     }
   }
 
+  /**
+   * @brief Validate that the selected piece belongs to the current player.
+   */
   bool Stage::CheckCorrectPieceSelected(char piece)
   {
       if((mWhiteTurn && (piece==whiteKing || piece==whiteQueen || piece==whiteRook || piece==whiteKnight || piece==whiteBishop || piece==whitePawn)) 
@@ -181,6 +226,10 @@ namespace chess
       return false;
   }
   
+  /**
+   * @brief Execute a move if legal, including castling and promotion.
+   * @return true if move succeeded.
+   */
   bool Stage::MovePiece(char piece) 
   {
     if(piece == invalid)return false;
@@ -228,6 +277,9 @@ namespace chess
     return false;
   }
 
+  /**
+   * @brief Check if castling is legal between given king and rook squares.
+   */
   bool Stage::CastlingPossible(ChessCoordinate kingCoordinate, ChessCoordinate rookCoordinate)
   {
       if(kingCoordinate == rookCoordinate)return false;
@@ -282,6 +334,9 @@ namespace chess
       return false;
   }
   
+  /**
+   * @brief Perform king-side castling for the given side.
+   */
   void Stage::CastleKingSide(bool whitePiece)
   {
       if(whitePiece)
@@ -306,6 +361,9 @@ namespace chess
       }
   }
 
+  /**
+   * @brief Perform queen-side castling for the given side.
+   */
   void Stage::CastleQueenSide(bool whitePiece)
   {
     if(whitePiece)
@@ -330,6 +388,9 @@ namespace chess
     }
   }
 
+  /**
+   * @brief Convert a board coordinate to window pixel position.
+   */
   const sf::Vector2f Stage::ConvertChessCoordinateToPosition(const ChessCoordinate &chessCoordinate)
   {
       int row = chessCoordinate.rank - 1;
@@ -343,6 +404,10 @@ namespace chess
       return sf::Vector2f{mBoard->GetBoardStart().x + mBoard->GetSquareOffsetX() * (col) + mPieceOffsetX, mBoard->GetBoardStart().y + mBoard->GetSquareOffsetY() * (7 - row) + mPieceOffsetY};
   }
 
+  /**
+   * @brief Convert a window pixel position to a board coordinate.
+   * @return `ChessCoordinate{invalid, invalid}` if outside the board region.
+   */
   ChessCoordinate Stage::ConvertPositionToChessCoordinate(const sf::Vector2i &position)
   {
       if(position.x < mBoard->GetBoardStart().x || position.y < mBoard->GetBoardStart().y 
@@ -356,12 +421,18 @@ namespace chess
       return mFlipBoard ? ChessCoordinate{row + 1, (char)((7 - col ) + 'a')} : ChessCoordinate{7 - row + 1, (char)(col + 'a')};
   }
 
+  /**
+   * @brief Create and own a new Board instance.
+   */
   shared<Board> Stage::SpawnBoard(const sf::Vector2f &boardStart, const sf::Vector2f &boardEnd)
   {
       mBoard = std::make_shared<Board>(this, boardStart, boardEnd); 
       return mBoard;
   }
 
+  /**
+   * @brief Get the shared container for a given piece code.
+   */
   shared<Piece> Stage::GetPieceContainer(char piece)
   {
       switch (piece)
@@ -394,12 +465,18 @@ namespace chess
       return nullptr;
   }
   
+  /**
+   * @brief Decide the promotion piece (placeholder returns queen based on side).
+   */
   char Stage::WhichPieceToPromote()
   {
       // TODO :: Implement an ask to which piece to promote
       return mWhiteTurn ? whiteQueen : blackQueen;
   }
 
+  /**
+   * @brief Determine current end-game state (win/draw/ongoing).
+   */
   int Stage::EndState()
   {
       bool ongoing = false; 
@@ -513,6 +590,9 @@ namespace chess
     return DRAW;
   }
 
+  /**
+   * @brief Render dots/indicators for legal moves from the selected square.
+   */
   void Stage::RenderPossibleMoves()
   {
     char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
@@ -548,6 +628,9 @@ namespace chess
     }
   }
 
+  /**
+   * @brief Highlight Red the king's square if the side-to-move is in check.
+   */
   void Stage::RenderKingInCheck()
   {
     if(ChessState::Get().KingInCheck(mWhiteTurn))
@@ -560,6 +643,9 @@ namespace chess
     
   }
 
+  /**
+   * @brief Highlight the last move (from and to squares).
+   */
   void Stage::RenderLastPlayedMove()
   {
     List<ChessCoordinate> lastMove = ChessState::Get().GetLastPlayedMove();
@@ -575,6 +661,9 @@ namespace chess
     mOwningApp->GetWindow().draw(rect);
   }
 
+  /**
+   * @brief Draw the HUD if present.
+   */
   void Stage::RenderHUD(sf::RenderWindow &renderWindow)
   {
     if(mHUD)
@@ -583,6 +672,12 @@ namespace chess
     }
   }
 
+  /**
+   * @brief Handle mouse/keyboard events related to the chess board.
+   *
+   * Manages selection, dragging, moving pieces, flipping board, toggling
+   * possible moves, and checking for end states.
+   */
   bool Stage::HandleBoardEvent(const std::optional<sf::Event> &event)
   {
       bool handled = false;
@@ -682,6 +777,9 @@ namespace chess
 
   }
 
+  /**
+   * @brief Forward board sprite scale for piece rendering alignment.
+   */
   sf::Vector2f Stage::GetSpriteScale()
   {
       return mBoard->GetSpriteScale();

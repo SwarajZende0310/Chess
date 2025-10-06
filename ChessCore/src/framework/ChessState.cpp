@@ -1,8 +1,19 @@
+/**
+ * @file ChessState.cpp
+ * @brief Implementation of bitboard-based chess state, move logging, and queries.
+ */
 #include"framework/ChessState.h"
 
 namespace chess
 {
     unique<ChessState> ChessState::mChessState{nullptr};
+    /**
+     * @brief Get the singleton instance of `ChessState`.
+     *
+     * Lazily constructs the instance on first use. The state holds bitboards
+     * for all pieces, move history, and helper maps (e.g., first-move flags).
+     * @return Reference to the global `ChessState`.
+     */
     ChessState& ChessState::Get()
     {
         if(!mChessState)
@@ -12,6 +23,12 @@ namespace chess
         return *mChessState;
     }
 
+    /**
+     * @brief Reset all bitboards and state to the initial chess position.
+     *
+     * Clears move logs and first-move flags, then sets up all piece bitboards
+     * to their standard starting squares. Also resets attacked-square maps.
+     */
     void ChessState::ResetToStartPosition()
     {
 
@@ -120,6 +137,11 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Collect coordinates of all pieces of a given type.
+     * @param piece One of the defined piece constants (e.g., whitePawn).
+     * @return List of board coordinates where the piece currently exists.
+     */
     List<ChessCoordinate> ChessState::GetPiecePosiiton(char piece)
     {
         List<ChessCoordinate> position;
@@ -140,6 +162,17 @@ namespace chess
         return position;
     }
 
+    /**
+     * @brief Move a piece from start to end, updating bitboards and logs.
+     *
+     * Handles captures (including en passant), castling flags, bitboard
+     * updates, and move history logging. Also updates first-move map and
+     * attacked squares.
+     * @param piece Piece identifier.
+     * @param start Start coordinate (must be valid and contain the piece).
+     * @param end Destination coordinate (must be valid).
+     * @param log If true, records the move into history and updates flags.
+     */
     void ChessState::SetPiecePosition(char piece, ChessCoordinate &start, ChessCoordinate &end,bool log)
     {
         uint64_t& pieceContainer = GetPieceContainer(piece);
@@ -193,6 +226,13 @@ namespace chess
         UpdateAttackedSquare();
     }
 
+    /**
+     * @brief Undo the last move from history and restore the previous state.
+     *
+     * Restores captured pieces, reverses castling if needed, resets first-move
+     * flags and positions, and decrements counters accordingly.
+     * @return true if a move was undone; false if history is empty or invalid.
+     */
     bool ChessState::UndoLastMove()
     {
         if(mMovesPlayed.size() == 0) return false;
@@ -263,6 +303,11 @@ namespace chess
         return true;
     }
 
+    /**
+     * @brief Query the piece occupying a coordinate.
+     * @param coordinate Board coordinate to check.
+     * @return Piece identifier at the square, or `invalid` if empty.
+     */
     char ChessState::GetPieceOnChessCoordinate(ChessCoordinate coordinate)
     {
         uint64_t currentPos =  (1ULL << (8 * (coordinate.rank - 1) + (7- ConvertRankToCol(coordinate.file)+1)));
@@ -284,6 +329,13 @@ namespace chess
         return invalid;
     }
 
+    /**
+     * @brief Remove a specific piece from a board position.
+     *
+     * Clears the high bit for the position in the piece's bitboard if present.
+     * @param piece Piece identifier to remove.
+     * @param position The coordinate from which to remove the piece.
+     */
     void ChessState::RemovePiece(char piece, ChessCoordinate &position)
     {
         if(piece == invalid || position.file == invalid || position.rank == -1)return;
@@ -296,6 +348,11 @@ namespace chess
         pieceContainer &= currentPos;
     }
 
+    /**
+     * @brief Determine whether the given side's king is in check.
+     * @param white True to test white's king; false to test black's king.
+     * @return true if the king is currently attacked.
+     */
     bool ChessState::KingInCheck(bool white)
     {
         UpdateAttackedSquare();
@@ -310,12 +367,21 @@ namespace chess
         return false;
     }
 
+    /**
+     * @brief Get the start and end coordinates of the last move.
+     * @return A list with two coordinates {start, end}, or empty if none.
+     */
     List<ChessCoordinate> ChessState::GetLastPlayedMove()
     {
         if(mMovesPlayed.size() == 0)return {};
         return {mMovesPlayed.back().mStartCoordinate,mMovesPlayed.back().mEndCoordinate};
     }
     
+    /**
+     * @brief Count the number of pieces of a given type on the board.
+     * @param piece Piece identifier (whitePawn, blackQueen, etc.).
+     * @return Number of set bits in the corresponding bitboard.
+     */
     int ChessState::GetPieceCount(char piece)
     {
         int pieceCount = 0;
@@ -330,6 +396,11 @@ namespace chess
         return pieceCount;
     }
 
+    /**
+     * @brief Check first-move flag for a coordinate (used for pawns/king/rook).
+     * @param coordinate Target coordinate to query.
+     * @return true if the piece at that coordinate has not moved yet.
+     */
     bool ChessState::IsFirstMove(ChessCoordinate coordinate)
     {
         if(mFirstMove.count(coordinate) > 0)
@@ -339,6 +410,10 @@ namespace chess
         return false;
     }
 
+    /**
+     * @brief Compute the number of moves since the last capture or pawn move.
+     * @return Count of consecutive non-capturing, non-pawn moves.
+     */
     int ChessState::GetMovesWithoutCapture()
     {
         // Iterate through played moves and check for pawn moves or piece captures
@@ -351,6 +426,11 @@ namespace chess
         return moveCount;
     }
 
+    /**
+     * @brief Construct `ChessState` with zeroed bitboards and initialize.
+     *
+     * Initializes all containers and calls `ResetToStartPosition()`.
+     */
     ChessState::ChessState()
         : mWhitePawns{0},
           mWhiteKnights{0},
@@ -372,12 +452,23 @@ namespace chess
         ResetToStartPosition();
     }
 
+    /**
+     * @brief Convert rank letter 'a'..'h' to 1-based file number.
+     * @param rank File letter.
+     * @return Integer 1..8 or -1 if out of range.
+     */
     int ChessState::ConvertRankToCol(char rank)
     {
         if(rank < 'a' || rank > 'h') return -1;
         return static_cast<int>(rank - 'a' + 1);
     }
 
+    /**
+     * @brief Recompute white/black attacked squares using current bitboards.
+     *
+     * Expands attack rays and step moves for each piece type to fill the
+     * attacked-squares sets. Kings' immediate neighborhoods are included.
+     */
     void ChessState::UpdateAttackedSquare()
     {
         mWhiteAttackedSquares.clear();
@@ -593,6 +684,11 @@ namespace chess
         }
     }
 
+    /**
+     * @brief Place a piece on the board at the given coordinate.
+     * @param piece Piece to place.
+     * @param position Target square (must be valid).
+     */
     void ChessState::SpawnPiece(char piece, ChessCoordinate &position)
     {
         uint64_t& pieceContainer = GetPieceContainer(piece);
@@ -602,6 +698,11 @@ namespace chess
         pieceContainer |= 1ULL << (8 * (position.rank - 1) + (7- ConvertRankToCol(position.file)+1));
     }
 
+    /**
+     * @brief Get a reference to the bitboard container for a piece type.
+     * @param piece Piece identifier.
+     * @return Reference to the corresponding uint64_t bitboard.
+     */
     uint64_t &ChessState::GetPieceContainer(char piece)
     {
         switch (piece)
@@ -634,6 +735,11 @@ namespace chess
         return UINT64_MAX_VALUE;
     }
 
+    /**
+     * @brief Convert 1-based file number to rank letter 'a'..'h'.
+     * @param col 1..8 column value.
+     * @return Rank letter or `invalid` if out of range.
+     */
     char ChessState::ConvertColToRank(int col)
     {
         if(col < 1 && col > 8) return invalid;

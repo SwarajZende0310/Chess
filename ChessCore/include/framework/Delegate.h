@@ -6,10 +6,22 @@ namespace chess
 {
     class Object;
 
+    /**
+     * @brief Lightweight multicast delegate for member function callbacks.
+     *
+     * Stores weak references to objects and invokes the bound member function
+     * if the object is still alive. Expired callbacks are pruned on broadcast.
+     */
     template<typename ...Args>
     class Delegate
     {
         public:
+            /**
+             * @brief Bind an object's member function as a callback.
+             * @tparam ClassName Class of the object
+             * @param obj Weak pointer to the object instance
+             * @param callback Member function pointer to invoke on broadcast
+             */
             template<typename ClassName>
             void BindAction(weak<Object>obj, void(ClassName::*callback)(Args...))
             {
@@ -25,6 +37,11 @@ namespace chess
                 mCallbacks.push_back(callbackFunc);
             }
 
+            /**
+             * @brief Invoke all bound callbacks with the provided arguments.
+             *
+             * Removes any callbacks whose objects have expired.
+             */
             void Broadcast(Args ... args)
             {
                 for(auto iter = mCallbacks.begin(); iter != mCallbacks.end();)

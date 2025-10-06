@@ -1,3 +1,7 @@
+/**
+ * @file Piece.cpp
+ * @brief Implementation of base Piece utilities shared by specific pieces.
+ */
 #include "framework/Piece.h"
 
 namespace chess
