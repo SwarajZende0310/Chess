@@ -69,6 +69,7 @@ namespace chess
                 
             shared<sf::Font> mButtonFont; ///< Font for label
             sf::Text mButtonText;         ///< Text label
+            int mButtonTextSize;          ///< Text Size
         
             ButtonColor mButtonColor; ///< Interaction colors
         

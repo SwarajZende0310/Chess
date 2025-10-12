@@ -65,6 +65,7 @@ namespace chess
      */
     void Button::SetTextSize(int textSize)
     {
+        mButtonTextSize = textSize;
         mButtonText.setCharacterSize(textSize);
         CenterText();
     }
@@ -173,6 +174,9 @@ namespace chess
     {
         mIsButtonDown = false;
         mButtonSprite.setColor(mButtonColor.buttonDefaultColor);
+        mButtonText.setCharacterSize(mButtonTextSize);
+        mButtonText.setFillColor(sf::Color::White);
+        CenterText();
     }
     
     /**
@@ -190,5 +194,8 @@ namespace chess
     void Button::MouseHovered()
     {
         mButtonSprite.setColor(mButtonColor.buttonHoverColor);
+        mButtonText.setCharacterSize(mButtonTextSize + 3);
+        mButtonText.setFillColor(sf::Color::Black);
+        CenterText();
     }
 }
