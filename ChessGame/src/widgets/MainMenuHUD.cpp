@@ -16,7 +16,8 @@ namespace chess
         mTwoPlayer{"Two Player"},
         mAnalysisBoard{"Analysis Board"},
         mPlayBot{"Play Bot"},
-        mQuit{"Quit"}
+        mQuit{"Quit"},
+        mBackGroundImage{"UI/chess_background.png"}
     {
         
     }
@@ -26,6 +27,7 @@ namespace chess
      */
     void MainMenuHUD::Draw(sf::RenderWindow & windowRef)
     {
+        mBackGroundImage.NativeDraw(windowRef);
         mTitleText.NativeDraw(windowRef);
         mHome.NativeDraw(windowRef);
         mPlayOnline.NativeDraw(windowRef);
@@ -53,29 +55,32 @@ namespace chess
      */
     void MainMenuHUD::Init(const sf::RenderWindow& windowRef)
     {
+        mBackGroundImage.SetWidgetLocation({-480.f,0.f});
+
         mTitleText.SetWidgetLocation({320.f,100.f});
         mTitleText.SetTextSize(40);
 
+        mHome.SetWidgetLocation({80.f,300.f});
         mHome.SetTextSize(17);
         mHome.mOnButtonClicked.BindAction(GetWeakRef(),&MainMenuHUD::HomeButtonClicked);
 
-        mPlayOnline.SetWidgetLocation({360.f,300.f});
+        mPlayOnline.SetWidgetLocation({80.f,450.f});
         mPlayOnline.SetTextSize(17);
         mPlayOnline.mOnButtonClicked.BindAction(GetWeakRef(),&MainMenuHUD::PlayOnlineButtonClicked);
 
-        mTwoPlayer.SetWidgetLocation({360.f,400.f});
+        mTwoPlayer.SetWidgetLocation({80.f,600.f});
         mTwoPlayer.SetTextSize(17);
         mTwoPlayer.mOnButtonClicked.BindAction(GetWeakRef(),&MainMenuHUD::TwoPlayerButtonClicked);
 
-        mAnalysisBoard.SetWidgetLocation({360.f,500.f});
+        mAnalysisBoard.SetWidgetLocation({700.f,300.f});
         mAnalysisBoard.SetTextSize(17);
         mAnalysisBoard.mOnButtonClicked.BindAction(GetWeakRef(),&MainMenuHUD::AnalysisBoardButtonClicked);
 
-        mPlayBot.SetWidgetLocation({360.f,600.f});
+        mPlayBot.SetWidgetLocation({700.f,450.f});
         mPlayBot.SetTextSize(17);
         mPlayBot.mOnButtonClicked.BindAction(GetWeakRef(),&MainMenuHUD::PlayBotButtonClicked);
 
-        mQuit.SetWidgetLocation({700.f,900.f});
+        mQuit.SetWidgetLocation({700.f,600.f});
         mQuit.SetTextSize(17);
         mQuit.mOnButtonClicked.BindAction(GetWeakRef(),&MainMenuHUD::QuitButtonClicked);
     }

@@ -3,6 +3,7 @@
 #include"widgets/HUD.h"
 #include"widgets/Button.h"
 #include"widgets/TextWidget.h"
+#include"widgets/ImageWidget.h"
 
 
 namespace chess
@@ -34,6 +35,8 @@ namespace chess
             Button mAnalysisBoard;
             Button mPlayBot;
             Button mQuit;
+
+            ImageWidget mBackGroundImage;
 
             void HomeButtonClicked();
             void PlayOnlineButtonClicked();
