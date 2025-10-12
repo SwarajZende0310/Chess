@@ -19,9 +19,6 @@ namespace chess
         mButtonText{*(mButtonFont.get()),textString},
         mIsButtonDown{false}    
     {
-        mButtonColor.buttonDefaultColor = sf::Color{128, 128, 128, 255};
-        mButtonColor.buttonDownColor = sf::Color{64, 64, 64 , 255};
-        mButtonColor.buttonHoverColor = sf::Color{190, 190, 190, 255};
         SetColor(mButtonColor);
         CenterText();
     }

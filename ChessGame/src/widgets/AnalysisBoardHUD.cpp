@@ -43,6 +43,9 @@ namespace chess
 
         mQuit.SetWidgetLocation({700.f,900.f});
         mQuit.SetTextSize(17);
+        mQuitButtonColor.buttonDefaultColor = sf::Color{180,50,50,100};
+        mQuitButtonColor.buttonHoverColor = sf::Color{200,50,50,255};
+        mQuit.SetColor(mQuitButtonColor);
         mQuit.mOnButtonClicked.BindAction(GetWeakRef(),&AnalysisBoardHUD::QuitButtonClicked);
     }
 

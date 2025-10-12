@@ -36,6 +36,8 @@ namespace chess
             Button mPlayBot;
             Button mQuit;
 
+            ButtonColor mQuitButtonColor;
+
             ImageWidget mBackGroundImage;
 
             void HomeButtonClicked();

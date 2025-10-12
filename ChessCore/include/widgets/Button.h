@@ -14,9 +14,9 @@ namespace chess
      */
     struct ButtonColor
     {
-        sf::Color buttonDefaultColor; ///< Idle color
-        sf::Color buttonDownColor;    ///< Mouse-down color
-        sf::Color buttonHoverColor;   ///< Hover color
+        sf::Color buttonDefaultColor{128, 128, 128, 100}; ///< Idle color
+        sf::Color buttonDownColor{64, 64, 64 , 255};      ///< Mouse-down color
+        sf::Color buttonHoverColor{190, 190, 190, 255};   ///< Hover color
     };
 
     /**

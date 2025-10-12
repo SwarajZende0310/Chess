@@ -25,6 +25,8 @@ namespace chess
             Button mHome;
             Button mQuit;
 
+            ButtonColor mQuitButtonColor;
+
             void HomeButtonClicked();
             void QuitButtonClicked();
     };
