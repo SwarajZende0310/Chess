@@ -94,8 +94,11 @@ namespace chess
                     mOnButtonClicked.Broadcast();
                     handled = true;
                 }
+                else
+                {
+                    ButtonUp();
+                }
             }
-            ButtonUp();
         }
         else if(const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>())
         {
