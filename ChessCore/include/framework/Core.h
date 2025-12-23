@@ -67,47 +67,52 @@ namespace chess
      */
     #define LOG(M, ...) printf(M "\n", ##__VA_ARGS__)
 
-    // White Piece Representation
-    /** @name White piece identifiers */
-    ///@{
-    #define whitePawn 'P'
-    #define whiteBishop 'B'
-    #define whiteKnight 'N'
-    #define whiteRook 'R'
-    #define whiteQueen 'Q'
-    #define whiteKing 'K'
-    ///@}
+    /** @enum PieceType
+    * @brief A strongly typed enum class representing PieceTypes.
+    * 
+    * This enum is used to identify different PieceTypes.
+    */
+    enum class PieceType
+    {
+        invalid = 0,
+        whitePawn = 1,
+        whiteBishop = 2,
+        whiteKnight = 3,
+        whiteRook = 4,
+        whiteQueen = 5,
+        whiteKing = 6,
+        blackPawn = -1,
+        blackBishop = -2,
+        blackKnight = -3,
+        blackRook = -4,
+        blackQueen = -5,
+        blackKing = -6
+    };
 
-    // Black Piece Representation
-    /** @name Black piece identifiers */
-    ///@{
-    #define blackPawn 'p'
-    #define blackBishop 'b'
-    #define blackKnight 'n'
-    #define blackRook 'r'
-    #define blackQueen 'q'
-    #define blackKing 'k'
-    ///@}
+    /** @enum GameState
+    * @brief A strongly typed enum class representing Game Current State.
+    * 
+    * This enum is used to identify current state of the ongoing chess game.
+    */
+    enum class GameState
+    {
+        WhiteWon,
+        Draw,
+        BlackWon,
+        Ongoing
+    };
 
-    /** @brief Invalid piece identifier. */
-    #define invalid 'i'
-
-    // Game End State
-    /** @name Game end state codes */
-    ///@{
-    #define WhiteWon  1
-    #define DRAW      0
-    #define BlackWon -1
-    #define Ongoing   2
-    ///@}
-
-    // Castling states
-    /** @name Castling state flags */
-    ///@{
-    #define NoCastling 0
-    #define KingSide 1
-    #define QueenSide 2
-    ///@}
+    /** @enum CastlingState
+    * @brief A strongly typed enum class representing Castling Possiblities.
+    * 
+    * This enum is used to identify castling of king.
+    */
+    enum class CastlingState
+    {
+        NoCastling = 0,
+        KingSide = 1,
+        QueenSide = 2
+    };
 
     // Invalid piece container
     /** @brief Helper constant representing an all-ones 64-bit value. */
@@ -135,8 +140,8 @@ namespace chess
          * @brief Construct an invalid coordinate.
          */
         ChessCoordinate()
-            :rank{invalid},
-            file{invalid}
+            :rank{-1},
+            file{-1}
         {
 
         }
@@ -184,12 +189,12 @@ namespace chess
          * @brief Construct an empty move (no piece, invalid coordinates).
          */
         PlayedMove()
-            :mPiece{invalid},
+            :mPiece{PieceType::invalid},
             mStartCoordinate{},
             mEndCoordinate{},
-            mCapturedPiece{invalid},
+            mCapturedPiece{PieceType::invalid},
             mCapturedPieceCoordinate{},
-            mCastling{NoCastling}
+            mCastling{CastlingState::NoCastling}
         {
 
         }
@@ -201,9 +206,9 @@ namespace chess
          * @param end End coordinate
          * @param capturedPiece Captured piece identifier (or 'invalid')
          * @param capturedCoordinate Coordinate of captured piece
-         * @param castling Castling flag (NoCastling/KingSide/QueenSide)
+         * @param castling CastlingState flag (NoCastling/KingSide/QueenSide)
          */
-        PlayedMove(char piece, ChessCoordinate start, ChessCoordinate end, char capturedPiece, ChessCoordinate capturedCoordinate,int castling)
+        PlayedMove(PieceType piece, ChessCoordinate start, ChessCoordinate end, PieceType capturedPiece, ChessCoordinate capturedCoordinate,CastlingState castling)
             :mPiece{piece},
             mStartCoordinate{start.rank,start.file},
             mEndCoordinate{end.rank,end.file},
@@ -214,13 +219,13 @@ namespace chess
 
             }
         
-        char mPiece;                     ///< Piece that moved
+        PieceType mPiece;                ///< Piece that moved
         ChessCoordinate mStartCoordinate;///< Starting coordinate
         ChessCoordinate mEndCoordinate;  ///< Ending coordinate
 
-        char mCapturedPiece;             ///< Captured piece ('invalid' if none)
+        PieceType mCapturedPiece;                 ///< Captured piece ('invalid' if none)
         ChessCoordinate mCapturedPieceCoordinate; ///< Coordinate of captured piece
 
-        int mCastling;                   ///< Castling flag
+        CastlingState mCastling;                   ///< CastlingState flag
     };
 }

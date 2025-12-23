@@ -40,7 +40,7 @@ namespace chess
 
         if(((ranksForward == 0 && filesRightward > 0 ) || (ranksForward > 0 && filesRightward == 0 )) &&
             !PiecesInBetweenPath(startCoordinate,endCoordinate) &&
-            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate)))
+            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == PieceType::invalid || isEnemy(endCoordinate)))
             {
                 return true;
             }
@@ -54,11 +54,11 @@ namespace chess
     {
         if(mWhitePieces)
         {
-            ChessState::Get().SetPiecePosition(whiteRook,startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(PieceType::whiteRook,startCoordinate,endCoordinate);
         }
         else
         {
-            ChessState::Get().SetPiecePosition(blackRook,startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(PieceType::blackRook,startCoordinate,endCoordinate);
         }
     }
 
@@ -118,7 +118,7 @@ namespace chess
 
             while(iter.isValid())
             {
-                if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid)
+                if(ChessState::Get().GetPieceOnChessCoordinate(iter) != PieceType::invalid)
                 {
                     if(isEnemy(iter))
                         moves.emplace_back(iter);
@@ -194,7 +194,7 @@ namespace chess
 
         while(iterator.isValid() && !(iterator == endCoordinate))
         {
-            if(ChessState::Get().GetPieceOnChessCoordinate(iterator) != invalid)
+            if(ChessState::Get().GetPieceOnChessCoordinate(iterator) != PieceType::invalid)
             {
                 return true;
             }

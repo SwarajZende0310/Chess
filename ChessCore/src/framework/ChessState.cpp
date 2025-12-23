@@ -142,7 +142,7 @@ namespace chess
      * @param piece One of the defined piece constants (e.g., whitePawn).
      * @return List of board coordinates where the piece currently exists.
      */
-    List<ChessCoordinate> ChessState::GetPiecePosiiton(char piece)
+    List<ChessCoordinate> ChessState::GetPiecePosiiton(PieceType piece)
     {
         List<ChessCoordinate> position;
         position.reserve(8);
@@ -173,21 +173,21 @@ namespace chess
      * @param end Destination coordinate (must be valid).
      * @param log If true, records the move into history and updates flags.
      */
-    void ChessState::SetPiecePosition(char piece, ChessCoordinate &start, ChessCoordinate &end,bool log)
+    void ChessState::SetPiecePosition(PieceType piece, ChessCoordinate &start, ChessCoordinate &end,bool log)
     {
         uint64_t& pieceContainer = GetPieceContainer(piece);
-        if(start.file == invalid || start.rank == -1 || end.file == invalid || end.rank == -1) return;
+        if(start.file == -1 || start.rank == -1 || end.file == -1 || end.rank == -1) return;
         uint64_t currentPos =  1ULL << (8 * (start.rank - 1) + (7- ConvertRankToCol(start.file)+1));
         if(!(pieceContainer & currentPos))return;
         PlayedMove move;
 
         // Remove other piece if already there in position where we are moving or Enpassant played
-        if(ChessState::Get().GetPieceOnChessCoordinate(end) != invalid 
-            || ( piece == whitePawn && abs(start.file - end.file) == 1 && (end.rank - start.rank) > 0 ) 
-            || ( piece == blackPawn && abs(start.file - end.file) == 1 && (end.rank - start.rank) < 0 ) )
+        if(ChessState::Get().GetPieceOnChessCoordinate(end) != PieceType::invalid
+            || ( piece == PieceType::whitePawn && abs(start.file - end.file) == 1 && (end.rank - start.rank) > 0 ) 
+            || ( piece == PieceType::blackPawn && abs(start.file - end.file) == 1 && (end.rank - start.rank) < 0 ) )
         {
-            char endPiece = ChessState::Get().GetPieceOnChessCoordinate(end);
-            if(endPiece == invalid)
+            PieceType endPiece = ChessState::Get().GetPieceOnChessCoordinate(end);
+            if(endPiece == PieceType::invalid)
             {
                 // Enpassant move
                 move.mCapturedPieceCoordinate = ChessCoordinate{start.rank,end.file};
@@ -202,9 +202,9 @@ namespace chess
         }
 
         // Check for castling
-        if((piece == whiteKing || piece == blackKing) && abs(start.file - end.file) > 1 )
+        if((piece == PieceType::whiteKing || piece == PieceType::blackKing) && abs(start.file - end.file) > 1 )
         {
-            move.mCastling = end.file - start.file > 0 ? KingSide : QueenSide;
+            move.mCastling = end.file - start.file > 0 ? CastlingState::KingSide : CastlingState::QueenSide;
         }
 
         // Unset the current high bit
@@ -242,48 +242,48 @@ namespace chess
         if(!LastMove.mStartCoordinate.isValid() || !LastMove.mEndCoordinate.isValid())return false;
 
         // Undoing castling
-        if(LastMove.mCastling != NoCastling)
+        if(LastMove.mCastling != CastlingState::NoCastling)
         {
-            if(LastMove.mPiece == whiteKing)
+            if(LastMove.mPiece == PieceType::whiteKing)
             {
                 ChessCoordinate kingCoordinateEnd = ChessCoordinate{1,'e'};
                 ChessCoordinate kingCoordinateStart = ChessCoordinate{1,'g'};
                 ChessCoordinate rookCoordinateEnd = ChessCoordinate{1,'h'};
                 ChessCoordinate rookCoordinateStart = ChessCoordinate{1,'f'};
-                if(LastMove.mCastling == KingSide)
+                if(LastMove.mCastling == CastlingState::KingSide)
                 {
-                    SetPiecePosition(whiteKing,kingCoordinateStart,kingCoordinateEnd,false);
-                    SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
+                    SetPiecePosition(PieceType::whiteKing,kingCoordinateStart,kingCoordinateEnd,false);
+                    SetPiecePosition(PieceType::whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
                 }
-                else if(LastMove.mCastling == QueenSide)
+                else if(LastMove.mCastling == CastlingState::QueenSide)
                 {
                     kingCoordinateStart.file = 'c';
                     rookCoordinateStart.file = 'd';
                     rookCoordinateEnd.file = 'a';
-                    SetPiecePosition(whiteKing,kingCoordinateStart,kingCoordinateEnd,false);
-                    SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
+                    SetPiecePosition(PieceType::whiteKing,kingCoordinateStart,kingCoordinateEnd,false);
+                    SetPiecePosition(PieceType::whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
                 }
                 mFirstMove[kingCoordinateEnd] = true;
                 mFirstMove[rookCoordinateEnd] = true;
             }
-            else if(LastMove.mPiece == blackKing)
+            else if(LastMove.mPiece == PieceType::blackKing)
             {
                 ChessCoordinate kingCoordinateEnd = ChessCoordinate{8,'e'};
                 ChessCoordinate kingCoordinateStart = ChessCoordinate{8,'g'};
                 ChessCoordinate rookCoordinateEnd = ChessCoordinate{8,'h'};
                 ChessCoordinate rookCoordinateStart = ChessCoordinate{8,'f'};
-                if(LastMove.mCastling == KingSide)
+                if(LastMove.mCastling == CastlingState::KingSide)
                 {
-                    SetPiecePosition(blackKing,kingCoordinateStart,kingCoordinateEnd,false);
-                    SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);
+                    SetPiecePosition(PieceType::blackKing,kingCoordinateStart,kingCoordinateEnd,false);
+                    SetPiecePosition(PieceType::blackRook,rookCoordinateStart,rookCoordinateEnd,false);
                 }
-                else if(LastMove.mCastling == QueenSide)
+                else if(LastMove.mCastling == CastlingState::QueenSide)
                 {
                     kingCoordinateStart.file = 'c';
                     rookCoordinateStart.file = 'd';
                     rookCoordinateEnd.file = 'a';
-                    SetPiecePosition(blackKing,kingCoordinateStart,kingCoordinateEnd,false);
-                    SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);  
+                    SetPiecePosition(PieceType::blackKing,kingCoordinateStart,kingCoordinateEnd,false);
+                    SetPiecePosition(PieceType::blackRook,rookCoordinateStart,rookCoordinateEnd,false);  
                 }
                 mFirstMove[kingCoordinateEnd] = true;
                 mFirstMove[rookCoordinateEnd] = true;
@@ -293,7 +293,7 @@ namespace chess
         }
 
         // Spawning removed piece
-        if(LastMove.mCapturedPiece != invalid && LastMove.mCapturedPieceCoordinate.isValid())
+        if(LastMove.mCapturedPiece != PieceType::invalid && LastMove.mCapturedPieceCoordinate.isValid())
         {
             SpawnPiece(LastMove.mCapturedPiece,LastMove.mCapturedPieceCoordinate);
         }
@@ -308,25 +308,25 @@ namespace chess
      * @param coordinate Board coordinate to check.
      * @return Piece identifier at the square, or `invalid` if empty.
      */
-    char ChessState::GetPieceOnChessCoordinate(ChessCoordinate coordinate)
+    PieceType ChessState::GetPieceOnChessCoordinate(ChessCoordinate coordinate)
     {
         uint64_t currentPos =  (1ULL << (8 * (coordinate.rank - 1) + (7- ConvertRankToCol(coordinate.file)+1)));
         
-        if(mWhitePawns & currentPos)return whitePawn;
-        else if( mWhiteRooks & currentPos)return whiteRook;
-        else if( mWhiteKnights & currentPos)return whiteKnight;
-        else if( mWhiteBishops & currentPos)return whiteBishop;
-        else if( mWhiteQueen & currentPos)return whiteQueen;
-        else if( mWhiteKing & currentPos)return whiteKing;
+        if(mWhitePawns & currentPos)return PieceType::whitePawn;
+        else if( mWhiteRooks & currentPos)return PieceType::whiteRook;
+        else if( mWhiteKnights & currentPos)return PieceType::whiteKnight;
+        else if( mWhiteBishops & currentPos)return PieceType::whiteBishop;
+        else if( mWhiteQueen & currentPos)return PieceType::whiteQueen;
+        else if( mWhiteKing & currentPos)return PieceType::whiteKing;
 
-        else if(mBlackPawns & currentPos)return blackPawn;
-        else if( mBlackRooks & currentPos)return blackRook;
-        else if( mBlackKnights & currentPos)return blackKnight;
-        else if( mBlackBishops & currentPos)return blackBishop;
-        else if( mBlackQueen & currentPos)return blackQueen;
-        else if( mBlackKing & currentPos)return blackKing;
+        else if(mBlackPawns & currentPos)return PieceType::blackPawn;
+        else if( mBlackRooks & currentPos)return PieceType::blackRook;
+        else if( mBlackKnights & currentPos)return PieceType::blackKnight;
+        else if( mBlackBishops & currentPos)return PieceType::blackBishop;
+        else if( mBlackQueen & currentPos)return PieceType::blackQueen;
+        else if( mBlackKing & currentPos)return PieceType::blackKing;
 
-        return invalid;
+        return PieceType::invalid;
     }
 
     /**
@@ -336,9 +336,9 @@ namespace chess
      * @param piece Piece identifier to remove.
      * @param position The coordinate from which to remove the piece.
      */
-    void ChessState::RemovePiece(char piece, ChessCoordinate &position)
+    void ChessState::RemovePiece(PieceType piece, ChessCoordinate &position)
     {
-        if(piece == invalid || position.file == invalid || position.rank == -1)return;
+        if(piece == PieceType::invalid || position.file == -1 || position.rank == -1)return;
         uint64_t& pieceContainer = GetPieceContainer(piece);
         uint64_t currentPos =  1ULL << (8 * (position.rank - 1) + (7- ConvertRankToCol(position.file)+1));
         if(!(pieceContainer & currentPos))return;
@@ -358,11 +358,11 @@ namespace chess
         UpdateAttackedSquare();
         if(white)
         {
-            return mBlackAttackedSquares.find(GetPiecePosiiton(whiteKing)[0]) != mBlackAttackedSquares.end() ;
+            return mBlackAttackedSquares.find(GetPiecePosiiton(PieceType::whiteKing)[0]) != mBlackAttackedSquares.end() ;
         }
         else
         {
-            return mWhiteAttackedSquares.find(GetPiecePosiiton(blackKing)[0]) != mWhiteAttackedSquares.end() ;
+            return mWhiteAttackedSquares.find(GetPiecePosiiton(PieceType::blackKing)[0]) != mWhiteAttackedSquares.end() ;
         }
         return false;
     }
@@ -382,7 +382,7 @@ namespace chess
      * @param piece Piece identifier (whitePawn, blackQueen, etc.).
      * @return Number of set bits in the corresponding bitboard.
      */
-    int ChessState::GetPieceCount(char piece)
+    int ChessState::GetPieceCount(PieceType piece)
     {
         int pieceCount = 0;
         uint64_t pieceContainer = GetPieceContainer(piece);
@@ -421,7 +421,7 @@ namespace chess
         for(int i = 0; i < mMovesPlayed.size(); i++)
         {
             PlayedMove move = mMovesPlayed[i];
-            moveCount = (move.mCapturedPiece != invalid || move.mPiece == whitePawn || move.mPiece == blackPawn) ? 0 : moveCount + 1 ;
+            moveCount = (move.mCapturedPiece != PieceType::invalid || move.mPiece == PieceType::whitePawn || move.mPiece == PieceType::blackPawn) ? 0 : moveCount + 1 ;
         }
         return moveCount;
     }
@@ -475,7 +475,7 @@ namespace chess
         mBlackAttackedSquares.clear();
 
         // white pawn attacked squares
-        for(auto coordinate : GetPiecePosiiton(whitePawn))
+        for(auto coordinate : GetPiecePosiiton(PieceType::whitePawn))
         {
             ChessCoordinate left = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file - 1)};
             ChessCoordinate right = ChessCoordinate{coordinate.rank + 1, (char)(coordinate.file + 1)};
@@ -485,7 +485,7 @@ namespace chess
         }
 
         // white Knight attacked squares
-        for(auto coordinate : GetPiecePosiiton(whiteKnight))
+        for(auto coordinate : GetPiecePosiiton(PieceType::whiteKnight))
         {
             ChessCoordinate forwardLeft = ChessCoordinate{coordinate.rank + 2, (char)(coordinate.file - 1)};
             ChessCoordinate forwardRight = ChessCoordinate{coordinate.rank + 2, (char)(coordinate.file + 1)};
@@ -513,14 +513,14 @@ namespace chess
         }
 
         // wihte bishop attacked squares
-        for(auto startCoordinate : GetPiecePosiiton(whiteBishop))
+        for(auto startCoordinate : GetPiecePosiiton(PieceType::whiteBishop))
         {
             int offsetRank[] = { 1, 1,-1,-1};
             int offsetFile[] = { 1,-1, 1,-1};
             for(int i = 0; i < 4; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == blackKing))
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::blackKing))
                 {
                     mWhiteAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -531,14 +531,14 @@ namespace chess
         }
 
         // white Rook attacked squares
-        for(auto startCoordinate : GetPiecePosiiton(whiteRook))
+        for(auto startCoordinate : GetPiecePosiiton(PieceType::whiteRook))
         {
             int offsetRank[] = { 0, 0, 1,-1};
             int offsetFile[] = { 1,-1, 0, 0};
             for(int i = 0; i < 4; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i],(char) (startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == blackKing))
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::blackKing))
                 {
                     mWhiteAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -549,14 +549,14 @@ namespace chess
         }
 
         // white Queen attacked squares
-        for(auto startCoordinate : GetPiecePosiiton(whiteQueen))
+        for(auto startCoordinate : GetPiecePosiiton(PieceType::whiteQueen))
         {
             int offsetRank[] = { 0, 0, 1,-1, 1, 1,-1,-1};
             int offsetFile[] = { 1,-1, 0, 0, 1,-1, 1,-1};
             for(int i = 0; i < 8; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == blackKing) )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::blackKing) )
                 {
                     mWhiteAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -567,7 +567,7 @@ namespace chess
         }
 
         // white King attacked squares
-        for(auto startCoordinate : GetPiecePosiiton(whiteKing))
+        for(auto startCoordinate : GetPiecePosiiton(PieceType::whiteKing))
         {
             int offsetRank[] = { 0, 0, 1,-1, 1, 1,-1,-1};
             int offsetFile[] = { 1,-1, 0, 0, 1,-1, 1,-1};
@@ -580,7 +580,7 @@ namespace chess
 
         //Black pieces
         // black pawn attacked squares
-        for(auto coordinate : GetPiecePosiiton(blackPawn))
+        for(auto coordinate : GetPiecePosiiton(PieceType::blackPawn))
         {
             ChessCoordinate left = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file - 1)};
             ChessCoordinate right = ChessCoordinate{coordinate.rank - 1, (char)(coordinate.file + 1)};
@@ -590,7 +590,7 @@ namespace chess
         }
 
         // black Knight attacked squares
-        for(auto coordinate : GetPiecePosiiton(blackKnight))
+        for(auto coordinate : GetPiecePosiiton(PieceType::blackKnight))
         {
             ChessCoordinate forwardLeft = ChessCoordinate{coordinate.rank + 2, (char)(coordinate.file - 1)};
             ChessCoordinate forwardRight = ChessCoordinate{coordinate.rank + 2, (char)(coordinate.file + 1)};
@@ -618,14 +618,14 @@ namespace chess
         }
 
         // black bishop attacked squares
-        for(auto startCoordinate : GetPiecePosiiton(blackBishop))
+        for(auto startCoordinate : GetPiecePosiiton(PieceType::blackBishop))
         {
             int offsetRank[] = { 1, 1,-1,-1};
             int offsetFile[] = { 1,-1, 1,-1};
             for(int i = 0; i < 4; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == whiteKing) )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::whiteKing) )
                 {
                     mBlackAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -636,14 +636,14 @@ namespace chess
         }
 
         // black Rook attacked squares
-        for(auto startCoordinate : GetPiecePosiiton(blackRook))
+        for(auto startCoordinate : GetPiecePosiiton(PieceType::blackRook))
         {
             int offsetRank[] = { 0, 0, 1,-1};
             int offsetFile[] = { 1,-1, 0, 0};
             for(int i = 0; i < 4; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i],(char) (startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == whiteKing) )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::whiteKing) )
                 {
                     mBlackAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -654,14 +654,14 @@ namespace chess
         }
 
         // black Queen attacked squares
-        for(auto startCoordinate : GetPiecePosiiton(blackQueen))
+        for(auto startCoordinate : GetPiecePosiiton(PieceType::blackQueen))
         {
             int offsetRank[] = { 0, 0, 1,-1, 1, 1,-1,-1};
             int offsetFile[] = { 1,-1, 0, 0, 1,-1, 1,-1};
             for(int i = 0; i < 8; i++)
             {
                 ChessCoordinate iter = ChessCoordinate{startCoordinate.rank + offsetRank[i], (char)(startCoordinate.file + offsetFile[i])};
-                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == whiteKing) )
+                while(iter.isValid() && (ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::invalid || ChessState::Get().GetPieceOnChessCoordinate(iter) == PieceType::whiteKing) )
                 {
                     mBlackAttackedSquares.insert(iter);
                     iter.file += offsetFile[i];
@@ -672,7 +672,7 @@ namespace chess
         }
 
         // black King attacked squares
-        for(auto startCoordinate : GetPiecePosiiton(blackKing))
+        for(auto startCoordinate : GetPiecePosiiton(PieceType::blackKing))
         {
             int offsetRank[] = { 0, 0, 1,-1, 1, 1,-1,-1};
             int offsetFile[] = { 1,-1, 0, 0, 1,-1, 1,-1};
@@ -689,7 +689,7 @@ namespace chess
      * @param piece Piece to place.
      * @param position Target square (must be valid).
      */
-    void ChessState::SpawnPiece(char piece, ChessCoordinate &position)
+    void ChessState::SpawnPiece(PieceType piece, ChessCoordinate &position)
     {
         uint64_t& pieceContainer = GetPieceContainer(piece);
         if(!position.isValid()) return;
@@ -703,33 +703,33 @@ namespace chess
      * @param piece Piece identifier.
      * @return Reference to the corresponding uint64_t bitboard.
      */
-    uint64_t &ChessState::GetPieceContainer(char piece)
+    uint64_t &ChessState::GetPieceContainer(PieceType piece)
     {
         switch (piece)
         {
-        case whitePawn:
+        case PieceType::whitePawn:
             return mWhitePawns;
-        case whiteBishop:
+        case PieceType::whiteBishop:
             return mWhiteBishops;
-        case whiteKnight:
+        case PieceType::whiteKnight:
             return mWhiteKnights;
-        case whiteRook:
+        case PieceType::whiteRook:
             return mWhiteRooks;
-        case whiteQueen:
+        case PieceType::whiteQueen:
             return mWhiteQueen;
-        case whiteKing:
+        case PieceType::whiteKing:
             return mWhiteKing;
-        case blackPawn:
+        case PieceType::blackPawn:
             return mBlackPawns;
-        case blackBishop:
+        case PieceType::blackBishop:
             return mBlackBishops;
-        case blackKnight:
+        case PieceType::blackKnight:
             return mBlackKnights;
-        case blackRook:
+        case PieceType::blackRook:
             return mBlackRooks;
-        case blackQueen:
+        case PieceType::blackQueen:
             return mBlackQueen;
-        case blackKing:
+        case PieceType::blackKing:
             return mBlackKing;
         }
         return UINT64_MAX_VALUE;
@@ -742,7 +742,7 @@ namespace chess
      */
     char ChessState::ConvertColToRank(int col)
     {
-        if(col < 1 && col > 8) return invalid;
+        if(col < 1 && col > 8) return -1;
         return static_cast<char>('a' + col - 1) ;
     }
 }

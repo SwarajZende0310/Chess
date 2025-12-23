@@ -41,8 +41,8 @@ namespace chess
     mPieceOffsetX{10},
     mPieceOffsetY{8},
     mPieceSelected{false},
-    mStartPose{-1,invalid},
-    mEndPose{-1,invalid},
+    mStartPose{-1,-1},
+    mEndPose{-1,-1},
     mWhiteTurn{true},
     mMouseDragging{false},
     mMousePosition{-1,-1},
@@ -161,8 +161,8 @@ namespace chess
     // Render red if king in check
     RenderKingInCheck();
 
-    char whitePieces[6] = {whiteKing,whiteQueen,whiteRook,whiteBishop,whiteKnight,whitePawn};
-    char blackPieces[6] = {blackKing,blackQueen,blackRook,blackBishop,blackKnight,blackPawn};
+    PieceType whitePieces[6] = {PieceType::whiteKing, PieceType::whiteQueen, PieceType::whiteRook, PieceType::whiteBishop, PieceType::whiteKnight, PieceType::whitePawn};
+    PieceType blackPieces[6] = {PieceType::blackKing, PieceType::blackQueen, PieceType::blackRook, PieceType::blackBishop, PieceType::blackKnight, PieceType::blackPawn};
 
     // Render White Pieces
     for(int i = 0; i < 6; i++)
@@ -206,8 +206,8 @@ namespace chess
 
     if(mMouseDragging && mPieceSelected && mStartPose.isValid())
     {
-      char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
-      if(piece != invalid)
+      PieceType piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+      if(piece != PieceType::invalid)
       {
         GetPieceContainer(piece)->SetPieceLocation({float(mMousePosition.x - mBoard->GetSquareOffsetX()/2.f) ,float(mMousePosition.y - mBoard->GetSquareOffsetY()/2.f)},GetPieceContainer(piece)->GetPieceColor());
         GetPieceContainer(piece)->RenderPiece();
@@ -218,10 +218,10 @@ namespace chess
   /**
    * @brief Validate that the selected piece belongs to the current player.
    */
-  bool Stage::CheckCorrectPieceSelected(char piece)
+  bool Stage::CheckCorrectPieceSelected(PieceType piece)
   {
-      if((mWhiteTurn && (piece==whiteKing || piece==whiteQueen || piece==whiteRook || piece==whiteKnight || piece==whiteBishop || piece==whitePawn)) 
-          || (!mWhiteTurn && (piece==blackKing || piece==blackQueen || piece==blackRook || piece==blackKnight || piece==blackBishop || piece==blackPawn)))
+      if((mWhiteTurn && static_cast<int>(piece) > 0) 
+          || (!mWhiteTurn && static_cast<int>(piece) < 0))
           return true;
       return false;
   }
@@ -230,9 +230,9 @@ namespace chess
    * @brief Execute a move if legal, including castling and promotion.
    * @return true if move succeeded.
    */
-  bool Stage::MovePiece(char piece) 
+  bool Stage::MovePiece(PieceType piece) 
   {
-    if(piece == invalid)return false;
+    if(piece == PieceType::invalid)return false;
 
     shared<Piece> piecePointer = GetPieceContainer(piece); 
 
@@ -268,7 +268,7 @@ namespace chess
       ChessCoordinate pawnToPromote = mWhiteTurn ? mWhitePawn->PawnToPromote() : mBlackPawn->PawnToPromote();
       if(pawnToPromote.isValid())
       {
-        ChessState::Get().RemovePiece(mWhiteTurn ? whitePawn : blackPawn, pawnToPromote);
+        ChessState::Get().RemovePiece(mWhiteTurn ? PieceType::whitePawn : PieceType::blackPawn, pawnToPromote);
         ChessState::Get().SpawnPiece(WhichPieceToPromote(), pawnToPromote);
       }
       mWhiteTurn = !mWhiteTurn;
@@ -289,9 +289,9 @@ namespace chess
 
       if(mWhiteTurn)
       {
-        if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != whiteKing 
+        if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != PieceType::whiteKing 
           || abs(rookCoordinate.file - kingCoordinate.file) < 2
-          || !ChessState::Get().IsFirstMove(ChessState::Get().GetPiecePosiiton(whiteKing)[0])
+          || !ChessState::Get().IsFirstMove(ChessState::Get().GetPiecePosiiton(PieceType::whiteKing)[0])
           || (offsetFile == 1 && !ChessState::Get().IsFirstMove(ChessCoordinate{1,'h'}))
           || (offsetFile == -1 && !ChessState::Get().IsFirstMove(ChessCoordinate{1,'a'}))
           || mWhiteKing->IsInCheck())
@@ -303,7 +303,7 @@ namespace chess
 
         while(iter.isValid() && !(iter == rookEndCoordinate))
         {
-          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid || blackAttackedSquares.find(iter) != blackAttackedSquares.end())
+          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != PieceType::invalid || blackAttackedSquares.find(iter) != blackAttackedSquares.end())
             return false;
           iter.file += offsetFile;
         }
@@ -311,9 +311,9 @@ namespace chess
       }
       else
       {
-        if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != blackKing 
+        if(ChessState::Get().GetPieceOnChessCoordinate(kingCoordinate) != PieceType::blackKing 
           || abs(rookCoordinate.file - kingCoordinate.file) < 2
-          || !ChessState::Get().IsFirstMove(ChessState::Get().GetPiecePosiiton(blackKing)[0])
+          || !ChessState::Get().IsFirstMove(ChessState::Get().GetPiecePosiiton(PieceType::blackKing)[0])
           || (offsetFile == 1 && !ChessState::Get().IsFirstMove(ChessCoordinate{8,'h'}))
           || (offsetFile == -1 && !ChessState::Get().IsFirstMove(ChessCoordinate{8,'a'}))
           || mBlackKing->IsInCheck())
@@ -325,7 +325,7 @@ namespace chess
 
         while(iter.isValid() && !(iter == rookEndCoordinate))
         {
-          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != invalid || whiteAttackedSquares.find(iter) != whiteAttackedSquares.end())
+          if(ChessState::Get().GetPieceOnChessCoordinate(iter) != PieceType::invalid || whiteAttackedSquares.find(iter) != whiteAttackedSquares.end())
             return false;
           iter.file += offsetFile;
         }
@@ -347,7 +347,7 @@ namespace chess
         ChessCoordinate rookCoordinateEnd = ChessCoordinate{1,'f'};
 
         mWhiteKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
-        ChessState::Get().SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
+        ChessState::Get().SetPiecePosition(PieceType::whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
       }
       else
       {
@@ -357,7 +357,7 @@ namespace chess
         ChessCoordinate rookCoordinateEnd = ChessCoordinate{8,'f'};
 
         mBlackKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
-        ChessState::Get().SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);
+        ChessState::Get().SetPiecePosition(PieceType::blackRook,rookCoordinateStart,rookCoordinateEnd,false);
       }
   }
 
@@ -374,7 +374,7 @@ namespace chess
       ChessCoordinate rookCoordinateEnd = ChessCoordinate{1,'d'};
 
       mWhiteKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
-      ChessState::Get().SetPiecePosition(whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
+      ChessState::Get().SetPiecePosition(PieceType::whiteRook,rookCoordinateStart,rookCoordinateEnd,false);
     }
     else
     {
@@ -384,7 +384,7 @@ namespace chess
       ChessCoordinate rookCoordinateEnd = ChessCoordinate{8,'d'};
 
       mBlackKing->MakeMove(kingCoordinateStart,kingCoordinateEnd);
-      ChessState::Get().SetPiecePosition(blackRook,rookCoordinateStart,rookCoordinateEnd,false);
+      ChessState::Get().SetPiecePosition(PieceType::blackRook,rookCoordinateStart,rookCoordinateEnd,false);
     }
   }
 
@@ -406,14 +406,14 @@ namespace chess
 
   /**
    * @brief Convert a window pixel position to a board coordinate.
-   * @return `ChessCoordinate{invalid, invalid}` if outside the board region.
+   * @return `ChessCoordinate{-1, -1}` if outside the board region.
    */
   ChessCoordinate Stage::ConvertPositionToChessCoordinate(const sf::Vector2i &position)
   {
       if(position.x < mBoard->GetBoardStart().x || position.y < mBoard->GetBoardStart().y 
         || position.x > mBoard->GetBoardDimensions().x + mBoard->GetBoardStart().x
         || position.y > mBoard->GetBoardDimensions().y + mBoard->GetBoardStart().y) 
-        return ChessCoordinate{invalid,invalid};
+        return ChessCoordinate{-1,-1};
       
       int row =  (position.y - mBoard->GetBoardStart().y) / mBoard->GetSquareOffsetX();
       int col =  (position.x - mBoard->GetBoardStart().x) / mBoard->GetSquareOffsetY(); 
@@ -433,33 +433,33 @@ namespace chess
   /**
    * @brief Get the shared container for a given piece code.
    */
-  shared<Piece> Stage::GetPieceContainer(char piece)
+  shared<Piece> Stage::GetPieceContainer(PieceType piece)
   {
       switch (piece)
         {
-        case whitePawn:
+        case PieceType::whitePawn:
             return mWhitePawn;
-        case whiteBishop:
+        case PieceType::whiteBishop:
             return mWhiteBishop;
-        case whiteKnight:
+        case PieceType::whiteKnight:
             return mWhiteKnight;
-        case whiteRook:
+        case PieceType::whiteRook:
             return mWhiteRook;
-        case whiteQueen:
+        case PieceType::whiteQueen:
             return mWhiteQueen;
-        case whiteKing:
+        case PieceType::whiteKing:
             return mWhiteKing;
-        case blackPawn:
+        case PieceType::blackPawn:
             return mBlackPawn;
-        case blackBishop:
+        case PieceType::blackBishop:
             return mBlackBishop;
-        case blackKnight:
+        case PieceType::blackKnight:
             return mBlackKnight;
-        case blackRook:
+        case PieceType::blackRook:
             return mBlackRook;
-        case blackQueen:
+        case PieceType::blackQueen:
             return mBlackQueen;
-        case blackKing:
+        case PieceType::blackKing:
             return mBlackKing;
         }
       return nullptr;
@@ -468,16 +468,16 @@ namespace chess
   /**
    * @brief Decide the promotion piece (placeholder returns queen based on side).
    */
-  char Stage::WhichPieceToPromote()
+  PieceType Stage::WhichPieceToPromote()
   {
       // TODO :: Implement an ask to which piece to promote
-      return mWhiteTurn ? whiteQueen : blackQueen;
+      return mWhiteTurn ? PieceType::whiteQueen : PieceType::blackQueen;
   }
 
   /**
    * @brief Determine current end-game state (win/draw/ongoing).
    */
-  int Stage::EndState()
+  GameState Stage::EndState()
   {
       bool ongoing = false; 
       if(mWhiteTurn)
@@ -485,13 +485,13 @@ namespace chess
         bool whiteKingInCheck = mWhiteKing->IsInCheck();
         // Check for all possible moves for white Pieces
         // White kings moves
-        List<ChessCoordinate> startCoordinate = ChessState::Get().GetPiecePosiiton(whiteKing);
+        List<ChessCoordinate> startCoordinate = ChessState::Get().GetPiecePosiiton(PieceType::whiteKing);
         List<ChessCoordinate> moves = mWhiteKing->GetAllPossibleMoves(startCoordinate[0]);
         
         if(moves.size() > 0)
           ongoing = true;
 
-        char whitePieces[5] = {whitePawn, whiteKnight, whiteBishop, whiteRook, whiteQueen};
+        PieceType whitePieces[5] = {PieceType::whitePawn, PieceType::whiteKnight, PieceType::whiteBishop, PieceType::whiteRook, PieceType::whiteQueen};
 
         for(int p = 0; p < 5 ; p++)
         {
@@ -514,23 +514,23 @@ namespace chess
         if(ongoing)
         {
           //Check for 50 move rule
-          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return DRAW;  
+          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return GameState::Draw;  
 
           // Check if enough checkmating material available
-          if(ChessState::Get().GetPieceCount(whiteQueen) || ChessState::Get().GetPieceCount(blackQueen) 
-            || ChessState::Get().GetPieceCount(whiteRook) || ChessState::Get().GetPieceCount(blackRook)
-            || ChessState::Get().GetPieceCount(whitePawn) || ChessState::Get().GetPieceCount(blackPawn)
-            || ChessState::Get().GetPieceCount(whiteBishop) == 2 || ChessState::Get().GetPieceCount(blackBishop) == 2
-            || (ChessState::Get().GetPieceCount(whiteBishop) && ChessState::Get().GetPieceCount(whiteKnight))
-            || (ChessState::Get().GetPieceCount(blackBishop) && ChessState::Get().GetPieceCount(blackKnight)) )
+          if(ChessState::Get().GetPieceCount(PieceType::whiteQueen) || ChessState::Get().GetPieceCount(PieceType::blackQueen) 
+            || ChessState::Get().GetPieceCount(PieceType::whiteRook) || ChessState::Get().GetPieceCount(PieceType::blackRook)
+            || ChessState::Get().GetPieceCount(PieceType::whitePawn) || ChessState::Get().GetPieceCount(PieceType::blackPawn)
+            || ChessState::Get().GetPieceCount(PieceType::whiteBishop) == 2 || ChessState::Get().GetPieceCount(PieceType::blackBishop) == 2
+            || (ChessState::Get().GetPieceCount(PieceType::whiteBishop) && ChessState::Get().GetPieceCount(PieceType::whiteKnight))
+            || (ChessState::Get().GetPieceCount(PieceType::blackBishop) && ChessState::Get().GetPieceCount(PieceType::blackKnight)) )
             {
-              return Ongoing;
+              return GameState::Ongoing;
             }
-          return DRAW;
+          return GameState::Draw;
         }
         else
         {
-          return whiteKingInCheck ? BlackWon : DRAW;
+          return whiteKingInCheck ? GameState::BlackWon : GameState::Draw;
         }
       }
       // Black's turn
@@ -539,13 +539,13 @@ namespace chess
         bool blackKingInCheck = mBlackKing->IsInCheck();
         // Check for all possible moves for black Pieces
         // Black kings moves
-        List<ChessCoordinate> startCoordinate = ChessState::Get().GetPiecePosiiton(blackKing);
+        List<ChessCoordinate> startCoordinate = ChessState::Get().GetPiecePosiiton(PieceType::blackKing);
         List<ChessCoordinate> moves = mBlackKing->GetAllPossibleMoves(startCoordinate[0]);
         
         if(moves.size() > 0)
           ongoing = true;
 
-        char blackPieces[5] = {blackPawn, blackKnight, blackBishop, blackRook, blackQueen};
+        PieceType blackPieces[5] = {PieceType::blackPawn, PieceType::blackKnight, PieceType::blackBishop, PieceType::blackRook, PieceType::blackQueen};
 
         for(int p = 0; p < 5 ; p++)
         {
@@ -568,26 +568,26 @@ namespace chess
         if(ongoing)
         {
           //Check for 50 move rule
-          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return DRAW;
+          if(ChessState::Get().GetMovesWithoutCapture() >= 100 )return GameState::Draw;
 
           // Check if enough checkmating material available
-          if(ChessState::Get().GetPieceCount(whiteQueen) || ChessState::Get().GetPieceCount(blackQueen)
-            || ChessState::Get().GetPieceCount(whiteRook) || ChessState::Get().GetPieceCount(blackRook)
-            || ChessState::Get().GetPieceCount(whitePawn) || ChessState::Get().GetPieceCount(blackPawn)
-            || ChessState::Get().GetPieceCount(whiteBishop) == 2 || ChessState::Get().GetPieceCount(blackBishop) == 2
-            || (ChessState::Get().GetPieceCount(whiteBishop) && ChessState::Get().GetPieceCount(whiteKnight))
-            || (ChessState::Get().GetPieceCount(blackBishop) && ChessState::Get().GetPieceCount(blackKnight)) )
+          if(ChessState::Get().GetPieceCount(PieceType::whiteQueen) || ChessState::Get().GetPieceCount(PieceType::blackQueen)
+            || ChessState::Get().GetPieceCount(PieceType::whiteRook) || ChessState::Get().GetPieceCount(PieceType::blackRook)
+            || ChessState::Get().GetPieceCount(PieceType::whitePawn) || ChessState::Get().GetPieceCount(PieceType::blackPawn)
+            || ChessState::Get().GetPieceCount(PieceType::whiteBishop) == 2 || ChessState::Get().GetPieceCount(PieceType::blackBishop) == 2
+            || (ChessState::Get().GetPieceCount(PieceType::whiteBishop) && ChessState::Get().GetPieceCount(PieceType::whiteKnight))
+            || (ChessState::Get().GetPieceCount(PieceType::blackBishop) && ChessState::Get().GetPieceCount(PieceType::blackKnight)) )
             {
-              return Ongoing;
+              return GameState::Ongoing;
             }
-          return DRAW;
+          return GameState::Draw;
         }
         else
         {
-          return blackKingInCheck ? WhiteWon : DRAW;
+          return blackKingInCheck ? GameState::WhiteWon : GameState::Draw;
         }
       }
-    return DRAW;
+    return GameState::Draw;
   }
 
   /**
@@ -595,8 +595,8 @@ namespace chess
    */
   void Stage::RenderPossibleMoves()
   {
-    char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
-    if(piece == invalid)return;
+    PieceType piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+    if(piece == PieceType::invalid)return;
 
     sf::CircleShape circle{mBoard->GetSquareOffsetY()/6.f};
 
@@ -608,7 +608,7 @@ namespace chess
       ChessState::Get().UndoLastMove();
       if(!kingInCheck)
       {
-        if(ChessState::Get().GetPieceOnChessCoordinate(move) == invalid)
+        if(ChessState::Get().GetPieceOnChessCoordinate(move) == PieceType::invalid)
         {
           circle.setRadius(mBoard->GetSquareOffsetY()/6.f);
           circle.setOutlineThickness(0.f);
@@ -637,7 +637,7 @@ namespace chess
     {
       sf::RectangleShape rect{sf::Vector2f{mBoard->GetSquareOffsetX(),mBoard->GetSquareOffsetY()}};
       rect.setFillColor(mKingInCheckColor);
-      rect.setPosition(ConvertChessCoordinateToPosition(mWhiteTurn ? ChessState::Get().GetPiecePosiiton(whiteKing)[0] : ChessState::Get().GetPiecePosiiton(blackKing)[0] ) + sf::Vector2f{-10.f,-10.f});
+      rect.setPosition(ConvertChessCoordinateToPosition(mWhiteTurn ? ChessState::Get().GetPiecePosiiton(PieceType::whiteKing)[0] : ChessState::Get().GetPiecePosiiton(PieceType::blackKing)[0] ) + sf::Vector2f{-10.f,-10.f});
       mOwningApp->GetWindow().draw(rect);
     }
     
@@ -685,18 +685,18 @@ namespace chess
       if(mPieceMoved)
       {
         // Check if current position is an End Position
-        int currState = EndState();
-        if(currState != Ongoing)
+        GameState currState = EndState();
+        if(currState != GameState::Ongoing)
         {
-          if(currState == DRAW)
+          if(currState == GameState::Draw)
           {
             LOG("DRAW");
           }
-          else if(currState == WhiteWon)
+          else if(currState == GameState::WhiteWon)
           {
             LOG("White Won");
           }
-          else if(currState == BlackWon)
+          else if(currState == GameState::BlackWon)
           {
             LOG("Black Won");
           }
@@ -723,7 +723,7 @@ namespace chess
               else
               {
                 mEndPose = ConvertPositionToChessCoordinate({mouseButtonPressed->position.x,mouseButtonPressed->position.y});
-                char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+                PieceType piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
                 // Change chess state and render everything again
                 if(MovePiece(piece))
                 {
@@ -743,7 +743,7 @@ namespace chess
       {
         mMouseDragging = false;
         mEndPose = ConvertPositionToChessCoordinate({mouseButtonReleased->position.x,mouseButtonReleased->position.y});
-        char piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+        PieceType piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
         if(MovePiece(piece))
         {
           SetPieceMoved(true);

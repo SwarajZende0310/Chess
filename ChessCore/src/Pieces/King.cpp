@@ -39,7 +39,7 @@ namespace chess
         int filesRightward = abs(endCoordinate.file - startCoordinate.file);
 
         if(((ranksForward == 1 && filesRightward == 1) || (ranksForward == 0 && filesRightward == 1 ) || (ranksForward == 1 && filesRightward == 0 )) && 
-            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate)) && 
+            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == PieceType::invalid || isEnemy(endCoordinate)) && 
             ((mWhitePieces && (ChessState::Get().GetBlackAttackedSquares().find(endCoordinate) == ChessState::Get().GetBlackAttackedSquares().end())) || (!mWhitePieces && (ChessState::Get().GetWhiteAttackedSquares().find(endCoordinate) == ChessState::Get().GetWhiteAttackedSquares().end())) ) )
         {
             return true;
@@ -54,11 +54,11 @@ namespace chess
     {
         if(mWhitePieces)
         {
-            ChessState::Get().SetPiecePosition(whiteKing,startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(PieceType::whiteKing,startCoordinate,endCoordinate);
         }
         else
         {
-            ChessState::Get().SetPiecePosition(blackKing,startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(PieceType::blackKing,startCoordinate,endCoordinate);
         }
     }
 
@@ -131,11 +131,11 @@ namespace chess
     bool King::IsInCheck()
     {
         Set<ChessCoordinate,ChessCoordinateHashFunction> attackedSquares = mWhitePieces ? ChessState::Get().GetBlackAttackedSquares() : ChessState::Get().GetWhiteAttackedSquares();
-        if(mWhitePieces && attackedSquares.find(ChessState::Get().GetPiecePosiiton(whiteKing)[0]) != attackedSquares.end())
+        if(mWhitePieces && attackedSquares.find(ChessState::Get().GetPiecePosiiton(PieceType::whiteKing)[0]) != attackedSquares.end())
         {
             return true;
         }
-        else if(!mWhitePieces && attackedSquares.find(ChessState::Get().GetPiecePosiiton(blackKing)[0]) != attackedSquares.end())
+        else if(!mWhitePieces && attackedSquares.find(ChessState::Get().GetPiecePosiiton(PieceType::blackKing)[0]) != attackedSquares.end())
         {
             return true;
         }

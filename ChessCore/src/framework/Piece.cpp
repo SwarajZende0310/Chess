@@ -12,11 +12,11 @@ namespace chess
 
     }
 
-    bool Piece::GetPieceColor(char piece)
+    bool Piece::GetPieceColor(PieceType piece)
     {
-        if(piece == whiteKing || piece == whiteQueen || piece == whiteRook || piece == whiteBishop || piece == whiteKnight || piece == whitePawn )
+        if(static_cast<int>(piece) > 0)
             return true;
-        else 
+        else
             return false;
     }
 }

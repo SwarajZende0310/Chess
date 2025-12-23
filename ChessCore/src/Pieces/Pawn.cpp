@@ -43,7 +43,7 @@ namespace chess
     bool Pawn::MovePossible(ChessCoordinate &startCoordinate, ChessCoordinate &endCoordinate)
     {
         int pawnForwardMoves = mWhitePieces ? endCoordinate.rank - startCoordinate.rank : startCoordinate.rank - endCoordinate.rank ;
-        if((startCoordinate.file == endCoordinate.file) && ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid)
+        if((startCoordinate.file == endCoordinate.file) && ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == PieceType::invalid)
         {
             if(mFirstMove[startCoordinate])
             {
@@ -56,8 +56,8 @@ namespace chess
         }
         else if((startCoordinate.file - 1 == endCoordinate.file || startCoordinate.file + 1 == endCoordinate.file) && 
                 (pawnForwardMoves == 1) && 
-                ((ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) != invalid && isEnemy(endCoordinate)) 
-                || (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid && EnPassantPossible(startCoordinate,endCoordinate))))//Capturing pieces
+                ((ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) != PieceType::invalid && isEnemy(endCoordinate)) 
+                || (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == PieceType::invalid && EnPassantPossible(startCoordinate,endCoordinate))))//Capturing pieces
         {
             return true;
         }
@@ -71,11 +71,11 @@ namespace chess
     {
         if(mWhitePieces)
         {
-            ChessState::Get().SetPiecePosition(whitePawn,startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(PieceType::whitePawn,startCoordinate,endCoordinate);
         }
         else
         {
-            ChessState::Get().SetPiecePosition(blackPawn,startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(PieceType::blackPawn,startCoordinate,endCoordinate);
         }
         mFirstMove[endCoordinate] = false;
     }
@@ -160,12 +160,12 @@ namespace chess
      */
     ChessCoordinate Pawn::PawnToPromote()
     {
-        ChessCoordinate pawnToPromote{invalid,invalid};
+        ChessCoordinate pawnToPromote{-1,-1};
         if(mWhitePieces)
         {
             for(int i = 0 ; i < 8 ; i++)
             {
-                if(ChessState::Get().GetPieceOnChessCoordinate(ChessCoordinate{8,char('a'+i)}) == whitePawn)
+                if(ChessState::Get().GetPieceOnChessCoordinate(ChessCoordinate{8,char('a'+i)}) == PieceType::whitePawn)
                 {
                     pawnToPromote.file = 'a' + i ;
                     pawnToPromote.rank = 8 ;
@@ -177,7 +177,7 @@ namespace chess
         {
             for(int i = 0 ; i < 8 ; i++)
             {
-                if(ChessState::Get().GetPieceOnChessCoordinate(ChessCoordinate{1,char('a'+i)}) == blackPawn)
+                if(ChessState::Get().GetPieceOnChessCoordinate(ChessCoordinate{1,char('a'+i)}) == PieceType::blackPawn)
                 {
                     pawnToPromote.file = 'a' + i ;
                     pawnToPromote.rank = 1 ;
@@ -240,7 +240,7 @@ namespace chess
      */
     bool Pawn::EnPassantPossible(ChessCoordinate startCoordinate, ChessCoordinate endCoordinate)
     {
-      if((mWhitePieces && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != whitePawn) || (!mWhitePieces && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != blackPawn))
+      if((mWhitePieces && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != PieceType::whitePawn) || (!mWhitePieces && ChessState::Get().GetPieceOnChessCoordinate(startCoordinate) != PieceType::blackPawn))
         return false;
       
       List<ChessCoordinate> lastMove = ChessState::Get().GetLastPlayedMove();

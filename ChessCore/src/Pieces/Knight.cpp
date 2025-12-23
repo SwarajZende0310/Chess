@@ -41,7 +41,7 @@ namespace chess
         //Knight moves forward and backward
         if((((ranksForward == 2 || ranksForward == -2) && (filesRightward == 1 || filesRightward == -1))  ||
             ((filesRightward == 2 || filesRightward == -2) && (ranksForward == 1 || ranksForward == -1))) && 
-            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == invalid || isEnemy(endCoordinate))) //Knight moves sidewards
+            (ChessState::Get().GetPieceOnChessCoordinate(endCoordinate) == PieceType::invalid || isEnemy(endCoordinate))) //Knight moves sidewards
         {
             return true;
         }
@@ -55,11 +55,11 @@ namespace chess
     {
         if(mWhitePieces)
         {
-            ChessState::Get().SetPiecePosition(whiteKnight,startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(PieceType::whiteKnight,startCoordinate,endCoordinate);
         }
         else
         {
-            ChessState::Get().SetPiecePosition(blackKnight,startCoordinate,endCoordinate);
+            ChessState::Get().SetPiecePosition(PieceType::blackKnight,startCoordinate,endCoordinate);
         }
     }
 

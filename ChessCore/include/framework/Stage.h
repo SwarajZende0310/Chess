@@ -159,7 +159,7 @@ namespace chess
        * @param piece The piece to check
        * @return true if the correct piece is selected, false otherwise
        */
-      bool CheckCorrectPieceSelected(char piece);
+      bool CheckCorrectPieceSelected(PieceType piece);
       
       /**
        * @brief Move a piece on the board
@@ -167,7 +167,7 @@ namespace chess
        * @param piece The piece to move
        * @return true if the move was successful, false otherwise
        */
-      bool MovePiece(char piece);
+      bool MovePiece(PieceType piece);
 
       /**
        * @brief Check if castling is possible
@@ -233,21 +233,21 @@ namespace chess
        * @param piece The piece to get the container for
        * @return shared<Piece> Shared pointer to the piece container
        */
-      shared<Piece> GetPieceContainer(char piece);
+      shared<Piece> GetPieceContainer(PieceType piece);
 
       /**
        * @brief Determine which piece to promote a pawn to
        * 
-       * @return char The piece type to promote to
+       * @return PieceType to promote to
        */
-      char WhichPieceToPromote();
+      PieceType WhichPieceToPromote();
 
       /**
        * @brief Check the current game state which might be Ongoing, WhiteWin, BlackWin, Draw
        * 
        * @return int The end state code
        */
-      int EndState();
+      GameState EndState();
 
       /**
        * @brief Render possible moves for the selected piece

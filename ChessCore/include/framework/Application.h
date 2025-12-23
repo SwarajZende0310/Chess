@@ -84,9 +84,9 @@ namespace chess
     /**
      * @brief Called when an end state(WhiteWon,BlackWon,DRAW) is reached 
      * 
-     * @param state The end state code
+     * @param state The end state
      */
-    void ReachedEndState(int state);
+    void ReachedEndState(GameState state);
 
   private:
     /**

@@ -24,7 +24,7 @@ namespace chess
             void ResetToStartPosition();
             
             /** @brief Get all coordinates where a given piece currently exists. */
-            List<ChessCoordinate> GetPiecePosiiton(char piece);
+            List<ChessCoordinate> GetPiecePosiiton(PieceType piece);
 
             /**
              * @brief Move a piece from start to end and optionally log the move.
@@ -33,16 +33,16 @@ namespace chess
              * @param end End coordinate
              * @param log If true, append to move history
              */
-            void SetPiecePosition(char piece, ChessCoordinate& start, ChessCoordinate& end,bool log = true);
+            void SetPiecePosition(PieceType piece, ChessCoordinate& start, ChessCoordinate& end,bool log = true);
 
             /** @brief Undo the last logged move if available. */
             bool UndoLastMove();
 
             /** @brief Get the piece occupying a coordinate or 'invalid'. */
-            char GetPieceOnChessCoordinate(ChessCoordinate coordinate);
+            PieceType GetPieceOnChessCoordinate(ChessCoordinate coordinate);
 
             /** @brief Remove a specific piece at the position. */
-            void RemovePiece(char piece,ChessCoordinate& position);
+            void RemovePiece(PieceType piece,ChessCoordinate& position);
 
             /** @brief Squares attacked by white pieces. */
             Set<ChessCoordinate,ChessCoordinateHashFunction> GetWhiteAttackedSquares(){ return mWhiteAttackedSquares; }
@@ -53,13 +53,13 @@ namespace chess
             bool KingInCheck(bool white);
 
             /** @brief Place a new piece onto the board. */
-            void SpawnPiece(char piece, ChessCoordinate& position);
+            void SpawnPiece(PieceType piece, ChessCoordinate& position);
 
             /** @brief Get the last move as [from, to] if available. */
             List<ChessCoordinate> GetLastPlayedMove();
 
             /** @brief Count of specific piece type currently on the board. */
-            int GetPieceCount(char piece);
+            int GetPieceCount(PieceType piece);
 
             /** @brief Whether the piece on this square has not yet moved. */
             bool IsFirstMove(ChessCoordinate coordinate);
@@ -73,7 +73,7 @@ namespace chess
 
         private:
             /** @brief Get the bitboard container reference for a piece. */
-            uint64_t& GetPieceContainer(char piece); 
+            uint64_t& GetPieceContainer(PieceType piece); 
 
             /** @brief Convert a file char to rank index. */
             char ConvertColToRank(int row);

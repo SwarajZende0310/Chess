@@ -153,7 +153,7 @@ namespace chess {
    * @note This method is called when the game reaches an end state.
    * Currently, it's a placeholder for end-game logic.
    */
-  void Application::ReachedEndState(int state)
+  void Application::ReachedEndState(GameState state)
   {
     // TODO:: Implement what will happen after the end state is reached
     // QuitApplication();

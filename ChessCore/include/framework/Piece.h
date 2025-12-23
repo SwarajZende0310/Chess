@@ -47,7 +47,7 @@ namespace chess
             /**
              * @brief Utility to determine color from a piece code.
              */
-            bool GetPieceColor(char piece);
+            bool GetPieceColor(PieceType piece);
 
             /**
              * @brief Set piece position in window coordinates.
