@@ -16,6 +16,10 @@ namespace chess
             
             virtual bool HandleEvent(const std::optional<sf::Event> &event)override;
 
+            virtual void Tick(float deltaTime)override;
+
+            void UpdateCurrentEvaluation(float eval);
+
             Delegate<> onHomeButtonClicked;
             Delegate<> onQuitButtonClicked;
 
@@ -24,6 +28,8 @@ namespace chess
 
             Button mHome;
             Button mQuit;
+
+            TextWidget mCurrEvaluation;
 
             ButtonColor mQuitButtonColor;
 

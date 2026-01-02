@@ -17,6 +17,7 @@
 #include<unordered_set>
 #include<utility>
 #include<cmath>
+#include <fmt/format.h>
 
 namespace chess
 {

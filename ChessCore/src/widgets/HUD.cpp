@@ -29,6 +29,19 @@ namespace chess
     }
 
     /**
+   * @brief Updates the HUD state
+   * 
+   * @param deltaTime Time elapsed since the last frame in seconds
+   * 
+   * @note This is a virtual method that can be overridden by derived classes
+   * to implement custom update logic.
+   */    
+    void HUD::Tick(float deltaTime)
+    {
+        return;
+    }
+
+    /**
      * @brief Construct the HUD (deferred Init via `NativeInit`).
      */
     HUD::HUD()

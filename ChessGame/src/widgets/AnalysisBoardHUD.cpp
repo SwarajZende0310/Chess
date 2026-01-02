@@ -11,7 +11,8 @@ namespace chess
      */
     AnalysisBoardHUD::AnalysisBoardHUD()
         :mHome{"Home"},
-        mQuit{"Quit"}
+        mQuit{"Quit"},
+        mCurrEvaluation{"0.0"}
     {
         
     }
@@ -23,6 +24,7 @@ namespace chess
     {
         mHome.NativeDraw(windowRef);
         mQuit.NativeDraw(windowRef);
+        mCurrEvaluation.NativeDraw(windowRef);
     }
 
     /**
@@ -31,6 +33,11 @@ namespace chess
     bool AnalysisBoardHUD::HandleEvent(const std::optional<sf::Event> &event)
     {
         return mHome.HandleEvent(event) || mQuit.HandleEvent(event) ;
+    }
+
+    void AnalysisBoardHUD::Tick(float deltaTime)
+    {
+        return;
     }
 
     /**
@@ -47,6 +54,9 @@ namespace chess
         mQuitButtonColor.buttonHoverColor = sf::Color{200,50,50,255};
         mQuit.SetColor(mQuitButtonColor);
         mQuit.mOnButtonClicked.BindAction(GetWeakRef(),&AnalysisBoardHUD::QuitButtonClicked);
+
+        mCurrEvaluation.SetTextSize(30);
+        mCurrEvaluation.SetWidgetLocation({400.f,0.f});
     }
 
     /**
@@ -63,5 +73,14 @@ namespace chess
     void AnalysisBoardHUD::QuitButtonClicked()
     {
         onQuitButtonClicked.Broadcast();
+    }
+
+
+    /**
+     * @brief Updates current evaluation when evaluation changed.
+     */
+    void AnalysisBoardHUD::UpdateCurrentEvaluation(float eval)
+    {
+        mCurrEvaluation.SetTextString(fmt::format("{:.1f}", eval));
     }
 }

@@ -79,6 +79,8 @@ target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-graphics)
 target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-window)
 target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-system)
 target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-audio)
+target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC sfml-system)
+target_link_libraries(${CHESS_CORE_TARGET_NAME} PUBLIC fmt)
 
 function(CopyLibToTarget LIB_NAME TARGET_NAME)
   add_custom_command(

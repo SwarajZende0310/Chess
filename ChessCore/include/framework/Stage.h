@@ -152,6 +152,18 @@ namespace chess
        */
       bool HandleBoardEvent(const std::optional<sf::Event> & event);
 
+      /**
+       * @brief Returns current evaluation of the position
+       */
+      float GetCurrentEvaluation();
+
+      /**
+       * @brief Calculates current evaluation of the position
+       */
+      void CalculateCurrentEvaluation();
+
+      Delegate<float> mOnEvaluationUpdate; ///< Delegate to be called on evaluation update
+
     private:
       /**
        * @brief Check if the correct piece is selected
@@ -313,6 +325,8 @@ namespace chess
       shared<HUD> mHUD;             ///< The HUD
 
       bool mBeginPlay;              ///< Whether the stage has begun play
+
+      float mCurrentEvaluation;     ///< Current evaluation of the position
   };
 
   /**

@@ -27,6 +27,7 @@ namespace chess
 
         mAnalysisBoardHUD.lock()->onHomeButtonClicked.BindAction(GetWeakRef(), &AnalysisBoardLevel::GoHome);
         mAnalysisBoardHUD.lock()->onQuitButtonClicked.BindAction(GetWeakRef(), &AnalysisBoardLevel::EndGame);
+        mOnEvaluationUpdate.BindAction(mAnalysisBoardHUD, &AnalysisBoardHUD::UpdateCurrentEvaluation);
     }
 
     /**

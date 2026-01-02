@@ -31,6 +31,13 @@ namespace chess
             /** @brief Handle input events. Default returns false. */
             virtual bool HandleEvent(const std::optional<sf::Event> &event);
 
+            /**
+            * @brief Updates the HUD state
+            * 
+            * @param deltaTime Time elapsed since the last frame in seconds
+            */
+            virtual void Tick(float deltaTime);
+
         protected:
             /** @brief Construct HUD with not-yet-initialized state. */
             HUD();

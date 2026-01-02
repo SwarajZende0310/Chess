@@ -50,7 +50,8 @@ namespace chess
     mRenderPossibleMoves{true},
     mPossibleMovesColor{201,201,201,90},
     mKingInCheckColor{150,0,0,100},
-    mBeginPlay{false}
+    mBeginPlay{false},
+    mCurrentEvaluation{0.0}
   {
     SpawnBoard({100.f,100.f},{800.f,800.f});
     ChessState::Get().ResetToStartPosition();
@@ -97,6 +98,10 @@ namespace chess
     {
       mHUD->NativeInit(mOwningApp->GetWindow());
     }
+    // Update current evaluation of the board
+    CalculateCurrentEvaluation();
+
+    mHUD->Tick(deltaTime);
   }
   /**
    * @brief Convenience to access the application window.
@@ -775,6 +780,38 @@ namespace chess
   void Stage::BeginPlay()
   {
 
+  }
+
+  /**
+   * @brief Returns the current evaluation of the current Position.
+   */
+  float Stage::GetCurrentEvaluation()
+  {
+      return mCurrentEvaluation;
+  }
+
+  /**
+   * @brief Calculates the current evaluation of the current Position.
+   *
+   * Currently doing the evaluation based on the pieces remaining on the board for both sides
+   * TODO :: Add stockfish for correct evaluation of the current position
+   */
+  void Stage::CalculateCurrentEvaluation()
+  {
+      int whitePoints = (ChessState::Get().GetPieceCount(PieceType::whitePawn) + 3 * ChessState::Get().GetPieceCount(PieceType::whiteBishop) 
+              + 3 * ChessState::Get().GetPieceCount(PieceType::whiteKnight) + 5 * ChessState::Get().GetPieceCount(PieceType::whiteRook)
+            + 9 * ChessState::Get().GetPieceCount(PieceType::whiteQueen));
+      int blackPoints = (ChessState::Get().GetPieceCount(PieceType::blackPawn) + 3 * ChessState::Get().GetPieceCount(PieceType::blackBishop) 
+              + 3 * ChessState::Get().GetPieceCount(PieceType::blackKnight) + 5 * ChessState::Get().GetPieceCount(PieceType::blackRook)
+            + 9 * ChessState::Get().GetPieceCount(PieceType::blackQueen));
+      float currEval = whitePoints - blackPoints;
+
+      // Update evaluation if changed
+      if(currEval != mCurrentEvaluation)
+      {
+        mCurrentEvaluation = currEval;
+        mOnEvaluationUpdate.Broadcast(mCurrentEvaluation);
+      }  
   }
 
   /**
