@@ -12,7 +12,8 @@ namespace chess
     AnalysisBoardHUD::AnalysisBoardHUD()
         :mHome{"Home"},
         mQuit{"Quit"},
-        mCurrEvaluation{"0.0"}
+        mCurrEvaluation{"0.0"},
+        mEvaluationBar{{50.f,800.f}}
     {
         
     }
@@ -25,6 +26,7 @@ namespace chess
         mHome.NativeDraw(windowRef);
         mQuit.NativeDraw(windowRef);
         mCurrEvaluation.NativeDraw(windowRef);
+        mEvaluationBar.NativeDraw(windowRef);
     }
 
     /**
@@ -35,6 +37,9 @@ namespace chess
         return mHome.HandleEvent(event) || mQuit.HandleEvent(event) ;
     }
 
+    /*
+     *  @brief Update the HUD.
+    */
     void AnalysisBoardHUD::Tick(float deltaTime)
     {
         return;
@@ -57,6 +62,8 @@ namespace chess
 
         mCurrEvaluation.SetTextSize(30);
         mCurrEvaluation.SetWidgetLocation({400.f,0.f});
+
+        mEvaluationBar.SetWidgetLocation({940.f,100.f});
     }
 
     /**
@@ -82,5 +89,6 @@ namespace chess
     void AnalysisBoardHUD::UpdateCurrentEvaluation(float eval)
     {
         mCurrEvaluation.SetTextString(fmt::format("{:.1f}", eval));
+        mEvaluationBar.UpdateCurrentEvaluation(eval);
     }
 }

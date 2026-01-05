@@ -3,6 +3,7 @@
 #include"widgets/HUD.h"
 #include"widgets/Button.h"
 #include"widgets/TextWidget.h"
+#include"widgets/EvaluationBar.h"
 
 
 namespace chess
@@ -30,6 +31,8 @@ namespace chess
             Button mQuit;
 
             TextWidget mCurrEvaluation;
+
+            EvaluationBar mEvaluationBar;
 
             ButtonColor mQuitButtonColor;
 
