@@ -17,6 +17,8 @@ namespace chess
             
             virtual bool HandleEvent(const std::optional<sf::Event> &event)override;
 
+            virtual void Tick(float deltaTime)override;
+
             Delegate<> onHomeButtonClicked;
             Delegate<> onPlayOnlineButtonClicked;
             Delegate<> onTwoPlayerButtonClicked;

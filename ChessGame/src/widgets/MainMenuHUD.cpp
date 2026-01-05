@@ -50,6 +50,14 @@ namespace chess
             || mQuit.HandleEvent(event) ;
     }
 
+    /*
+     *  @brief Update the HUD.
+    */
+    void MainMenuHUD::Tick(float deltaTime)
+    {
+        return;
+    }
+
     /**
      * @brief Initialize positions, sizes, and bind button click delegates.
      */
