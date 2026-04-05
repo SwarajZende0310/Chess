@@ -167,6 +167,6 @@ namespace chess
      */
     bool Knight::isEnemy(ChessCoordinate &endCoordinate)
     {
-        return ((mWhitePieces && !Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))) || (!mWhitePieces && Piece::GetPieceColor(ChessState::Get().GetPieceOnChessCoordinate(endCoordinate))));
+        return Piece::IsCapturableEnemy(mWhitePieces, ChessState::Get().GetPieceOnChessCoordinate(endCoordinate));
     }
 }

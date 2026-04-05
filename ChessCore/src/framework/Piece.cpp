@@ -19,4 +19,19 @@ namespace chess
         else
             return false;
     }
+
+    bool Piece::IsKingPiece(PieceType piece)
+    {
+        return piece == PieceType::whiteKing || piece == PieceType::blackKing;
+    }
+
+    bool Piece::IsCapturableEnemy(bool whitePiece, PieceType targetPiece)
+    {
+        if(targetPiece == PieceType::invalid || IsKingPiece(targetPiece))
+        {
+            return false;
+        }
+
+        return whitePiece ? !GetPieceColor(targetPiece) : GetPieceColor(targetPiece);
+    }
 }

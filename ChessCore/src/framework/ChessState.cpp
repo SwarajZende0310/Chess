@@ -356,13 +356,19 @@ namespace chess
     bool ChessState::KingInCheck(bool white)
     {
         UpdateAttackedSquare();
+        const List<ChessCoordinate> kingPositions = GetPiecePosiiton(white ? PieceType::whiteKing : PieceType::blackKing);
+        if(kingPositions.empty())
+        {
+            return false;
+        }
+
         if(white)
         {
-            return mBlackAttackedSquares.find(GetPiecePosiiton(PieceType::whiteKing)[0]) != mBlackAttackedSquares.end() ;
+            return mBlackAttackedSquares.find(kingPositions[0]) != mBlackAttackedSquares.end() ;
         }
         else
         {
-            return mWhiteAttackedSquares.find(GetPiecePosiiton(PieceType::blackKing)[0]) != mWhiteAttackedSquares.end() ;
+            return mWhiteAttackedSquares.find(kingPositions[0]) != mWhiteAttackedSquares.end() ;
         }
         return false;
     }
