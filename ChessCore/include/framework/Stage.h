@@ -88,6 +88,12 @@ namespace chess
       inline void SetPieceMoved(bool moved){ mPieceMoved = moved; }
 
       /**
+       * @brief Get the current side to move.
+       * @return true when white is to move.
+       */
+      inline bool IsWhiteTurn() const { return mWhiteTurn; }
+
+      /**
        * @brief Spawn a HUD element
        * 
        * @tparam HUDType Type of HUD to spawn
@@ -160,7 +166,13 @@ namespace chess
       /**
        * @brief Calculates current evaluation of the position
        */
-      void CalculateCurrentEvaluation();
+      virtual void CalculateCurrentEvaluation();
+
+      /**
+       * @brief Update cached evaluation and notify listeners if it changed.
+       * @param evaluation New evaluation in pawn units.
+       */
+      void PublishCurrentEvaluation(float evaluation);
 
       Delegate<float> mOnEvaluationUpdate; ///< Delegate to be called on evaluation update
 

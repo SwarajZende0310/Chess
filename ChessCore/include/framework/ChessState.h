@@ -67,6 +67,12 @@ namespace chess
             /** @brief Half-move clock (for 50-move rule). */
             int GetMovesWithoutCapture();
 
+            /**
+             * @brief Convert current board state into a FEN string.
+             * @param whiteToMove True when white is the side to move.
+             */
+            std::string GetCurrentPositionInFEN(bool whiteToMove);
+
         protected:
             /** @brief Construct hidden for singleton pattern. */
             ChessState();
@@ -106,7 +112,5 @@ namespace chess
             List<PlayedMove> mMovesPlayed; ///< Move history
 
             Dictionary<ChessCoordinate,bool,ChessCoordinateHashFunction> mFirstMove; ///< First-move flags per square
-
-            int mMovesWithoutCapture; ///< i dont remember what this is for
     };
 }

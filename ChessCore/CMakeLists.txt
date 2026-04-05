@@ -62,6 +62,11 @@ add_library(
 
   ${CMAKE_CURRENT_SOURCE_DIR}/include/widgets/EvaluationBar.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/EvaluationBar.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/engines/Engine.h
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/engines/BacktrackingEngine.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/engines/BacktrackingEngine.cpp
 )
 
 target_include_directories(${CHESS_CORE_TARGET_NAME}

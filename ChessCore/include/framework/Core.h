@@ -9,6 +9,7 @@
 #pragma once
 
 #include<stdio.h>
+#include<limits>
 #include<vector>
 #include<memory>
 #include<map>
@@ -17,6 +18,7 @@
 #include<unordered_set>
 #include<utility>
 #include<cmath>
+#include<sstream>
 #include <fmt/format.h>
 
 namespace chess

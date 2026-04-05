@@ -5,7 +5,6 @@
 #include"widgets/TextWidget.h"
 #include"widgets/EvaluationBar.h"
 
-
 namespace chess
 {
     class AnalysisBoardHUD : public HUD

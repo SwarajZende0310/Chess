@@ -288,7 +288,6 @@ namespace chess
                 mFirstMove[kingCoordinateEnd] = true;
                 mFirstMove[rookCoordinateEnd] = true;
             }
-            mMovesWithoutCapture -=1;
             return true;
         }
 
@@ -430,6 +429,140 @@ namespace chess
             moveCount = (move.mCapturedPiece != PieceType::invalid || move.mPiece == PieceType::whitePawn || move.mPiece == PieceType::blackPawn) ? 0 : moveCount + 1 ;
         }
         return moveCount;
+    }
+
+    /**
+     * @brief Compute the FEN representation for current poisiton.
+     * @return FEN resprestation of current position.
+     */
+    std::string ChessState::GetCurrentPositionInFEN(bool whiteToMove)
+    {
+        std::string fenString;
+
+        for(int rank = 8; rank >= 1; --rank)
+        {
+            int emptySquares = 0;
+            for(char file = 'a'; file <= 'h'; ++file)
+            {
+                const PieceType piece = GetPieceOnChessCoordinate(ChessCoordinate{rank, file});
+                char fenPiece = '\0';
+                switch (piece)
+                {
+                case PieceType::whitePawn:
+                    fenPiece = 'P';
+                    break;
+                case PieceType::whiteBishop:
+                    fenPiece = 'B';
+                    break;
+                case PieceType::whiteKnight:
+                    fenPiece = 'N';
+                    break;
+                case PieceType::whiteRook:
+                    fenPiece = 'R';
+                    break;
+                case PieceType::whiteQueen:
+                    fenPiece = 'Q';
+                    break;
+                case PieceType::whiteKing:
+                    fenPiece = 'K';
+                    break;
+                case PieceType::blackPawn:
+                    fenPiece = 'p';
+                    break;
+                case PieceType::blackBishop:
+                    fenPiece = 'b';
+                    break;
+                case PieceType::blackKnight:
+                    fenPiece = 'n';
+                    break;
+                case PieceType::blackRook:
+                    fenPiece = 'r';
+                    break;
+                case PieceType::blackQueen:
+                    fenPiece = 'q';
+                    break;
+                case PieceType::blackKing:
+                    fenPiece = 'k';
+                    break;
+                case PieceType::invalid:
+                default:
+                    break;
+                }
+
+                if(fenPiece == '\0')
+                {
+                    ++emptySquares;
+                    continue;
+                }
+
+                if(emptySquares > 0)
+                {
+                    fenString += static_cast<char>('0' + emptySquares);
+                    emptySquares = 0;
+                }
+
+                fenString += fenPiece;
+            }
+
+            if(emptySquares > 0)
+            {
+                fenString += static_cast<char>('0' + emptySquares);
+            }
+
+            if(rank != 1)
+            {
+                fenString += '/';
+            }
+        }
+
+        fenString += whiteToMove ? " w " : " b ";
+
+        std::string castlingRights;
+        if(GetPieceOnChessCoordinate(ChessCoordinate{1, 'e'}) == PieceType::whiteKing && IsFirstMove(ChessCoordinate{1, 'e'}))
+        {
+            if(GetPieceOnChessCoordinate(ChessCoordinate{1, 'h'}) == PieceType::whiteRook && IsFirstMove(ChessCoordinate{1, 'h'}))
+            {
+                castlingRights += 'K';
+            }
+            if(GetPieceOnChessCoordinate(ChessCoordinate{1, 'a'}) == PieceType::whiteRook && IsFirstMove(ChessCoordinate{1, 'a'}))
+            {
+                castlingRights += 'Q';
+            }
+        }
+
+        if(GetPieceOnChessCoordinate(ChessCoordinate{8, 'e'}) == PieceType::blackKing && IsFirstMove(ChessCoordinate{8, 'e'}))
+        {
+            if(GetPieceOnChessCoordinate(ChessCoordinate{8, 'h'}) == PieceType::blackRook && IsFirstMove(ChessCoordinate{8, 'h'}))
+            {
+                castlingRights += 'k';
+            }
+            if(GetPieceOnChessCoordinate(ChessCoordinate{8, 'a'}) == PieceType::blackRook && IsFirstMove(ChessCoordinate{8, 'a'}))
+            {
+                castlingRights += 'q';
+            }
+        }
+
+        fenString += castlingRights.empty() ? "-" : castlingRights;
+        fenString += " ";
+
+        std::string enPassantSquare = "-";
+        const List<ChessCoordinate> lastMove = GetLastPlayedMove();
+        if(lastMove.size() == 2 && lastMove[0].file == lastMove[1].file && std::abs(lastMove[0].rank - lastMove[1].rank) == 2)
+        {
+            const PieceType movedPiece = GetPieceOnChessCoordinate(lastMove[1]);
+            if(movedPiece == PieceType::whitePawn || movedPiece == PieceType::blackPawn)
+            {
+                enPassantSquare = fmt::format("{}{}", lastMove[0].file, (lastMove[0].rank + lastMove[1].rank) / 2);
+            }
+        }
+
+        fenString += enPassantSquare;
+        fenString += " ";
+        fenString += std::to_string(GetMovesWithoutCapture());
+        fenString += " ";
+        fenString += std::to_string(static_cast<int>(mMovesPlayed.size() / 2) + 1);
+
+        return fenString;
     }
 
     /**

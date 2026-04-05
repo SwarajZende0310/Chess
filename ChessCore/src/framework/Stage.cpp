@@ -822,12 +822,16 @@ namespace chess
             + 9 * ChessState::Get().GetPieceCount(PieceType::blackQueen));
       float currEval = whitePoints - blackPoints;
 
-      // Update evaluation if changed
-      if(currEval != mCurrentEvaluation)
+      PublishCurrentEvaluation(currEval);
+  }
+
+  void Stage::PublishCurrentEvaluation(float evaluation)
+  {
+      if(evaluation != mCurrentEvaluation)
       {
-        mCurrentEvaluation = currEval;
+        mCurrentEvaluation = evaluation;
         mOnEvaluationUpdate.Broadcast(mCurrentEvaluation);
-      }  
+      }
   }
 
   /**
