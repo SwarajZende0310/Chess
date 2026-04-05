@@ -47,7 +47,17 @@ namespace chess
             /**
              * @brief Utility to determine color from a piece code.
              */
-            bool GetPieceColor(PieceType piece);
+            static bool GetPieceColor(PieceType piece);
+
+            /**
+             * @brief Utility to determine whether a piece code is a king.
+             */
+            static bool IsKingPiece(PieceType piece);
+
+            /**
+             * @brief Utility to determine whether a target piece is a capturable enemy.
+             */
+            static bool IsCapturableEnemy(bool whitePiece, PieceType targetPiece);
 
             /**
              * @brief Set piece position in window coordinates.

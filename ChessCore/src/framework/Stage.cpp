@@ -487,10 +487,15 @@ namespace chess
       bool ongoing = false; 
       if(mWhiteTurn)
       {
+        List<ChessCoordinate> startCoordinate = ChessState::Get().GetPiecePosiiton(PieceType::whiteKing);
+        if(startCoordinate.empty())
+        {
+          return GameState::BlackWon;
+        }
+
         bool whiteKingInCheck = mWhiteKing->IsInCheck();
         // Check for all possible moves for white Pieces
         // White kings moves
-        List<ChessCoordinate> startCoordinate = ChessState::Get().GetPiecePosiiton(PieceType::whiteKing);
         List<ChessCoordinate> moves = mWhiteKing->GetAllPossibleMoves(startCoordinate[0]);
         
         if(moves.size() > 0)
@@ -541,10 +546,15 @@ namespace chess
       // Black's turn
       else
       {
+        List<ChessCoordinate> startCoordinate = ChessState::Get().GetPiecePosiiton(PieceType::blackKing);
+        if(startCoordinate.empty())
+        {
+          return GameState::WhiteWon;
+        }
+
         bool blackKingInCheck = mBlackKing->IsInCheck();
         // Check for all possible moves for black Pieces
         // Black kings moves
-        List<ChessCoordinate> startCoordinate = ChessState::Get().GetPiecePosiiton(PieceType::blackKing);
         List<ChessCoordinate> moves = mBlackKing->GetAllPossibleMoves(startCoordinate[0]);
         
         if(moves.size() > 0)
@@ -640,9 +650,15 @@ namespace chess
   {
     if(ChessState::Get().KingInCheck(mWhiteTurn))
     {
+      List<ChessCoordinate> kingPositions = ChessState::Get().GetPiecePosiiton(mWhiteTurn ? PieceType::whiteKing : PieceType::blackKing);
+      if(kingPositions.empty())
+      {
+        return;
+      }
+
       sf::RectangleShape rect{sf::Vector2f{mBoard->GetSquareOffsetX(),mBoard->GetSquareOffsetY()}};
       rect.setFillColor(mKingInCheckColor);
-      rect.setPosition(ConvertChessCoordinateToPosition(mWhiteTurn ? ChessState::Get().GetPiecePosiiton(PieceType::whiteKing)[0] : ChessState::Get().GetPiecePosiiton(PieceType::blackKing)[0] ) + sf::Vector2f{-10.f,-10.f});
+      rect.setPosition(ConvertChessCoordinateToPosition(kingPositions[0]) + sf::Vector2f{-10.f,-10.f});
       mOwningApp->GetWindow().draw(rect);
     }
     
