@@ -10,6 +10,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <atomic>
+#include <memory>
+#include <mutex>
+#include <queue>
 #include"framework/Stage.h"
 
 namespace chess 
@@ -24,6 +28,13 @@ namespace chess
   class Application 
   {
   public:
+    struct CommandInputState
+    {
+      std::mutex mutex;
+      std::queue<std::string> pendingCommands;
+      std::atomic<bool> stopRequested{false};
+    };
+
     /**
      * @brief Construct a new Application
      * 
@@ -35,6 +46,7 @@ namespace chess
     Application(unsigned int windowWidth, unsigned int windowHeight, 
                const std::string &windowTitle, 
                std::uint32_t windowStyle = sf::Style::Titlebar | sf::Style::Close);
+    virtual ~Application();
 
     /**
      * @brief Loads a new stage/world into the application
@@ -88,6 +100,14 @@ namespace chess
      */
     void ReachedEndState(GameState state);
 
+    /**
+     * @brief Handle application-level text commands that are not stage-specific.
+     * @param command Raw command string.
+     * @param response Filled with deterministic output when handled.
+     * @return true if the command was handled.
+     */
+    virtual bool HandleApplicationTextCommand(const std::string& command, std::string& response);
+
   private:
     /**
      * @brief Dispatches an SFML event to the current stage
@@ -96,6 +116,9 @@ namespace chess
      * @return true if the event was handled, false otherwise
      */
     bool DispathEvent(const std::optional<sf::Event>& event);
+    void ProcessPendingTextCommands();
+    void ExecuteTextCommand(const std::string& command);
+    void PrintTextCommandHelp() const;
     
     /**
      * @brief Internal tick function that handles frame timing
@@ -115,6 +138,7 @@ namespace chess
     sf::Clock mTickClock;         ///< Clock used for frame timing
     
     shared<Stage> mCurrentStage;  ///< The currently active stage
+    std::shared_ptr<CommandInputState> mCommandInputState; ///< Shared state for stdin-driven commands
   };
 
   /**
@@ -127,6 +151,7 @@ namespace chess
   inline weak<StageType> Application::LoadWorld()
   {
       mCurrentStage = std::make_shared<StageType>(this);
+      mCurrentStage->BeginPlayInternal();
       return std::static_pointer_cast<StageType>(mCurrentStage);
   }
 } // namespace chess

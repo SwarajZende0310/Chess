@@ -156,7 +156,7 @@ namespace chess
          * @brief Check if the coordinate is within board bounds.
          * @return true if in [1..8] x ['a'..'h']
          */
-        bool isValid()
+        bool isValid() const
         {
             return (rank > 0 && rank < 9) && (file >= 'a' && file <= 'h');
         }

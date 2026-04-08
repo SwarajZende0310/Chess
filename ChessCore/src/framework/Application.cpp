@@ -9,6 +9,10 @@
 
 #include "framework/Application.h"
 
+#include <iostream>
+#include <sstream>
+#include <thread>
+
 namespace chess {
   /**
    * @brief Construct a new Application::Application object
@@ -23,9 +27,32 @@ namespace chess {
       : mWindow{sf::VideoMode({windowWidth, windowHeight}), windowTitle, windowStyle},
         mTargetFrameRate{120.f},
         mTickClock{},
-        mCurrentStage{}
+        mCurrentStage{},
+        mCommandInputState{std::make_shared<CommandInputState>()}
   {
+    const std::shared_ptr<CommandInputState> commandInputState = mCommandInputState;
+    std::thread([commandInputState]()
+    {
+      std::string command;
+      while(!commandInputState->stopRequested.load() && std::getline(std::cin, command))
+      {
+        if(command.empty())
+        {
+          continue;
+        }
 
+        std::lock_guard<std::mutex> lock(commandInputState->mutex);
+        commandInputState->pendingCommands.push(command);
+      }
+    }).detach();
+  }
+
+  Application::~Application()
+  {
+    if(mCommandInputState)
+    {
+      mCommandInputState->stopRequested.store(true);
+    }
   }
 
   /**
@@ -178,6 +205,7 @@ namespace chess {
    */
   void Application::TickInternal(float deltaTime)
   {
+    ProcessPendingTextCommands();
     if(mCurrentStage)
     {
       mCurrentStage->TickInternal(deltaTime);
@@ -192,5 +220,77 @@ namespace chess {
   {
     if(mCurrentStage)
       mCurrentStage->Render();
+  }
+
+  void Application::ProcessPendingTextCommands()
+  {
+    if(!mCommandInputState)
+    {
+      return;
+    }
+
+    std::queue<std::string> pendingCommands;
+    {
+      std::lock_guard<std::mutex> lock(mCommandInputState->mutex);
+      pendingCommands.swap(mCommandInputState->pendingCommands);
+    }
+
+    while(!pendingCommands.empty())
+    {
+      ExecuteTextCommand(pendingCommands.front());
+      pendingCommands.pop();
+    }
+  }
+
+  void Application::ExecuteTextCommand(const std::string& command)
+  {
+    std::istringstream commandStream(command);
+    std::string verb;
+    commandStream >> verb;
+
+    if(verb.empty())
+    {
+      return;
+    }
+
+    if(verb == "help")
+    {
+      PrintTextCommandHelp();
+      return;
+    }
+
+    if(verb == "quit")
+    {
+      std::cout << "ok quit" << std::endl;
+      QuitApplication();
+      return;
+    }
+
+    std::string response;
+    if(HandleApplicationTextCommand(command, response))
+    {
+      std::cout << response << std::endl;
+      return;
+    }
+
+    if(!mCurrentStage)
+    {
+      std::cout << "error no_active_stage" << std::endl;
+      return;
+    }
+
+    std::cout << mCurrentStage->HandleTextCommand(command) << std::endl;
+  }
+
+  void Application::PrintTextCommandHelp() const
+  {
+    std::cout << "ok help commands: help, quit, world main_menu, world analysis, move <uci>, undo, fen, eval, bestmove, turn" << std::endl;
+  }
+
+  bool Application::HandleApplicationTextCommand(const std::string& command, std::string& response)
+  {
+    (void)command;
+    (void)response;
+    return false;
   }
 } // namespace chess

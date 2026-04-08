@@ -80,6 +80,29 @@ namespace chess
         return handled;
     }
 
+    std::string AnalysisBoardLevel::HandleTextCommand(const std::string& command)
+    {
+        if(command == "bestmove")
+        {
+            std::lock_guard<std::mutex> lock(mAnalysisMutex);
+            if(!mHasCompletedAnalysis)
+            {
+                return "bestmove pending";
+            }
+            return fmt::format("bestmove {} depth {} aborted {}",
+                               mCompletedAnalysis.result.bestMove.empty() ? "(none)" : mCompletedAnalysis.result.bestMove,
+                               mCompletedAnalysis.result.completedDepth,
+                               mCompletedAnalysis.result.aborted ? "true" : "false");
+        }
+
+        const std::string response = Stage::HandleTextCommand(command);
+        if(response.rfind("ok move ", 0) == 0 || response.rfind("ok undo", 0) == 0)
+        {
+            RefreshEvaluationFromCurrentPosition();
+        }
+        return response;
+    }
+
     /**
      * @brief Navigate back to the main menu level.
      */
@@ -183,5 +206,10 @@ namespace chess
                 mHasCompletedAnalysis = true;
             }
         }
+    }
+
+    bool AnalysisBoardLevel::SupportsBoardTextInterface() const
+    {
+        return true;
     }
 }

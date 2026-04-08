@@ -14,6 +14,9 @@
 #include"Pieces/Pawn.h"
 #include"widgets/HUD.h"
 
+#include <cctype>
+#include <sstream>
+
 namespace chess
 {
   /**
@@ -47,6 +50,7 @@ namespace chess
     mMouseDragging{false},
     mMousePosition{-1,-1},
     mFlipBoard{false},
+    mPendingPromotionPiece{PieceType::invalid},
     mRenderPossibleMoves{true},
     mPossibleMovesColor{201,201,201,90},
     mKingInCheckColor{150,0,0,100},
@@ -101,7 +105,10 @@ namespace chess
     // Update current evaluation of the board
     CalculateCurrentEvaluation();
 
-    mHUD->Tick(deltaTime);
+    if(mHUD)
+    {
+      mHUD->Tick(deltaTime);
+    }
   }
   /**
    * @brief Convenience to access the application window.
@@ -135,6 +142,67 @@ namespace chess
   bool Stage::HandleEventInternal(const std::optional<sf::Event> &event)
   {
       return false;
+  }
+
+  std::string Stage::HandleTextCommand(const std::string& command)
+  {
+      std::istringstream commandStream(command);
+      std::string verb;
+      commandStream >> verb;
+
+      if(verb.empty())
+      {
+        return "error empty_command";
+      }
+
+      if(!SupportsBoardTextInterface())
+      {
+        return "error unsupported_command_for_stage";
+      }
+
+      if(verb == "move")
+      {
+        std::string moveText;
+        commandStream >> moveText;
+        if(moveText.empty())
+        {
+          return "error missing_move";
+        }
+
+        const bool moved = ApplyTextMove(moveText);
+        if(!moved)
+        {
+          return fmt::format("error illegal_move {}", moveText);
+        }
+
+        return fmt::format("ok move {} fen {}", moveText, ChessState::Get().GetCurrentPositionInFEN(IsWhiteTurn()));
+      }
+
+      if(verb == "undo")
+      {
+        if(!UndoTextMove())
+        {
+          return "error undo_unavailable";
+        }
+        return fmt::format("ok undo fen {}", ChessState::Get().GetCurrentPositionInFEN(IsWhiteTurn()));
+      }
+
+      if(verb == "fen")
+      {
+        return fmt::format("fen {}", ChessState::Get().GetCurrentPositionInFEN(IsWhiteTurn()));
+      }
+
+      if(verb == "eval")
+      {
+        return fmt::format("eval {:.1f}", GetCurrentEvaluation());
+      }
+
+      if(verb == "turn")
+      {
+        return fmt::format("turn {}", IsWhiteTurn() ? "white" : "black");
+      }
+
+      return "error unknown_stage_command";
   }
 
   /**
@@ -276,10 +344,101 @@ namespace chess
         ChessState::Get().RemovePiece(mWhiteTurn ? PieceType::whitePawn : PieceType::blackPawn, pawnToPromote);
         ChessState::Get().SpawnPiece(WhichPieceToPromote(), pawnToPromote);
       }
+      mPendingPromotionPiece = PieceType::invalid;
       mWhiteTurn = !mWhiteTurn;
       return true;
     }  
+    mPendingPromotionPiece = PieceType::invalid;
     return false;
+  }
+
+  bool Stage::ApplyTextMove(const std::string& moveText)
+  {
+      if(moveText.size() != 4 && moveText.size() != 5)
+      {
+        return false;
+      }
+
+      const ChessCoordinate start = ParseTextSquare(moveText.substr(0, 2));
+      const ChessCoordinate end = ParseTextSquare(moveText.substr(2, 2));
+      if(!start.isValid() || !end.isValid())
+      {
+        return false;
+      }
+
+      mStartPose = start;
+      mEndPose = end;
+      mPieceSelected = false;
+      mMouseDragging = false;
+
+      if(moveText.size() == 5)
+      {
+        mPendingPromotionPiece = PromotionPieceFromSuffix(moveText[4]);
+        if(mPendingPromotionPiece == PieceType::invalid)
+        {
+          return false;
+        }
+      }
+      else
+      {
+        mPendingPromotionPiece = PieceType::invalid;
+      }
+
+      const PieceType piece = ChessState::Get().GetPieceOnChessCoordinate(mStartPose);
+      const bool moved = CheckCorrectPieceSelected(piece) && MovePiece(piece);
+      if(moved)
+      {
+        SetPieceMoved(true);
+      }
+      return moved;
+  }
+
+  bool Stage::UndoTextMove()
+  {
+      mPendingPromotionPiece = PieceType::invalid;
+      if(ChessState::Get().UndoLastMove())
+      {
+        SetPieceMoved(true);
+        mWhiteTurn = !mWhiteTurn;
+        return true;
+      }
+      return false;
+  }
+
+  ChessCoordinate Stage::ParseTextSquare(const std::string& square) const
+  {
+      if(square.size() != 2)
+      {
+        return ChessCoordinate{};
+      }
+
+      const char file = static_cast<char>(std::tolower(static_cast<unsigned char>(square[0])));
+      const char rank = square[1];
+      if(file < 'a' || file > 'h' || rank < '1' || rank > '8')
+      {
+        return ChessCoordinate{};
+      }
+
+      return ChessCoordinate{rank - '0', file};
+  }
+
+  PieceType Stage::PromotionPieceFromSuffix(char promotionSuffix) const
+  {
+      const char lowered = static_cast<char>(std::tolower(static_cast<unsigned char>(promotionSuffix)));
+      const bool whiteMove = mWhiteTurn;
+      switch (lowered)
+      {
+      case 'q':
+        return whiteMove ? PieceType::whiteQueen : PieceType::blackQueen;
+      case 'r':
+        return whiteMove ? PieceType::whiteRook : PieceType::blackRook;
+      case 'b':
+        return whiteMove ? PieceType::whiteBishop : PieceType::blackBishop;
+      case 'n':
+        return whiteMove ? PieceType::whiteKnight : PieceType::blackKnight;
+      default:
+        return PieceType::invalid;
+      }
   }
 
   /**
@@ -475,7 +634,10 @@ namespace chess
    */
   PieceType Stage::WhichPieceToPromote()
   {
-      // TODO :: Implement an ask to which piece to promote
+      if(mPendingPromotionPiece != PieceType::invalid)
+      {
+        return mPendingPromotionPiece;
+      }
       return mWhiteTurn ? PieceType::whiteQueen : PieceType::blackQueen;
   }
 
@@ -840,5 +1002,10 @@ namespace chess
   sf::Vector2f Stage::GetSpriteScale()
   {
       return mBoard->GetSpriteScale();
+  }
+
+  bool Stage::SupportsBoardTextInterface() const
+  {
+      return false;
   }
 }

@@ -56,8 +56,12 @@ namespace chess
             virtual void Render()override;
             /** @brief Submit a fresh analysis request after board state changes. */
             virtual bool HandleEventInternal(const std::optional<sf::Event> & event)override;
+            /** @brief Handle analysis-specific text commands such as `bestmove`. */
+            virtual std::string HandleTextCommand(const std::string& command) override;
 
         protected:
+            /** @brief Analysis mode supports shared board text commands. */
+            virtual bool SupportsBoardTextInterface() const override;
 
         private:
             /**

@@ -10,6 +10,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <string>
 #include "framework/Core.h"
 #include "framework/Object.h"
 
@@ -131,6 +132,17 @@ namespace chess
        * @return Application* Pointer to the parent Application
        */
       Application* GetApplication(){ return mOwningApp; }
+
+      /**
+       * @brief Execute a textual command against the current stage.
+       *
+       * The default implementation supports board-oriented commands only for
+       * stages that opt in via `SupportsBoardTextInterface()`.
+       *
+       * @param command Raw command line without trailing newline.
+       * @return Deterministic single-line response for automation.
+       */
+      virtual std::string HandleTextCommand(const std::string& command);
     
     protected:
       /**
@@ -174,6 +186,12 @@ namespace chess
        */
       void PublishCurrentEvaluation(float evaluation);
 
+      /**
+       * @brief Whether this stage accepts board text commands.
+       * @return true for board-capable stages exposed to automation.
+       */
+      virtual bool SupportsBoardTextInterface() const;
+
       Delegate<float> mOnEvaluationUpdate; ///< Delegate to be called on evaluation update
 
     private:
@@ -192,6 +210,10 @@ namespace chess
        * @return true if the move was successful, false otherwise
        */
       bool MovePiece(PieceType piece);
+      bool ApplyTextMove(const std::string& moveText);
+      bool UndoTextMove();
+      ChessCoordinate ParseTextSquare(const std::string& square) const;
+      PieceType PromotionPieceFromSuffix(char promotionSuffix) const;
 
       /**
        * @brief Check if castling is possible
@@ -328,6 +350,7 @@ namespace chess
       sf::Vector2i mMousePosition;  ///< Mouse position
 
       bool mFlipBoard;              ///< Whether the board is flipped
+      PieceType mPendingPromotionPiece; ///< Promotion override used by text commands
 
       bool mRenderPossibleMoves;    ///< Whether to render possible moves
       sf::Color mPossibleMovesColor;///< Color of possible moves

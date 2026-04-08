@@ -1,5 +1,7 @@
-cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Debug && /
-cd build /
-make && / 
-cd .. /
+#!/bin/sh
+
+set -e
+
+cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Debug
+cmake --build ./build
 ./build/ChessGame/ChessGame

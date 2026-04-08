@@ -19,5 +19,10 @@ namespace chess
              * @brief Construct the application and set up resources/initial world.
              */
             GameApplication();
+
+            /**
+             * @brief Handle world-switching commands for the concrete game app.
+             */
+            virtual bool HandleApplicationTextCommand(const std::string& command, std::string& response) override;
     };
 }
